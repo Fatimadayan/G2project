@@ -27,6 +27,12 @@
     text-align: center;
     border-bottom: 4px solid #3949ab;
   }
+  h1 {
+    font-size: 70px; 
+    font-weight: bold;
+  }
+  
+  
   
   .subheading {
     font-size: 1rem;
