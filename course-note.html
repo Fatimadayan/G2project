@@ -18,17 +18,21 @@
     <section class="courses">
       <h2>Available Courses</h2>
 
-      <label for="sortSelect">Sort by Department:</label>
-      <select id="sortSelect">
-        <option value="default">Default</option>
-        <option value="CS">CS</option>
-        <option value="NE">NE</option>
-        <option value="IS">IS</option>
-        <option value="CY">CY</option>
-        <option value="CE">CE</option>
-        <option value="OTHER">Other</option>
-      </select> 
-      
+      <div class="search-container">
+        <input type="text" id="search" placeholder="Search Courses..." />
+    </div>
+
+      <div class="sort-container">
+        <select id="course-sort">
+          <option value="" selected disabled>Choose a category</option> 
+            <option value="CS">CS</option>
+            <option value="NE">NE</option>
+            <option value="IS">IS</option>
+            <option value="CY">CY</option>
+            <option value="CE">CE</option>
+            <option value="ANOTHER">Another</option>
+        </select>
+
       <div class="course-grid">
         <div class="course-card">
           <h3>ITCS333 – Internet Software Development</h3>

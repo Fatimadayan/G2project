@@ -32,6 +32,16 @@
     font-weight: bold;
   }
   
+.search-container input,.sort-container select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #d32f2f;
+    border-radius: 5px;
+    margin: 10px 0;
+    width: 100%;
+    max-width: 300px;
+    outline: none;
+}
   
   
   .subheading {
