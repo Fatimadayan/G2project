@@ -42,6 +42,20 @@
     max-width: 300px;
     outline: none;
 }
+
+.add-item {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-item select,
+.add-item button {
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
   
   
   .subheading {
