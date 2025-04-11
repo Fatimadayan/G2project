@@ -1,0 +1,35 @@
+<!-- events.html -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upcoming Events</title>
+  <!-- Pico CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="eventstyle.css">
+</head>
+
+<form class="max-w-xl mx-auto mt-10 space-y-4">
+    <h2 class="text-2xl font-bold">Create New Event</h2>
+  
+    <label>Title *</label>
+    <input type="text" required class="w-full border p-2" placeholder="Event Name">
+  
+    <label>Description *</label>
+    <textarea required class="w-full border p-2"></textarea>
+  
+    <label>Date *</label>
+    <input type="date" required class="w-full border p-2">
+  
+    <label>Time *</label>
+    <input type="time" required class="w-full border p-2">
+  
+    <label>Location</label>
+    <input type="text" class="w-full border p-2">
+  
+    <div class="flex gap-2">
+      <button class="bg-blue-600 text-white px-4 py-2 rounded">Submit</button>
+      <a href="event.html" class="bg-gray-300 px-4 py-2 rounded">Cancel</a>
+    </div>
+  </form>
+  
