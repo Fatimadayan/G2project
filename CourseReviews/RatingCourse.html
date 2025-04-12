@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta name = "viewport" content = "width=device-width, initialscale = 1.0">
     <title>Rate a Course</title>
-    <link rel="stylesheet" href = "Rating.css">
+    <link rel="stylesheet" href = "Reviews.css">
 </head>
 
 <body>
@@ -17,12 +18,11 @@
 
     <main>
         <section class = "rating-form">
-            <h2>Rating</h2>
             <form>
                 <label for = "course-title">Course Title</label>
+                <input type = "text" id = "course-title" required placeholder = "Enter course title">
+                <label for = "rating">Rate the course</label>
                 <select id = "rating" name = "rating" required>
-                <input type = "text" id = "course-title" required placeholder = "Enter the course title">
-                <option value = "">Rate the course</option>
                 <option value = "1">1 star</option>
                 <option value = "2">2 stars</option>
                 <option value = "3">3 stars</option>
@@ -31,10 +31,14 @@
                 </select>
 
                 <label for = "review-data">Review</label>
-                <textarea id = "review-data" name = "review-data" required placeholder = "Write your review here.."></textarea>
+                <textarea id = "review-data" name = "review-data" required placeholder = "Write your review here..."></textarea>
                 <button type = "submit">Submit</button>
             </form>
         </section>
+        
+        <div class = "action-buttons">
+            <a href = "Reviews.html"><button>Back</button></a>
+            </div>
     </main>
 
     <footer>
