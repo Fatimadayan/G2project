@@ -110,9 +110,13 @@ main{
     margin-top: 20px;
 }
 
+.action-buttons {
+    margin-top: 20px;
+}
+
 button{
     padding: 10px 20px;
-    background: linear-gradient(135deg,#800000 ,#caa472);
+    background: linear-gradient(135deg,#800000,#caa472);
     border: none;
     border-radius: 25px;
     cursor : pointer;
