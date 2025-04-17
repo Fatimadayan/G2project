@@ -4,63 +4,131 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Campus Club Activities</title>
-  <link rel="stylesheet" href="CSS2.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary-bg: #4b1e1e;
+      --secondary-bg: #800000;
+      --accent-bg: #d9d9d9;
+      --light-bg: #f7f7f7;
+      --primary-text: #fff;
+      --secondary-text: #1f1212;
+      --highlight: #caa472;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-[var(--light-bg)] text-gray-800">
 
   <!-- Header -->
-  <header>
-    <div class="logo">
-      <img src="images.png" alt="Campus Logo" />
+  <header class="bg-[var(--primary-bg)] text-[var(--primary-text)] shadow-md ">
+    <div class="flex items-center justify-between p-4 border-t-4">
+      <div class="logo">
+        <img src="images.png" alt="Campus Logo" class="h-12" />
+      </div>
+      <nav>
+        <ul class="flex space-x-4">
+           <li><a href="../events/event.html" class="hover:underline">Events Calendar</a></li>
+           <li><a href="../CourseReviews/Reviews.html" class="hover:underline">Course Reviews</a></li>
+           <li><a href="../Course-note/course-note.html" class="hover:underline">Course Notes</a></li>
+           <li><a href="../CampusNews/CampusNews.html" class="hover:underline">Campus News</a></li>
+           <li><a href="../index.html" class="hover:underline">Main page</a></li>
+        </ul>
+      </nav>
     </div>
-    <nav>
-      <ul>
-         <li> <a href=../events\event.html>Events Calendar</a></li>
-         <li> <a href=../CourseReviews/Reviews.html>Course Reviews</a></li>
-         <li> <a href=../Course-note/course-note.html>Course Notes</a></li>
-         <li><a href=../CampusNews/CampusNews.html>Campus News</a></li>
-         <li> <a href=../index.html>Main page</a></li>
-      </ul>
-    </nav>
   </header>
 
   <!-- Title + Search -->
-  <div class="title-wrapper">
-    <section class="title">
-      <h1>Explore Campus Club Activities</h1>
+  <div class="title-wrapper bg-[var(--secondary-bg)] text-[var(--primary-text)] py-8">
+    <section class="title text-center">
+      <h1 class="text-4xl font-bold">Explore Campus Club Activities</h1>
     </section>
-    <div class="search-section">
-      <h2>search for club</h2>
-      <input
-        type="text"
-        placeholder="Type here..."
-        class="search-input"
-        id="search-input"
-      />
+    <div class="search-section mt-4 text-center">
+      <h2 class="text-xl font-semibold">Search for club</h2>
+      <div class="relative inline-block mt-2">
+        <input
+          type="text"
+          placeholder="Type here..."
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+          id="search-input"
+          list="club-suggestions"
+        />
+        <span class="absolute inset-y-0 right-3 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+          </svg>
+        </span>
+        <datalist id="club-suggestions">
+          <option value="Tech Innovators Club"></option>
+          <option value="Art and Expression Society"></option>
+          <option value="Green Future Club"></option>
+        </datalist>
+      </div>
     </div>
   </div>
 
+  <!-- Sort Controls -->
+  <div class="sort-controls text-center mb-8">
+    <label for="sort" class="text-lg font-semibold">Sort by:</label>
+    <select id="sort" class="ml-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="name">Name</option>
+      <option value="newest">Newest</option>
+      <option value="category">Category</option>
+    </select>
+  </div>
+
   <!-- Club Cards Section -->
-  <section class="club-cards">
-    <div class="club-card">Tech Innovators Club</div>
-    <div class="club-card">Art and Expression Society</div>
-    <div class="club-card">Green Future Club</div>
+  <section class="club-cards grid grid-cols-1 md:grid-cols-3 gap-4 p-8">
+    <div class="club-card bg-[url('./tech%20innovators%20club.jpg')] bg-cover bg-center text-[var(--secondary-text)] shadow-md p-6 rounded-lg text-center">
+      <h3 class="text-xl font-bold bg-[var(--light-bg)] bg-opacity-70 inline-block px-2 py-1 rounded">Tech Innovators Club</h3>
+      <p class="mt-4 bg-[var(--light-bg)] bg-opacity-80 p-2 rounded">A club for tech enthusiasts to innovate and collaborate on projects.</p>
+      <a href="tech-innovators.html" class="mt-6 inline-block px-6 py-3 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Learn More</a>
+    </div>
+    <div class="club-card bg-[url('./art%20and%20expression%20society.jpg')] bg-cover bg-center text-[var(--secondary-text)] shadow-md p-6 rounded-lg text-center">
+      <h3 class="text-xl font-bold bg-[var(--light-bg)] bg-opacity-70 inline-block px-2 py-1 rounded">Art and Expression Society</h3>
+      <p class="mt-4 bg-[var(--light-bg)] bg-opacity-80 p-2 rounded">A space for artists to express and showcase their creativity.</p>
+      <a href="art-expression.html" class="mt-6 inline-block px-6 py-3 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Learn More</a>
+    </div>
+    <div class="club-card bg-[url('./green%20future%20club.jpg')] bg-cover bg-center text-[var(--secondary-text)] shadow-md p-6 rounded-lg text-center">
+      <h3 class="text-xl font-bold bg-[var(--light-bg)] bg-opacity-70 inline-block px-2 py-1 rounded">Green Future Club</h3>
+      <p class="mt-4 bg-[var(--light-bg)] bg-opacity-80 p-2 rounded">Join us in promoting sustainability and environmental awareness.</p>
+      <a href="green-future.html" class="mt-6 inline-block px-6 py-3 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Learn More</a>
+    </div>
   </section>
 
+  <!-- Pagination Controls -->
+  <div class="pagination-controls text-center mt-8">
+    <button class="px-4 py-2 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Previous</button>
+    <span class="mx-4">Page 1 of 5</span>
+    <button class="px-4 py-2 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Next</button>
+  </div>
+
   <!-- Join Us Section (curved) -->
-  <section class="join-us-wrapper">
+  <section class="join-us-wrapper bg-[var(--accent-bg)] text-[var(--secondary-text)] py-12 text-center rounded-full mx-8 mb-8">
     <div class="join-us">
-      <h2 id="join" >join us now</h2>
-      <input type="button" class="join" value="join">
+      <h2 id="join" class="text-3xl font-bold">Join us now</h2>
+      <input
+        type="button"
+        class="mt-4 px-6 py-2 bg-[var(--primary-bg)] text-[var(--primary-text)] font-semibold rounded-lg shadow-md hover:bg-gray-100"
+        value="Join"
+        onclick="location.href='join-a-club.html'"
+      />
     </div>
   </section>
 
   <!-- Upcoming Event Section -->
-  <section class="upcoming-event">
-    <h2>upcoming event</h2>
+  <section class="upcoming-event bg-gradient-to-b from-[var(--primary-bg)] to-[var(--secondary-bg)] text-[var(--primary-text)] py-8 text-center">
+    <h2 class="text-2xl font-bold">Upcoming Event</h2>
+    <div class="event-details mt-4 text-center">
+      <h3 class="text-2xl font-semibold">Tech Innovation Workshop</h3>
+      <p class="mt-2">Date & Time: April 25, 2025, 3:00 PM</p>
+      <p class="mt-2">Hosting Club: Tech Innovators Club</p>
+      <p class="mt-2">Location: University Auditorium</p>
+      <a href="#" class="mt-4 inline-block px-4 py-2 bg-[var(--highlight)] text-[var(--secondary-text)] rounded-lg hover:bg-gray-100">RSVP</a>
+    </div>
   </section>
+
   <!-- FOOTER -->
-  <footer id="main-footer">
+  <footer id="main-footer" class="bg-[var(--primary-bg)] text-[var(--primary-text)] text-center py-4 border-t-4 border-[var(--highlight)]">
     <p>&copy; 2025 University of Bahrain. Student Hub Platform.</p>
   </footer>
 
