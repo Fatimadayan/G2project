@@ -9,6 +9,28 @@
     <link rel="stylesheet" href="eventstyle.css">
   </head>
   
+  <script>
+    document.querySelector("form").addEventListener("submit", function (e) {
+      e.preventDefault(); // Prevents page reload
+  
+      const title = document.querySelector('input[type="text"]').value;
+      const description = document.querySelector('textarea').value;
+      const date = document.querySelector('input[type="date"]').value;
+      const time = document.querySelector('input[type="time"]').value;
+      const location = document.querySelectorAll('input[type="text"]')[1].value;
+  
+      console.log("Event Details:");
+      console.log("Title:", title);
+      console.log("Description:", description);
+      console.log("Date:", date);
+      console.log("Time:", time);
+      console.log("Location:", location);
+  
+      // You could also store this data or send it somewhere using fetch/AJAX
+    });
+  </script>
+  
+
   <form class="max-w-xl mx-auto mt-10 space-y-4">
       <h2 class="text-2xl font-bold">Create New Event</h2>
     
