@@ -5,14 +5,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const eventList = document.querySelector(".grid");
   const form = document.querySelector("form");
 
-  // Show toast notification
+  // Toast container setup
+  const toastContainer = document.createElement("div");
+  toastContainer.className = "fixed bottom-4 right-4 space-y-2 z-50";
+  document.body.appendChild(toastContainer);
+
   function showToast(message, type = "success") {
     const toast = document.createElement("div");
+    toast.className = `px-4 py-2 rounded shadow text-white ${
+      type === "error" ? "bg-red-500" : "bg-green-500"
+    } animate-fadeIn`;
     toast.textContent = message;
-    toast.className = `fixed top-5 right-5 px-4 py-2 rounded shadow-lg text-white z-50 ${
-      type === "success" ? "bg-green-600" : "bg-red-500"
-    }`;
-    document.body.appendChild(toast);
+    toastContainer.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
   }
 
@@ -32,17 +36,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function displayEvents(events) {
     eventList.innerHTML = ""; // Clear existing
     if (events.length === 0) {
-      eventList.innerHTML = `<p class="text-red-600 font-semibold">No events found.</p>`;
+      eventList.innerHTML = "<p>No events found.</p>";
       return;
     }
     events.forEach(event => {
       const div = document.createElement("div");
-      div.className = "border p-4 rounded shadow transition-all duration-300 hover:scale-105 bg-white";
+      div.className =
+        "border p-4 rounded shadow hover:shadow-lg transition duration-300 transform hover:-translate-y-1 bg-white";
       div.innerHTML = `
-        <h2 class="font-bold text-lg">${event.title}</h2>
-        <p>Date: ${new Date().toLocaleDateString()}</p>
-        <p>Location: Online</p>
-        <a href="event-detail.html?id=${event.id}" class="text-blue-500 underline" title="Click for full details">View Details</a>
+        <h2 class="font-bold text-lg mb-2">${event.title}</h2>
+        <p class="text-sm text-gray-600 mb-1">Date: ${new Date().toLocaleDateString()}</p>
+        <p class="text-sm text-gray-600 mb-2">Location: Online</p>
+        <a href="event-detail.html?id=${event.id}" class="text-blue-500 underline">View Details</a>
       `;
       eventList.appendChild(div);
     });
@@ -62,9 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // 3. FORM VALIDATION
   if (form) {
     form.addEventListener("submit", e => {
-      e.preventDefault(); // Prevent reload
+      e.preventDefault();
       const title = form.querySelector('input[type="text"]').value.trim();
-      const desc = form.querySelector('textarea').value.trim();
+      const desc = form.querySelector("textarea").value.trim();
       const date = form.querySelector('input[type="date"]').value;
       const time = form.querySelector('input[type="time"]').value;
 
@@ -73,23 +78,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Simulate event creation
+      // Simulate adding event
       const newEvent = {
-        id: Date.now(),
         title,
         desc,
         date,
-        time
+        time,
+        id: Date.now(),
       };
-
-      // Add to the top of the list for now (mocked behavior)
-      const currentEvents = Array.from(eventList.children).map(div => ({
-        title: div.querySelector("h2").textContent,
-        id: div.querySelector("a").href.split("id=")[1]
-      }));
-      displayEvents([newEvent, ...currentEvents]);
+      displayEvents([{ ...newEvent }, ...Array.from(eventList.children).map(div => ({
+        title: div.querySelector("h2").innerText,
+        id: div.querySelector("a").href.split("=")[1],
+      }))]);
+      showToast("Event created successfully!");
       form.reset();
-      showToast("Event created successfully 🎉");
     });
   }
 
