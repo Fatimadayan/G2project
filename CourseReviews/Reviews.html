@@ -17,41 +17,42 @@
         </header>
 
         <main id = "main list">
+            <div id = "loading" style = "display:none;">Loading...</div>
             <section class = "search-bar">
-                <input type = "text" placeholder = "Search for reviews" aria-label = "Search reviews">
-                    <select aria-label = "Filter options">
+                <input type = "text" id = "search-input" placeholder = "Search for reviews" aria-label = "Search reviews">
+                    <select id = "course-filter" aria-label = "Filter options">
                         <option value = "">Filter by course</option>
                         <option value = "Course1">First Course</option>
                         <option value = "Course2">Second Course</option>
                     </select>
-                    <button>Sort</button>
+                    <button id="sort-button">Sort</button>
             </section>
 
-            <section class = "reviews-list">
-                <article class = "review-item">
-                    <h2>Course 1</h2>
-                    <a href = "ReviewDetails.html">View Details...</a>
+            <section class = "reviews-list" id = "reviews-list">
+                <article class = "review-item" data-course="course1">
+                    <h2>ITCS333: Internet Software Development</h2>
+                    <a href = "ReviewDetails.html?course=1">View Details...</a>
                 </article>
 
-                <article class = "review-item">
-                    <h2>Course 2</h2>
-                    <a href = "ReviewDetails.html">View Details...</a>
+                <article class = "review-item" data-course="course2">
+                    <h2>ITCS113: Introduction to Programming</h2>
+                    <a href = "ReviewDetails.html?course=2">View Details...</a>
                 </article>
 
-                <article class = "review-item">
-                    <h2>Course 3</h2>
-                    <a href = "ReviewDetails.html">View Details...</a>
+                <article class = "review-item" data-course="course3">
+                    <h2>ITCS214: Data Structures</h2>
+                    <a href = "ReviewDetails.html?course=3">View Details...</a>
                 </article>
 
-                <article class = "review-item">
-                    <h2>Course 4</h2>
-                    <a href = "ReviewDetails.html">View Details...</a>
+                <article class = "review-item" data-course="course4">
+                    <h2>ITCS254: Discrete Structures I</h2>
+                    <a href = "ReviewDetails.html?course=4">View Details...</a>
                 </article>
             </section>
 
             <div class = "pagination">
-                <button>Back</button>
-                <button>Next</button>
+                <button onclick="window.location.href='../index.html'">Back</button>
+                <button onclick="window.location.href='MoreReviews.html'">Next</button>
             </div>
 
             <div style = "margin-top:20px;">
@@ -77,5 +78,38 @@
         <footer>
             <p>&copy; 2025 Campus Hub</p>
         </footer>
+<script>
+    document.getElementById('search-input').addEventListener('input', function(){
+        const searchTerm = this.value.toLowerCase();
+        const reviews = document.querySelectorAll('.review-item');
+        reviews.forEach(review => {
+            const title = review.querySelector('h2').textContent.toLowerCase();
+            if (title.includes(searchTerm)){
+                review.style.display = 'block';
+            }
+            else {
+                review.style.display = 'none';
+            }
+        });
+        document.getElementById('loading').style.display = 'none';
+    });
+
+    document.getElementById('sort-button').addEventListener('click', function () {
+    const reviewsList = document.getElementById('reviews-list');
+    const reviews = Array.from(reviewsList.children);
+    document.getElementById('loading').style.display='block';
+    
+    setTimeout(()=> {
+    reviews.sort((a, b) => {
+        const titleA = a.querySelector('h2').textContent.toLowerCase();
+        const titleB = b.querySelector('h2').textContent.toLowerCase();
+        return titleA.localeCompare(titleB); 
+    });
+    reviewsList.innerHTML = '';
+    reviews.forEach(review => reviewsList.appendChild(review));
+    document.getElementById('loading').style.display='none';
+  },300);
+});
+</script>
     </body>
 </html>

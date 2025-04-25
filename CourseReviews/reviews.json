@@ -1,0 +1,34 @@
+{
+    "courses": [
+        {
+            "id": 1,
+            "title": "ITCS333: Internet Software Development",
+            "description": "This course offers amazing detailed information on how to create stylish, interactive, and responsive webpages.",
+            "rating": 4.5
+        },
+        {
+            "id": 2,
+            "title": "ITCS113: Introduction to Programming",
+            "description": "This course offers a comprehensive introduction to programming concepts.",
+            "rating": 4.0
+        },
+        {
+            "id": 3,
+            "title": "ITCS214: Data Structures",
+            "description": "This course provides a specialized format for organizing, processing, retrieving, and storing data.",
+            "rating": 4.2
+        },
+        {
+            "id": 4,
+            "title": "ITCS254: Discrete Structures I",
+            "description": "This course shows combinations, graphs, and logical statements.",
+            "rating": 4.1
+        },
+        {
+            "id": 5,
+            "title": "ITCS342: Design of Algorithms",
+            "description": "Describes a set of commands that must be followed for a computer to perform calculations.",
+            "rating": 4.7
+        }
+    ]
+}

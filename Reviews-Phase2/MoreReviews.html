@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang = "en">
+
+<head>
+    <meta name = "viewport" content="width=device-width, initial-scale = 1.0">
+    <title>More Course Reviews</title>
+    <link rel = "stylesheet" href = "Reviews.css">
+</head>
+
+<body>
+    <header>
+        <h1>More Course Reviews</h1>
+        <nav>
+            <a href = "../index.html">Home</a>
+            <a href = "RatingCourse.html">Rate a Course</a>
+        </nav>
+    </header>
+
+    <main id = "main list">
+        <section class = "reviews-list">
+            <article class = "review-item" data-course="course5">
+                <h2>ITCS342: Design of algorithms</h2>
+                <a href = "ReviewDetails.html?course=5">View Details...</a>
+            </article>
+        </section>
+
+        <div class = "pagination">
+            <button onclick="window.location.href='Reviews.html'">Back</button>
+        </div>
+
+        <div style = "margin-top:20px;">
+            <div class = "action-buttons" style= "text-align:center;">
+                <a href = "RatingCourse.html"><button>Add new review</button></a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
