@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Course Notes</title>
   <link rel="stylesheet" href="course-note.css" />
+  <style>
+    .loading { text-align: center; font-size: 18px; }
+    .error { color: red; text-align: center; }
+    .pagination button { margin: 3px; }
+  </style>
 </head>
 <body>
   <header>
@@ -20,57 +25,32 @@
 
       <div class="search-container">
         <input type="text" id="search" placeholder="Search Courses.." />
-    </div>
+      </div>
 
       <div class="sort-container">
         <select id="course-sort">
           <option value="" selected disabled>Choose a category</option> 
-            <option value="CS">CS</option>
-            <option value="NE">NE</option>
-            <option value="IS">IS</option>
-            <option value="CY">CY</option>
-            <option value="CE">CE</option>
-            <option value="ANOTHER">Another</option>
+          <option value="CS">CS</option>
+          <option value="NE">NE</option>
+          <option value="IS">IS</option>
+          <option value="CY">CY</option>
+          <option value="CE">CE</option>
+          <option value="ANOTHER">Another</option>
         </select>
 
         <label for="itemType">Add new item:</label>
-          <select id="itemType">
+        <select id="itemType">
           <option value="">-- Choose type --</option>
           <option value="pdf">PDF</option>
           <option value="link">Link</option>
         </select>
 
-      <button>Add</button>
-
-
-      <div class="course-grid">
-        <div class="course-card">
-          <h3>ITCS333 – Internet Software Development</h3>
-          <p>HTML, CSS, assignments, quizzes, and project notes.</p>
-          <a href="itcs333.html" class="btn">View Notes</a>
-        </div>
-        <div class="course-card">
-          <h3>ITCS241 – Data Structures</h3>
-          <p>Lectures, exercises, and past exams.</p>
-          <a href="itcs241.html" class="btn">View Notes</a>
-        </div>
-        <div class="course-card">
-          <h3>MATH101 – Calculus I</h3>
-          <p>Limits, derivatives, integrals, and practice problems.</p>
-          <a href="math101.html" class="btn">View Notes</a>
-        </div>
-        <div class="course-card">
-            <h3>ITNE352 – Network Programming</h3>
-            <p>Python, UDP&TCP, Server, and Past exama.</p>
-            <a href="itne352.html" class="btn">View Notes</a>
-          </div>
-          <div class="course-card">
-            <h3>ITNE240 – Network Operating Systems</h3>
-            <p>OS, Printer, AD, and Mid exams.</p>
-            <a href="itne240.html" class="btn">View Notes</a>
-          </div>
-      
+        <button id="addButton">Add</button>
       </div>
+
+      <div id="course-grid" class="course-grid"></div>
+      <div id="pagination" class="pagination"></div>
+
     </section>
   </main>
 
@@ -79,5 +59,89 @@
       <p>Made by Noora Sami</p>
     </div>
   </footer>
+
+<script>
+  const API_URL = "";
+  const courseGrid = document.getElementById("course-grid");
+  const searchInput = document.getElementById("search");
+  const sortSelect = document.getElementById("course-sort");
+  const paginationDiv = document.getElementById("pagination");
+
+  let courses = [];
+  let filteredCourses = [];
+  let currentPage = 1;
+  const itemsPerPage = 5;
+
+  async function fetchCourses() {
+    courseGrid.innerHTML = "<p class='loading'>Loading...</p>";
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) {
+        throw new Error("Failed to fetch");
+      }
+      const data = await res.json();
+      courses = data.slice(0, 20);
+      filteredCourses = [...courses];
+      displayCourses();
+      setupPagination();
+    } catch (err) {
+      courseGrid.innerHTML = "<p class='error'>" + err.message + "</p>";
+    }
+  }
+
+  function displayCourses() {
+    courseGrid.innerHTML = "";
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const currentItems = filteredCourses.slice(start, end);
+
+    currentItems.forEach(course => {
+      const div = document.createElement("div");
+      div.className = "course-card";
+      div.innerHTML = `
+        <h3>${course.title}</h3>
+        <p>${course.body.slice(0, 50)}...</p>
+        <a href="#" class="btn">View Notes</a>
+      `;
+      courseGrid.appendChild(div);
+    });
+  }
+
+  searchInput.addEventListener("input", function() {
+    const searchValue = this.value.toLowerCase();
+    filteredCourses = courses.filter(course => course.title.toLowerCase().includes(searchValue));
+    currentPage = 1;
+    displayCourses();
+    setupPagination();
+  });
+
+  sortSelect.addEventListener("change", function() {
+    const value = this.value;
+    if (value) {
+      filteredCourses.sort((a, b) => a.title.localeCompare(b.title));
+      currentPage = 1;
+      displayCourses();
+    }
+  });
+
+  function setupPagination() {
+    paginationDiv.innerHTML = "";
+    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.innerText = i;
+      if (i === currentPage) {
+        btn.style.fontWeight = "bold";
+      }
+      btn.addEventListener("click", function() {
+        currentPage = i;
+        displayCourses();
+      });
+      paginationDiv.appendChild(btn);
+    }
+  }
+
+  fetchCourses();
+</script>
 </body>
 </html>
