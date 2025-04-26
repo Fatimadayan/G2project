@@ -1,36 +1,62 @@
 <!DOCTYPE html>
-<html lang = "en">
+<html lang="en">
 
-<head> 
-    <meta name = "viewport" content = "width = device-width, initial - scale = 1.0">
-    <title> Course Review Details</title>
-    <link rel = "stylesheet" href = "Reviews.css">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Review Details</title>
+    <link rel="stylesheet" href="Reviews.css">
 </head>
 
 <body>
     <header>
-        <h1> Review Details</h1>
+        <h1>Review Details</h1>
         <nav>
-            <a href = "../index.html">Home</a>
+            <a href="../index.html">Home</a>
         </nav>
     </header>
 
-    <main> 
-        <section class = "review-detail">
-            <h2>Course : Internet Software Development</h2>
-            <p>This course offers an amazing detailed information on how to create stylish, interactive, and responsive webpages. </p>
-            <h2>Course : Introduction to Programming</h2>
-            <p>This course offers comprehensive introduction to programming concepts. The materials are well prepared and key topics are discussed. It is a great starting point for beginners!</p>
-             
-            <div class = "action-buttons">
-                <a href = "Reviews.html"><button>Back</button></a>
-                </div>
+    <main>
+        <section class="review-detail">
+            <h2 id="course-title"></h2>
+            <p id="course-description"></p>
+            <p id="course-rating"></p>
         </section>
+
+        <div class="action-buttons">
+            <a href="Reviews.html"><button>Back</button></a>
+        </div>
     </main>
 
     <footer>
         <p>&copy; 2025 Campus Hub</p>
     </footer>
 
+    <script>
+        fetch('reviews.json') 
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const courseDetails = data.courses;
+                const urlParams = new URLSearchParams(window.location.search);
+                const courseId = urlParams.get('course'); 
+                const course = courseDetails.find(c => c.id == courseId); 
+
+                if (course) {
+                    document.getElementById('course-title').textContent = course.title;
+                    document.getElementById('course-description').textContent = course.description;
+                    document.getElementById('course-rating').textContent = `Rating: ${course.rating} / 5`;
+                } else {
+                    document.getElementById('course-title').textContent = "Course not found";
+                    document.getElementById('course-description').textContent = "";
+                    document.getElementById('course-rating').textContent = "";
+                }
+            })
+            .catch(error => console.error('Error fetching course data:', error));
+    </script>
 </body>
 </html>
+
