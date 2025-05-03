@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upcoming Events</title>
+  <title >Upcoming Events</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
   <style>
+    
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f5f5f5;
@@ -105,11 +106,14 @@
 .cta-section h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  color:#f5f5f5;
+  font-style:oblique;
 }
 
 .cta-section p {
   font-size: 1.25rem;
   margin-bottom: 2rem;
+  color:#fff
 }
 
 .cta-section a {
@@ -126,12 +130,15 @@
   background-color: #caa472;
   color: #fff;
 }
-
+.UE{
+  font-style: italic;
+  color: #fff;
+}
   </style>
 </head>
 <body>
   <header>
-    <h1>Upcoming Events</h1>
+    <h1 class="UE">Upcoming Events</h1>
   </header>
 
   <main class="event-section">
@@ -170,7 +177,10 @@
   </section>
 
   <script src="events.js"></script>
-  <footer style="background-color: #000; color: white; padding: 3rem 1rem;">
+ 
+
+<footer style="background-color: #000; color: white; padding: 3rem 1rem;">
+
     <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem;">
       
       <!-- UOB Logo and Address -->
