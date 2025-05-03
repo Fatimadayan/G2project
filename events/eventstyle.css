@@ -82,6 +82,7 @@
     padding: 1.5rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
   }
   
   .border:hover {
@@ -101,7 +102,13 @@
     color: #caa472;
     text-decoration: underline;
   }
-  
+  /*image in Event Cards */
+  .event-image {
+    width: 25%;
+    max-height: 200px;
+    object-fit: contain; /* change from 'cover' to 'contain' */
+    border: 2px solid red; /* helps visualize it */
+  }
   /*  New Event Button */
   .mt-4 a {
     display: inline-block;
@@ -255,4 +262,7 @@
   .animate-fadeIn {
     animation: fadeIn 0.3s ease-in-out;
   }
+  
+ 
+  
   

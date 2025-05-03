@@ -1,4 +1,4 @@
-const EVENTS_API = "https://jsonplaceholder.typicode.com/posts"; // mock API
+const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob"; // Your API endpoint
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector('input[placeholder="Search events..."]');
@@ -6,69 +6,59 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   const detailContainer = document.querySelector("#event-detail");
 
-  // 1. FETCH & DISPLAY EVENTS
+  // 1. Fetch and display events
   async function fetchEvents() {
     try {
-      if (eventList) eventList.innerHTML = "<p>Loading events...</p>";
-      const response = await fetch(EVENTS_API);
-      if (!response.ok) throw new Error("Failed to load events");
+      if (eventList) eventList.innerHTML = "<p>Loading events...</p>"; // Show loading message
+      const response = await fetch(EVENTS_API); // Make the API request
+
+      if (!response.ok) {
+        console.error("Failed to fetch events:", response.status, response.statusText); // Log error status
+        throw new Error("Failed to load events");
+      }
+
       const data = await response.json();
+      console.log("Fetched events:", data); // Debugging line
 
-      // Show first 6 only
-      if (eventList) displayEvents(data.slice(0, 6));
+      if (eventList) displayEvents(data.slice(0, 10)); // Display only the first 6 events
 
-      // If on detail page
       const params = new URLSearchParams(window.location.search);
       const id = params.get("id");
+
       if (id && detailContainer) {
         const event = data.find(e => e.id == id);
         displayEventDetail(event);
       }
     } catch (error) {
-      if (eventList) {
-        eventList.innerHTML = `<p style="color:red;">Error loading events: ${error.message}</p>`;
-      } else if (detailContainer) {
-        detailContainer.innerHTML = `<p style="color:red;">Error loading event detail: ${error.message}</p>`;
-      }
+      const msg = `<p style="color:red;">Error loading events: ${error.message}</p>`;
+      console.error("Error:", error); // Log error message
+      if (eventList) eventList.innerHTML = msg;
+      if (detailContainer) detailContainer.innerHTML = msg;
     }
   }
 
-  function displayEvents() {
-    eventList.innerHTML = ""; // Clear existing
-  
-    const titles = [
-      "Tech Workshop",
-      "Data Science Day",
-      "AI Bootcamp",
-      "Cybersecurity Summit",
-      "Mobile App Hackathon",
-      "Green Tech Forum"
-    ];
-  
-    const descriptions = [
-      "Learn web development basics with hands-on activities.",
-      "Explore data science tools and real-world projects.",
-      "Train with experts in artificial intelligence.",
-      "Stay ahead with the latest in cybersecurity trends.",
-      "Design and develop apps in a weekend sprint.",
-      "Discover innovations in clean and green technology."
-    ];
-  
-    for (let i = 0; i < titles.length; i++) {
+  function displayEvents(events = []) {
+    eventList.innerHTML = ""; // Clear previous events
+
+    if (events.length === 0) {
+      eventList.innerHTML = "<p>No events found.</p>";
+      return;
+    }
+
+    events.forEach(e => {
       const div = document.createElement("div");
       div.className = "event-card";
       div.innerHTML = `
-        <img src="https://source.unsplash.com/featured/?technology,${i}" alt="Event Image" class="event-image">
+        <img src="${e.image}" alt="Event Image" class="event-image">
         <div class="event-content">
-          <div class="event-title">${titles[i]}</div>
-          <p><strong>Description:</strong> ${descriptions[i]}</p>
-          <a href="event-detail.html?id=${i}" class="event-button">View Details</a>
+          <div class="event-title">${e.title}</div>
+          <p><strong>Description:</strong> ${e.description}</p>
+          <a href="event-detail.html?id=${e.id}" class="event-button">View Details</a>
         </div>
       `;
       eventList.appendChild(div);
-    }
+    });
   }
-  
 
   function displayEventDetail(event) {
     if (!event) {
@@ -78,17 +68,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     detailContainer.innerHTML = `
       <h2>${event.title}</h2>
-      <img src="https://source.unsplash.com/featured/?technology,${event.id}" alt="${event.title}" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px;" />
-      <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-      <p><strong>Time:</strong> 3:00 PM</p>
-      <p><strong>Location:</strong> Online</p>
-      <p><strong>Description:</strong> ${event.body}</p>
-
+      <img src="${event.image}" alt="${event.title}" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px;" />
+      <p><strong>Date:</strong> ${event.date}</p>
+      <p><strong>Time:</strong> ${event.time}</p>
+      <p><strong>Location:</strong> ${event.location}</p>
+      <p><strong>Description:</strong> ${event.description}</p>
       <section style="margin-top: 2rem;">
         <h3>Comments</h3>
         <p style="font-style: italic;">(Comment box UI only)</p>
       </section>
-
       <div style="margin-top: 1.5rem;">
         <button>Edit</button>
         <button class="secondary">Delete</button>
@@ -100,50 +88,66 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. SEARCH FILTER
   if (searchInput) {
     searchInput.addEventListener("input", async () => {
-      const response = await fetch(EVENTS_API);
-      const events = await response.json();
-      const keyword = searchInput.value.toLowerCase();
-      const filtered = events.filter(ev => ev.title.toLowerCase().includes(keyword));
-      displayEvents(filtered.slice(0, 6));
+      try {
+        const response = await fetch(EVENTS_API);
+        const events = await response.json();
+        const keyword = searchInput.value.toLowerCase();
+        const filtered = events.filter(ev => ev.title.toLowerCase().includes(keyword));
+        displayEvents(filtered.slice(0, 6));
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
     });
   }
 
-  // 3. FORM VALIDATION
+  // 3. FORM SUBMISSION (CREATE EVENT)
   if (form) {
-    form.addEventListener("submit", e => {
+    form.addEventListener("submit", async e => {
       e.preventDefault();
       const title = form.querySelector('input[type="text"]').value.trim();
-      const desc = form.querySelector('textarea').value.trim();
+      const description = form.querySelector('textarea').value.trim();
       const date = form.querySelector('input[type="date"]').value;
       const time = form.querySelector('input[type="time"]').value;
+      const location = "Online"; // Change this as per your needs
+      const image = `https://source.unsplash.com/featured/?technology,${Math.floor(Math.random() * 1000)}`;
 
-      if (!title || !desc || !date || !time) {
+      if (!title || !description || !date || !time) {
         alert("Please fill in all required fields!");
         return;
       }
 
-      const newEvent = {
-        id: Date.now(),
-        title,
-        description: desc,
-        date,
-        time
-      };
+      const newEvent = { title, description, date, time, location, image };
 
-      const eventCard = document.createElement("div");
-      eventCard.className = "border p-4 rounded shadow animate-fadeIn bg-white mt-4";
-      eventCard.innerHTML = `
-        <h2 class="font-bold text-lg">${newEvent.title}</h2>
-        <p>Date: ${newEvent.date} ${newEvent.time}</p>
-        <p>Location: Online</p>
-        <p>${newEvent.description}</p>
-        <span class="text-green-500 font-semibold">Event created successfully!</span>
-      `;
-      form.insertAdjacentElement("afterend", eventCard);
-      form.reset();
+      try {
+        const res = await fetch(EVENTS_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newEvent)
+        });
+
+        if (!res.ok) throw new Error("Failed to create event");
+
+        const saved = await res.json();
+        console.log("Event posted:", saved);
+
+        const eventCard = document.createElement("div");
+        eventCard.className = "border p-4 rounded shadow animate-fadeIn bg-white mt-4";
+        eventCard.innerHTML = `
+          <h2 class="font-bold text-lg">${saved.title}</h2>
+          <p>Date: ${saved.date} ${saved.time}</p>
+          <p>Location: ${saved.location}</p>
+          <p>${saved.description}</p>
+          <span class="text-green-500 font-semibold">Event created successfully!</span>
+        `;
+        form.insertAdjacentElement("afterend", eventCard);
+        form.reset();
+      } catch (err) {
+        console.error("Error creating event:", err);
+        alert("Error creating event: " + err.message);
+      }
     });
   }
 
-  // 4. INITIALIZE
+  // 4. INITIALIZE EVENTS
   fetchEvents();
 });
