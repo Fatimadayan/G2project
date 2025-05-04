@@ -1,4 +1,4 @@
-const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob"; // Your API endpoint
+const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob"; // API endpoint
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector('input[placeholder="Search events..."]');
@@ -9,18 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // 1. Fetch and display events
   async function fetchEvents() {
     try {
-      if (eventList) eventList.innerHTML = "<p>Loading events...</p>"; // Show loading message
-      const response = await fetch(EVENTS_API); // Make the API request
+      if (eventList) eventList.innerHTML = "<p>Loading events...</p>";
+      const response = await fetch(EVENTS_API);
 
-      if (!response.ok) {
-        console.error("Failed to fetch events:", response.status, response.statusText); // Log error status
-        throw new Error("Failed to load events");
-      }
+      if (!response.ok) throw new Error("Failed to load events");
 
       const data = await response.json();
-      console.log("Fetched events:", data); // Debugging line
 
-      if (eventList) displayEvents(data.slice(0, 10)); // Display only the first 6 events
+      if (eventList) displayEvents(data.slice(0, 10));
 
       const params = new URLSearchParams(window.location.search);
       const id = params.get("id");
@@ -31,14 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       const msg = `<p style="color:red;">Error loading events: ${error.message}</p>`;
-      console.error("Error:", error); // Log error message
       if (eventList) eventList.innerHTML = msg;
       if (detailContainer) detailContainer.innerHTML = msg;
     }
   }
 
   function displayEvents(events = []) {
-    eventList.innerHTML = ""; // Clear previous events
+    eventList.innerHTML = "";
 
     if (events.length === 0) {
       eventList.innerHTML = "<p>No events found.</p>";
@@ -65,89 +60,81 @@ document.addEventListener("DOMContentLoaded", () => {
       detailContainer.innerHTML = "<p>Event not found.</p>";
       return;
     }
-
+  
     detailContainer.innerHTML = `
       <h2>${event.title}</h2>
-      <img src="${event.image}" alt="${event.title}" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px;" />
+      <img src="${event.image}" alt="${event.title}" class="fullscreen-image" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px; cursor: zoom-in;" />
       <p><strong>Date:</strong> ${event.date}</p>
       <p><strong>Time:</strong> ${event.time}</p>
       <p><strong>Location:</strong> ${event.location}</p>
       <p><strong>Description:</strong> ${event.description}</p>
-      <section style="margin-top: 2rem;">
+  
+      <!-- Comment Section -->
+      <section class="comment-section" style="margin-top: 2rem;">
         <h3>Comments</h3>
-        <p style="font-style: italic;">(Comment box UI only)</p>
+        <form id="comment-form">
+          <textarea 
+            class="comment-textarea" 
+            placeholder="Leave a comment..." 
+            required></textarea>
+          <button type="submit" class="comment-btn">Post Comment</button>
+        </form>
+        <div id="comment-list" class="comment-list"></div>
       </section>
+  
       <div style="margin-top: 1.5rem;">
         <button>Edit</button>
         <button class="secondary">Delete</button>
         <a href="event.html" class="secondary">Back to Events</a>
       </div>
+  
+      <!-- Fullscreen Modal HTML -->
+      <div id="imageModal" class="image-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:9999;">
+        <img id="modalImage" style="max-width:90%; max-height:90%; border-radius:10px;" />
+        <span id="closeModal" style="position:absolute; top:20px; right:30px; font-size:30px; color:white; cursor:pointer;">✕</span>
+      </div>
     `;
-  }
-
-  // 2. SEARCH FILTER
-  if (searchInput) {
-    searchInput.addEventListener("input", async () => {
-      try {
-        const response = await fetch(EVENTS_API);
-        const events = await response.json();
-        const keyword = searchInput.value.toLowerCase();
-        const filtered = events.filter(ev => ev.title.toLowerCase().includes(keyword));
-        displayEvents(filtered.slice(0, 6));
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
+  
+    // Fullscreen Modal Functionality
+    const img = document.querySelector(".fullscreen-image");
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    const closeModal = document.getElementById("closeModal");
+  
+    img.addEventListener("click", () => {
+      modal.style.display = "flex";
+      modalImg.src = img.src;
     });
-  }
-
-  // 3. FORM SUBMISSION (CREATE EVENT)
-  if (form) {
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
-      const title = form.querySelector('input[type="text"]').value.trim();
-      const description = form.querySelector('textarea').value.trim();
-      const date = form.querySelector('input[type="date"]').value;
-      const time = form.querySelector('input[type="time"]').value;
-      const location = "Online"; // Change this as per your needs
-      const image = `https://source.unsplash.com/featured/?technology,${Math.floor(Math.random() * 1000)}`;
-
-      if (!title || !description || !date || !time) {
-        alert("Please fill in all required fields!");
-        return;
-      }
-
-      const newEvent = { title, description, date, time, location, image };
-
-      try {
-        const res = await fetch(EVENTS_API, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newEvent)
-        });
-
-        if (!res.ok) throw new Error("Failed to create event");
-
-        const saved = await res.json();
-        console.log("Event posted:", saved);
-
-        const eventCard = document.createElement("div");
-        eventCard.className = "border p-4 rounded shadow animate-fadeIn bg-white mt-4";
-        eventCard.innerHTML = `
-          <h2 class="font-bold text-lg">${saved.title}</h2>
-          <p>Date: ${saved.date} ${saved.time}</p>
-          <p>Location: ${saved.location}</p>
-          <p>${saved.description}</p>
-          <span class="text-green-500 font-semibold">Event created successfully!</span>
-        `;
-        form.insertAdjacentElement("afterend", eventCard);
-        form.reset();
-      } catch (err) {
-        console.error("Error creating event:", err);
-        alert("Error creating event: " + err.message);
-      }
+  
+    closeModal.addEventListener("click", () => {
+      modal.style.display = "none";
     });
+  
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    });
+  
+    // 💬 COMMENT FORM HANDLING (moved here)
+    const form = document.getElementById("comment-form");
+    const commentList = document.getElementById("comment-list");
+  
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const textarea = form.querySelector("textarea");
+        const comment = textarea.value.trim();
+        if (comment) {
+          const div = document.createElement("div");
+          div.className = "comment-bubble animate-fadeIn";
+          div.textContent = comment;
+          commentList.appendChild(div);
+          textarea.value = "";
+        }
+      });
+    }
   }
-
-  // 4. INITIALIZE EVENTS
+  
+  
+  // 4. Initialize events
   fetchEvents();
 });

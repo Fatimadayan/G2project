@@ -10,39 +10,26 @@
 <body>
   <main class="container">
     <article id="event-detail" class="max-w-2xl mx-auto p-4">
-      <!-- Content will be injected here -->
+    
+      <section class="comment-section" style="margin-top: 2rem;">
+        <h3>Comments</h3>
+        <form id="comment-form">
+          <textarea 
+            class="comment-textarea" 
+            placeholder="Leave a comment..." 
+            required>
+          </textarea>
+          <button type="submit" class="comment-btn">Post Comment</button>
+        </form>
+        <div id="comment-list" class="comment-list">
+          <!-- Comments will be injected here by JS -->
+        </div>
+      </section>
+      
     </article>
   </main>
 
   <script src="events.js"></script>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const eventId = params.get("event");
-    const event = getEventById(eventId);
-
-    if (event) {
-      document.getElementById("event-detail").innerHTML = `
-        <h2>${event.title}</h2>
-        <img src="${event.image}" alt="${event.title}" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px;" />
-        <p><strong>Date:</strong> ${event.date}</p>
-        <p><strong>Time:</strong> ${event.time}</p>
-        <p><strong>Location:</strong> ${event.location}</p>
-        <p><strong>Description:</strong> ${event.description}</p>
-
-        <section style="margin-top: 2rem;">
-          <h3>Comments</h3>
-          <p style="font-style: italic;">(Comment box UI only)</p>
-        </section>
-
-        <div style="margin-top: 1.5rem;">
-          <button>Edit</button>
-          <button class="secondary">Delete</button>
-          <a href="event.html" class="secondary">Back to Events</a>
-        </div>
-      `;
-    } else {
-      document.getElementById("event-detail").innerHTML = "<p>Event not found.</p>";
-    }
-  </script>
+  
 </body>
 </html>
