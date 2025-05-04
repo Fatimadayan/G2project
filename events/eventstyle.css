@@ -1,249 +1,273 @@
-
 /* Reset & Base */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Georgia', serif;
-    background-color: #fdfaf6; /* Off-white background */
-    color: #2e2e2e;
-    line-height: 1.7;
-    padding: 20px;
-  }
-  
-  /* HEADER */
-  header {
-    background-color: #800000; /*  maroon */
-    color: #fff;
-    padding: 1.5rem;
-    text-align: center;
-    border-bottom: 5px solid #caa472; /* Gold accent */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  header h1,
-  header .text-2xl {
-    font-size: 2.5rem;
-    letter-spacing: 1px;
-  }
-  
-  /* NAVIGATION BAR */
-  nav {
-    display: flex;
-    justify-content: center;
-    background-color: #4b1e1e; /* Dark shade */
-    padding: 1rem;
-    flex-wrap: wrap;
-  }
-  
-  nav a {
-    color: #f9f5f1;
-    margin: 0 20px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  
-  nav a:hover {
-    color: #caa472;
-    text-decoration: underline;
-  }
-  
-  /* MAIN SECTION (Events Listing) */
-  section {
-    padding: 2rem;
-  }
-  
-  /* Search Input */
-  section input[type="text"] {
-    width: 100%;
-    max-width: 400px;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-  }
-  
-  /* Grid Layout for Event Cards */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  /* Event Card Styling */
-  .border {
-    background: #fff;
-    border: 1px solid #e0d7cd;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .border:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-  }
-  
-  /* Links in Event Cards */
-  .border a {
-    color: #800000;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s;
-  }
-  
-  .border a:hover {
-    color: #caa472;
-    text-decoration: underline;
-  }
-  
-  /*  New Event Button */
-  .mt-4 a {
-    display: inline-block;
-    background-color: #800000;
-    color: #fff;
-    padding: 0.75rem 1.25rem;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-  
-  .mt-4 a:hover {
-    background-color: #caa472;
-  }
-  
-  /*   Event  Form Styles */
-  
-  form {
-    max-width: 600px;
-    margin: 2rem auto;
-    background: #fff;
-    padding: 2rem;
-    border: 1px solid #e0d7cd;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-  
-  form h2,
-  form .text-2xl {
-    color: #800000;
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  form label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-  }
-  
-  form input[type="text"],
-  form input[type="date"],
-  form input[type="time"],
-  form textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-  }
-  
-  form .flex {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  form button {
-    background-color: #800000;
-    color: #fff;
-    padding: 0.75rem 1.25rem;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  form button:hover {
-    background-color: #caa472;
-  }
-  
-  form a {
-    background-color: #aaa;
-    color: #fff;
-    text-decoration: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 5px;
-    font-weight: bold;
-    display: inline-block;
-    transition: background-color 0.3s ease;
-  }
-  
-  form a:hover {
-    background-color: #888;
-  }
-  
-  /*    Event Detail View Styles  */
-  
-  article {
-    max-width: 800px;
-    margin: 2rem auto;
-    background: #fff;
-    padding: 2rem;
-    border: 1px solid #e0d7cd;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-  
-  article h2,
-  article .text-2xl {
-    color: #800000;
-    margin-bottom: 1rem;
-  }
-  
-  article p {
-    margin-bottom: 0.5rem;
-  }
-  
-  article section {
-    margin-top: 2rem;
-  }
-  
-  article button {
-    background-color: #800000;
-    color: #fff;
-    border: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  article button:hover {
-    background-color: #caa472;
-  }
-  
-  article .flex {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  
-  article a {
-    color: #800000;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s;
-  }
-  
-  article a:hover {
-    text-decoration: underline;
-    color: #caa472;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #fdfaf6;
+  color: #2e2e2e;
+  line-height: 1.7;
+  padding: 20px;
+}
+
+/* HEADER */
+header {
+  background-color: #800000;
+  color: #fff;
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 5px solid #caa472;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+header h1,
+header .text-2xl {
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* NAVIGATION BAR */
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #4b1e1e;
+  padding: 1rem;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #f9f5f1;
+  margin: 0 20px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* MAIN SECTION (Events Listing) */
+section {
+  padding: 2rem;
+}
+
+/* Search Input */
+section input[type="text"] {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Grid Layout for Event Cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Event Card Styling */
+.border {
+  background: #fff;
+  border: 1px solid #e0d7cd;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+}
+
+.border a {
+  color: #800000;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+/*image in Event Cards */
+.event-image {
+  width: 25%;
+  max-height: 200px;
+  object-fit: contain;
+  border: 2px solid red;
+}
+
+/*  New Event Button */
+.mt-4 a {
+  display: inline-block;
+  background-color: #800000;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+/*   Event  Form Styles */
+form {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border: 1px solid #e0d7cd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+form h2,
+form .text-2xl {
+  color: #800000;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="date"],
+form input[type="time"],
+form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+form .flex {
+  display: flex;
+  gap: 1rem;
+}
+
+form button {
+  background-color: #800000;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+form a {
+  background-color: #aaa;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  font-weight: bold;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Event Detail View Styles */
+article {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border: 1px solid #e0d7cd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+article h2,
+article .text-2xl {
+  color: #800000;
+  margin-bottom: 1rem;
+}
+
+article p {
+  margin-bottom: 0.5rem;
+}
+
+article section {
+  margin-top: 2rem;
+}
+
+article button {
+  background-color: #800000;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+article a {
+  color: #800000;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* COMMENT STYLING */
+.comment-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #e0d7cd;
+  border-radius: 10px;
+  background-color: #fefbf7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-family: 'Poppins', sans-serif;
+}
+
+.comment-section h3 {
+  margin-bottom: 1rem;
+  color: #800000;
+}
+
+#comment-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  margin-bottom: 0.75rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.comment-btn {
+  background-color: #800000;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.comment-bubble {
+  background-color: #fff6ee;
+  border: 1px solid #e6d5c3;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  font-style: italic;
+  animation: fadeIn 0.4s ease-in-out;
+  font-family: 'Poppins', sans-serif;
+}

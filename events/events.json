@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "title": "Tech Workshop",
+      "date": "2025-04-20",
+      "location": "Lab 3"
+    },
+    {
+      "id": 2,
+      "title": "AI Conference",
+      "date": "2025-05-10",
+      "location": "Main Hall"
+    }
+  ]
+  

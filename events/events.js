@@ -1,90 +1,140 @@
-
-const EVENTS_API = "https://jsonplaceholder.typicode.com/posts"; // mock API
+const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob"; // API endpoint
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector('input[placeholder="Search events..."]');
   const eventList = document.querySelector(".grid");
   const form = document.querySelector("form");
+  const detailContainer = document.querySelector("#event-detail");
 
-  // 1. FETCH & DISPLAY EVENTS
+  // 1. Fetch and display events
   async function fetchEvents() {
     try {
-      eventList.innerHTML = "<p>Loading events...</p>";
+      if (eventList) eventList.innerHTML = "<p>Loading events...</p>";
       const response = await fetch(EVENTS_API);
+
       if (!response.ok) throw new Error("Failed to load events");
+
       const data = await response.json();
-      displayEvents(data.slice(0, 6)); // Show only first 6 for now
+
+      if (eventList) displayEvents(data.slice(0, 10));
+
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      if (id && detailContainer) {
+        const event = data.find(e => e.id == id);
+        displayEventDetail(event);
+      }
     } catch (error) {
-      eventList.innerHTML = `<p style="color:red;">Error loading events: ${error.message}</p>`;
+      const msg = `<p style="color:red;">Error loading events: ${error.message}</p>`;
+      if (eventList) eventList.innerHTML = msg;
+      if (detailContainer) detailContainer.innerHTML = msg;
     }
   }
 
-  function displayEvents(events) {
-    eventList.innerHTML = ""; // Clear existing
-    events.forEach(event => {
+  function displayEvents(events = []) {
+    eventList.innerHTML = "";
+
+    if (events.length === 0) {
+      eventList.innerHTML = "<p>No events found.</p>";
+      return;
+    }
+
+    events.forEach(e => {
       const div = document.createElement("div");
-      div.className = "border p-4 rounded shadow animate-fadeIn bg-white";
+      div.className = "event-card";
       div.innerHTML = `
-        <h2 class="font-bold text-lg">${event.title}</h2>
-        <p>Date: ${new Date().toLocaleDateString()}</p>
-        <p>Location: Online</p>
-        <a href="event-detail.html?id=${event.id}" class="text-blue-500 underline">View Details</a>
+        <img src="${e.image}" alt="Event Image" class="event-image">
+        <div class="event-content">
+          <div class="event-title">${e.title}</div>
+          <p><strong>Description:</strong> ${e.description}</p>
+          <a href="event-detail.html?id=${e.id}" class="event-button">View Details</a>
+        </div>
       `;
       eventList.appendChild(div);
     });
   }
 
-  // 2. SEARCH FILTER
-  if (searchInput) {
-    searchInput.addEventListener("input", async () => {
-      const response = await fetch(EVENTS_API);
-      const events = await response.json();
-      const keyword = searchInput.value.toLowerCase();
-      const filtered = events.filter(ev => ev.title.toLowerCase().includes(keyword));
-      displayEvents(filtered);
+  function displayEventDetail(event) {
+    if (!event) {
+      detailContainer.innerHTML = "<p>Event not found.</p>";
+      return;
+    }
+  
+    detailContainer.innerHTML = `
+      <h2>${event.title}</h2>
+      <img src="${event.image}" alt="${event.title}" class="fullscreen-image" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px; cursor: zoom-in;" />
+      <p><strong>Date:</strong> ${event.date}</p>
+      <p><strong>Time:</strong> ${event.time}</p>
+      <p><strong>Location:</strong> ${event.location}</p>
+      <p><strong>Description:</strong> ${event.description}</p>
+  
+      <!-- Comment Section -->
+      <section class="comment-section" style="margin-top: 2rem;">
+        <h3>Comments</h3>
+        <form id="comment-form">
+          <textarea 
+            class="comment-textarea" 
+            placeholder="Leave a comment..." 
+            required></textarea>
+          <button type="submit" class="comment-btn">Post Comment</button>
+        </form>
+        <div id="comment-list" class="comment-list"></div>
+      </section>
+  
+      <div style="margin-top: 1.5rem;">
+        <button>Edit</button>
+        <button class="secondary">Delete</button>
+        <a href="event.html" class="secondary">Back to Events</a>
+      </div>
+  
+      <!-- Fullscreen Modal HTML -->
+      <div id="imageModal" class="image-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:9999;">
+        <img id="modalImage" style="max-width:90%; max-height:90%; border-radius:10px;" />
+        <span id="closeModal" style="position:absolute; top:20px; right:30px; font-size:30px; color:white; cursor:pointer;">✕</span>
+      </div>
+    `;
+  
+    // Fullscreen Modal Functionality
+    const img = document.querySelector(".fullscreen-image");
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    const closeModal = document.getElementById("closeModal");
+  
+    img.addEventListener("click", () => {
+      modal.style.display = "flex";
+      modalImg.src = img.src;
     });
-  }
-
-  // 3. FORM VALIDATION + INTERACTIVE FEEDBACK
-  if (form) {
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const title = form.querySelector('input[type="text"]').value.trim();
-      const desc = form.querySelector('textarea').value.trim();
-      const date = form.querySelector('input[type="date"]').value;
-      const time = form.querySelector('input[type="time"]').value;
-
-      if (!title || !desc || !date || !time) {
-        alert("Please fill in all required fields!");
-        return;
-      }
-
-      const newEvent = {
-        id: Date.now(),
-        title: title,
-        description: desc,
-        date: date,
-        time: time
-      };
-
-      // Add to UI instantly
-      const eventCard = document.createElement("div");
-      eventCard.className = "border p-4 rounded shadow animate-fadeIn bg-white mt-4";
-      eventCard.innerHTML = `
-        <h2 class="font-bold text-lg">${newEvent.title}</h2>
-        <p>Date: ${newEvent.date} ${newEvent.time}</p>
-        <p>Location: Online</p>
-        <p>${newEvent.description}</p>
-        <span class="text-green-500 font-semibold">Event created successfully!</span>
-      `;
-      form.insertAdjacentElement("afterend", eventCard);
-
-      form.reset();
+  
+    closeModal.addEventListener("click", () => {
+      modal.style.display = "none";
     });
+  
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    });
+  
+    // 💬 COMMENT FORM HANDLING (moved here)
+    const form = document.getElementById("comment-form");
+    const commentList = document.getElementById("comment-list");
+  
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const textarea = form.querySelector("textarea");
+        const comment = textarea.value.trim();
+        if (comment) {
+          const div = document.createElement("div");
+          div.className = "comment-bubble animate-fadeIn";
+          div.textContent = comment;
+          commentList.appendChild(div);
+          textarea.value = "";
+        }
+      });
+    }
   }
-
-  // 4. INITIAL LOAD
-  if (eventList) {
-    fetchEvents();
-  }
+  
+  
+  // 4. Initialize events
+  fetchEvents();
 });
