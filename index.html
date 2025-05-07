@@ -1,66 +1,197 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Hub - University of Bahrain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>University of Bahrain</title>
 
-  <!-- Link to Custom CSS -->
-  <link rel="stylesheet" href="./style.css" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inknut: ['"Inknut Antiqua"', 'serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom Styles -->
+  <style>
+    .overlap-section {
+      margin-top: -80px;
+      position: relative;
+      z-index: 10;
+    }
+    .card-overlay {
+      background: rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+    .card:hover .card-overlay {
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .hero-section {
+      position: relative;
+    }
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 100%;
+    }
+    .logo-overlay {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+    .campus-hub-bg {
+      background: url('../G2project/Images/pic3.jpg') no-repeat center center;
+      background-size: cover;
+    }
+  </style>
 </head>
+<body class="bg-gray-50 font-inknut">
 
-<body>
-  <!-- HEADER -->
-  <header id="main-header">
-    <h1>University of Bahrain - Student Hub</h1>
-    
-  </header>
-
-  <!-- NAVIGATION BAR -->
-  <nav id="main-nav">
-    <a href=events\event.html>Events Calendar</a>
+  <!-- Header -->
+  <header class="bg-[#1F1212] text-white h-20">
+    <div class="container mx-auto px-4 h-full">
+      <div class="flex justify-between items-center h-full">
+        <div class="flex items-center space-x-2 h-full py-2.5">
+          <a href="#">
+            <img src="../G2project/Images/logo.jpg" alt="University Logo" class="h-12">
+          </a>
+        </div>
+        <nav class="hidden md:flex space-x-6 h-full">
+          <div class="flex items-center space-x-6">
+            <a href=events\event.html>Events Calendar</a>
     <a href=CourseReviews\Reviews.html>Course Reviews</a>
     <a href=Course-note\course-note.html>Course Notes</a>
     <a href=CampusNews\CampusNews.html>Campus News</a>
     <a href="club activity\html3.html">Club Activities</a>
-  
-  </nav>
-
-
-  <!-- HERO SECTION -->
-
-  
-  <section id="hero">
-    <div class="hero-text">Welcome to Your  Campus Companion</div>
-  <!--<img src="uob.png"/>--> <!--delet img-->
-  </section>
-
-
-  <!-- MAIN CONTENT -->
-  <section id="features">
-    <div class="feature-card">
-      <h2>Events Calendar</h2>
-      <p>Stay informed about upcoming UOB events</p>
-      <a href=events\event.html>Explore Events</a>
+          </div>
+        </nav>
+        <button class="md:hidden text-xl text-white">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <div class="feature-card">
-      <h2>Course Reviews</h2>
-      <p>See what fellow students say about courses</p>
-      <a href=CourseReviews\Reviews.html>Read Reviews</a>
+  <!-- Hero Section -->
+  <section class="hero-section w-full h-[900px] overflow-hidden relative">
+    <img src="Images/pic1.jpg" alt="University of Bahrain Campus" class="w-full h-full object-cover object-center" loading="lazy" />
+    <div class="logo-overlay" style="top: 5%;">
+      <img src="../G2project/Images/logo.jpg" alt="University Logo" class="h-24 mx-auto">
     </div>
-
-    <div class="feature-card">
-      <h2>Student Notes</h2>
-      <p>You can write your notes</p>
-      <a href=Course-note\course-note.html>Write Notes</a>
+    <div class="hero-content" style="top: 20%;">
+      <h1 class="text-4xl md:text-5xl font-bold text-white">University of Bahrain</h1>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer id="main-footer">
-    <p>&copy; 2025 University of Bahrain. Student Hub Platform.</p>
+  <!-- Overlapping Section -->
+  <section class="overlap-section container mx-auto px-0">
+    <div class="bg-[#1F1212] text-white shadow-xl rounded-lg flex flex-col md:flex-row">
+      <div class="p-8 md:w-1/2">
+        <h2 class="text-3xl font-bold mb-4">University of Bahrain</h2>
+        <p class="text-sm leading-relaxed">
+          The University of Bahrain is a leading institution of higher education committed to excellence in teaching, research, and community engagement. As a hub for innovation and knowledge, the university offers diverse academic programs designed to empower students with the skills and expertise needed for a dynamic and evolving world. With a strong emphasis on academic excellence, technological advancement, and cultural enrichment, the University of Bahrain continues to shape future leaders and contribute to national and global development.
+        </p>
+      </div>
+      <div class="md:w-1/2 relative">
+        <div class="absolute -top-20 -bottom-20 right-0 h-[calc(100%+120px)] w-full md:w-[75%]">
+          <img src="Images/pic2.jpg" alt="University Campus Life" class="w-full h-full object-cover rounded-tr-lg rounded-br-lg shadow-lg" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Campus Hub Section -->
+  <section class="campus-hub-bg py-16 bg-cover bg-center relative w-full">
+    <div class="absolute inset-0 bg-black bg-opacity-45"></div>
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="text-left mb-12">
+        <h2 class="text-3xl font-bold text-white mb-2">Campus Hub News</h2>
+        <h3 class="text-xl font-medium text-white mb-4">University of Bahrain | Your Gateway to Campus Life</h3>
+        <p class="text-white max-w-2xl">
+          Your personalized space to stay informed, engaged, and inspired. From academic updates to campus stories, everything you need is right here.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Card 1 -->
+        <div class="card rounded-lg overflow-hidden shadow-md h-64 relative">
+          <img src="Images/card1.jpg" alt="Campus Life" class="w-full h-full object-cover">
+          <div class="card-overlay absolute inset-0 flex flex-col justify-center items-start text-white p-6 text-left">
+            <span class="font-bold text-yellow-300 mb-2">FEATURED | TODAY</span>
+            <h3 class="text-lg font-bold mb-2">Life Through Their Eyes</h3>
+            <p class="mb-4 text-sm">Discover a quieter side of campus through a photo series capturing the everyday charm of our feline friends.</p>
+            <a href="#" class="text-yellow-300 font-semibold hover:underline text-sm">Explore More <i class="fas fa-chevron-right ml-1"></i></a>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card rounded-lg overflow-hidden shadow-md h-64 relative">
+          <img src="Images/card2.jpg" alt="Lantern of Arts" class="w-full h-full object-cover">
+          <div class="card-overlay absolute inset-0 flex flex-col justify-center items-start text-white p-6 text-left">
+            <h3 class="text-lg font-bold mb-2">The Lantern of Arts</h3>
+            <p class="mb-4 text-sm">Brought to you this holy month by the Deanship of Student Affairs</p>
+            <a href="#" class="text-yellow-300 font-semibold hover:underline text-sm">Explore More <i class="fas fa-chevron-right ml-1"></i></a>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card rounded-lg overflow-hidden shadow-md h-64 relative">
+          <img src="Images/card3.jpg" alt="Postgraduate Admissions" class="w-full h-full object-cover">
+          <div class="card-overlay absolute inset-0 flex flex-col justify-center items-start text-white p-6 text-left">
+            <h3 class="text-lg font-bold mb-2">Postgraduate Admissions</h3>
+            <p class="mb-4 text-sm">Applications are now open for the Postgraduate Studies Programs</p>
+            <a href="#" class="text-yellow-300 font-semibold hover:underline text-sm">Explore More <i class="fas fa-chevron-right ml-1"></i></a>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="card rounded-lg overflow-hidden shadow-md h-64 relative">
+          <img src="Images/card4.jpg" alt="Soft Skills Workshop" class="w-full h-full object-cover">
+          <div class="card-overlay absolute inset-0 flex flex-col justify-center items-start text-white p-6 text-left">
+            <h3 class="text-lg font-bold mb-2">Soft Skills Workshop</h3>
+            <p class="mb-4 text-sm">Practical session to help IT students strengthen communication skills</p>
+            <a href="#" class="text-yellow-300 font-semibold hover:underline text-sm">Explore More <i class="fas fa-chevron-right ml-1"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-8">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <!-- Logo Section -->
+      <div class="flex items-center space-x-2">
+        <img src="Images/logo.jpg" alt="University Logo" class="h-12">
+        <span class="text-lg font-bold">University of Bahrain</span>
+      </div>
+
+      <!-- Links Section -->
+      <div class="flex space-x-6">
+        <a href="#" class="text-white hover:text-gray-400 transition-all duration-200">Privacy Policy</a>
+        <a href="#" class="text-white hover:text-gray-400 transition-all duration-200">Terms of Service</a>
+        <a href="#" class="text-white hover:text-gray-400 transition-all duration-200">Contact Us</a>
+        <a href="#" class="text-white hover:text-gray-400 transition-all duration-200">About Us</a>
+      </div>
+    </div>
   </footer>
 </body>
 </html>
