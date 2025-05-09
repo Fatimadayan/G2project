@@ -88,52 +88,41 @@
       line-height: 1.6;
     }
 
-    .tour-section {
-      background: url('https://tour.wells.edu/images/hero-home.jpg') center/cover no-repeat;
-      height: 90vh;
-      color: white;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
+   
+      /* Shared container styling tour video //('https://tour.wells.edu/images/hero-home.jpg') center/cover no-repeat;*/
+      .tour-section {
+  background-color: #f5f5f5;
+  padding: 60px 20px;
+  text-align: center;
+}
 
-    .tour-section::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background: rgba(0, 0, 0, 0.5);
-    }
+.tour-content .recommended {
+  font-size: 14px;
+  font-weight: bold;
+  color: #aa0023;
+  margin-bottom: 10px;
+}
 
-    .tour-content {
-      position: relative;
-      z-index: 2;
-    }
+.tour-section h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #333;
+}
 
-    .tour-content h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 4rem;
-      margin-bottom: 0.5rem;
-    }
+.tour-section p {
+  font-size: 16px;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
 
-    .tour-content p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .recommended {
-      background: crimson;
-      display: inline-block;
-      padding: 0.2em 0.6em;
-      font-size: 0.9rem;
-      border-radius: 5px;
-      margin-bottom: 1rem;
-    }
+.video-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
 
    
 
@@ -170,12 +159,245 @@
     .card-tour h3 {
       margin-bottom: 10px;
     }
+    
+    .header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0)); /* Transparent background */
+  transition: background 0.5s ease;
+  z-index: 1000;
+}
+
+.header.active {
+  background: rgba(34, 34, 34, 0.8); /* Solid background on scroll */
+}
+.header.active {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+nav{
+  color: #000;
+ font-family: "Times New Roman", Times, serif;
+ font-size: larger;
+}
+h1{
+  font-family: "Times New Roman", Times, serif
+}
+.accreditations-rankings {
+  background: #fff;
+  padding: 60px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+.accreditations-rankings .container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.accreditations-rankings .left, 
+.accreditations-rankings .right {
+  flex: 1 1 45%;
+}
+
+.accreditations-rankings h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  font-family: 'Times New Roman', Times, serif;
+  color:#54595F;
+}
+
+.accreditations-rankings .logos,
+.accreditations-rankings .ranking-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.accreditations-rankings .logos img,
+.accreditations-rankings .ranking-logos img {
+  max-height: 80px;
+  max-width: 150px;
+  object-fit: contain;
+}
+
+.accreditations-rankings .ranking-text {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.accreditations-rankings .ranking-text li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: 'Times New Roman', Times, serif;
+  
+}
+/* Shared container styling */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Study & Research Section */
+.study-research {
+  background: rgba(170, 0, 35, 0.9);
+  color: white;
+  padding: 60px 20px;
+}
+
+/* Container layout adjustment */
+.study-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Left column (Study text) */
+.study {
+  flex: 1 1 50%;
+  padding-right: 20px;
+  font-size: 15px;
+}
+
+/* Right column (Image) */
+.study-image {
+  flex: 1 1 50%;
+  text-align: center;
+}
+
+.study-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+
+/* Upcoming Events Section */
+.upcoming-events {
+  background: #fff;
+  color: #333;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.upcoming-events h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.upcoming-events p {
+  font-size: 16px;
+  color: #999;
+}
+
+.more-events {
+  display: inline-block;
+  margin-top: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Carousel Styles */
+.slider-wrapper {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+.event-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding: 10px;
+}
+
+.event-card {
+  min-width: 300px;
+  max-width: 300px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+  text-align: left;
+  padding-bottom: 10px;
+}
+
+.event-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.event-content {
+  padding: 10px;
+}
+
+.event-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.event-button {
+  display: inline-block;
+  margin-top: 10px;
+  background-color: #aa0023;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Navigation Arrows */
+.slide-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: #a6a3a4;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  border-radius: 50%;
+}
+
+.prev-btn {
+  left: 10px;
+}
+
+.next-btn {
+  right: 10px;
+}
+
+
+
   </style>
 </head>
 <body class="bg-gray-50 font-inknut">
-
+  
+  
+   <!-- 4d271f -->
   <!-- Header -->
-  <header class="bg-[#1F1212] text-white h-20">
+  <header class="header">
     <div class="container mx-auto px-4 h-full">
       <div class="flex justify-between items-center h-full">
         <div class="flex items-center space-x-2 h-full py-2.5">
@@ -199,6 +421,17 @@
         </button>
       </div>
     </div>
+    <script>
+       window.addEventListener('scroll', function() {
+      const header = document.querySelector('.header');
+      if (window.scrollY > 10) {
+        header.classList.add('active');
+      } else {
+        header.classList.remove('active');
+      }
+    });
+    </script>
+    
   </header>
 
   <!-- Hero Section --
@@ -251,11 +484,139 @@
   </div>
 </section>
 
+<!-- font-family: "Times New Roman", Sans-serif; -->
+
+<!-- Accreditations Section -->
+<section class="accreditations-rankings">
+  <div class="container">
+    <div class="left">
+      <h2>Accreditations</h2>
+      <div class="logos">
+        <img src="path/to/higher-education.png" alt="Higher Education Council" />
+        <img src="path/to/education-quality.png" alt="Education & Training Quality Authority" />
+        <img src="path/to/ministry-education.png" alt="Ministry of Education" />
+        <img src="path/to/aacsb.png" alt="AACSB Accredited" />
+        <img src="path/to/abet.png" alt="ABET Accreditation" />
+      </div>
+    </div>
+    <div class="right">
+      <h2>Rankings</h2>
+      <ul class="ranking-text">
+        <li>Ranked the <strong>1<sup>st</sup></strong> university in Bahrain by Times Higher Education Impact Ranking for the year 2024</li>
+        <li>Ranked <strong>10<sup>th</sup></strong> worldwide for SDG4 related to Quality Education</li>
+        <li>Ranked <strong>33<sup>rd</sup></strong> in the Arab region by QS and classified among the World University Rankings.</li>
+      </ul>
+      <div class="ranking-logos">
+        <img src="path/to/the1.png" alt="THE Impact Rankings" />
+        <img src="path/to/the2.png" alt="THE SDG4 Ranking" />
+        <img src="path/to/qs.png" alt="QS University Rankings" />
+      </div>
+    </div>
+  </div>
+</section>
+
+ّ<!--800000
+    caa472-->
+<!-- Study & Research Section -->
+<section class="study-research">
+  <div class="container study-container">
+    <!-- Study Content (50%) -->
+    <div class="study">
+      <h2>Study</h2>
+      <p>
+        Whether you’re venturing into a new area of study or looking to build upon your experience and knowledge in a particular field, Ahlia University offers a range of undergraduate and postgraduate degrees, as well as Ph.D. programmes.
+      </p>
+      <ul>
+        <li>➔ <a href="#">Undergraduate</a></li>
+        <li>➔ <a href="#">Postgraduate</a></li>
+        <li>➔ <a href="#">Brunel PhD without residence</a></li>
+      </ul>
+    </div>
+
+    <!-- Image Section (50%) -->
+    <div class="study-image">
+      <img src="events/students.png" alt="Graduate Student" />
+    </div>
+  </div>
+</section>
 
 
-  <!-- Overlapping Section -->
+<!-- Upcoming Events Preview Section -->
+<section class="upcoming-events">
+  <h2>Upcoming Events</h2>
+  <p>Stay tuned for exciting academic and social events happening at UOB.</p>
+
+  <div class="slider-wrapper">
+    <button class="slide-btn prev-btn">&#8249;</button>
+
+    <div id="event-carousel" class="event-carousel"></div>
+
+    <button class="slide-btn next-btn">&#8250;</button>
+  </div>
+
+  <a href="events/event.html" class="more-events">View More Events</a>
+
+  <script>
+    const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const eventList = document.querySelector("#event-carousel");
+      const prevBtn = document.querySelector(".prev-btn");
+      const nextBtn = document.querySelector(".next-btn");
+
+      async function fetchEvents() {
+        try {
+          if (eventList) eventList.innerHTML = "<p>Loading events...</p>";
+          const response = await fetch(EVENTS_API);
+          if (!response.ok) throw new Error("Failed to load events");
+
+          const data = await response.json();
+          if (eventList) displayEvents(data.slice(0, 5));
+        } catch (error) {
+          const msg = `<p style="color:red;">Error loading events: ${error.message}</p>`;
+          if (eventList) eventList.innerHTML = msg;
+        }
+      }
+
+      function displayEvents(events = []) {
+        eventList.innerHTML = "";
+
+        if (events.length === 0) {
+          eventList.innerHTML = "<p>No events found.</p>";
+          return;
+        }
+
+        events.forEach(e => {
+          const div = document.createElement("div");
+          div.className = "event-card";
+          div.innerHTML = `
+            <img src="${e.image}" alt="Event Image" class="event-image">
+            <div class="event-content">
+              <div class="event-title">${e.title}</div>
+              <p><strong>Description:</strong> ${e.description}</p>
+              <a href="event-detail.html?id=${e.id}" class="event-button">View Details</a>
+            </div>
+          `;
+          eventList.appendChild(div);
+        });
+      }
+
+      prevBtn.addEventListener("click", () => {
+        eventList.scrollBy({ left: -320, behavior: "smooth" });
+      });
+
+      nextBtn.addEventListener("click", () => {
+        eventList.scrollBy({ left: 320, behavior: "smooth" });
+      });
+
+      fetchEvents();
+    });
+  </script>
+</section>
+
+  <!-- Overlapping Section 
   <section class="overlap-section container mx-auto px-0">
-    <div class="bg-[#1F1212] text-white shadow-xl rounded-lg flex flex-col md:flex-row">
+    <div class="bg-[#800000] text-white shadow-xl rounded-lg flex flex-col md:flex-row">
       <div class="p-8 md:w-1/2">
         <h2 class="text-3xl font-bold mb-4">University of Bahrain</h2>
         <p class="text-sm leading-relaxed">
@@ -269,7 +630,7 @@
       </div>
     </div>
   </section>
-
+-->
   <!-- Campus Hub Section -->
   <section class="campus-hub-bg py-16 bg-cover bg-center relative w-full">
     <div class="absolute inset-0 bg-black bg-opacity-45"></div>
@@ -333,9 +694,22 @@
     <div class="tour-content">
       <div class="recommended">RECOMMENDED</div>
       <h1>Tour Our College</h1>
-      <p>Explore our historic campus in [City, Country]. Keep an eye out for unique locations and college traditions.</p>
+      
+    </div>
+  
+    <div class="video-wrapper">
+      <iframe 
+        width="100%" 
+        height="480" 
+        src="https://www.youtube.com/embed/hxZccTeaR8U" 
+        title="UOB Aerial Tour" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
     </div>
   </section>
+  
 
   <section class="cards">
     <div class="card">

@@ -1,4 +1,4 @@
-const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob"; // API endpoint
+const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob"; // API
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector('input[placeholder="Search events..."]');
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === modal) modal.style.display = "none";
     });
   
-    // 💬 COMMENT FORM HANDLING (moved here)
+    //  COMMENT FORM HANDLING (moved here)
     const form = document.getElementById("comment-form");
     const commentList = document.getElementById("comment-list");
   
