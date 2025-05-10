@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Campus Map</title>
+  <link rel="stylesheet" href="style2.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <style>#map { height: 500px; }</style>
+</head>
+<body>
+  <main class="container">
+    <h1>Interactive Campus Map</h1>
+    <div id="map"></div>
+    <a href="index.html" class="btn">⬅ Back to Home</a>
+  </main>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([42.746, -76.703], 16); // Adjust coordinates
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([42.746, -76.703])
+      .addTo(map)
+      .bindPopup('Main Building')
+      .openPopup();
+  </script>
+</body>
+</html>
