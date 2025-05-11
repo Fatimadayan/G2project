@@ -5,17 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Course Notes</title>
   <link rel="stylesheet" href="course-note.css" />
-  <style>
-    .loading { text-align: center; font-size: 18px; }
-    .error { color: red; text-align: center; }
-    .pagination button { margin: 3px; }
-  </style>
+  
 </head>
 <body>
   <header>
     <div class="container">
       <h1>Course Notes</h1>
-      <p class="subheading">I hope that will help you</p>
+      <p class="subheading">I hope this helps you in your journey 🌱</p>
     </div>
   </header>
 
@@ -24,12 +20,13 @@
       <h2>Available Courses</h2>
 
       <div class="search-container">
-        <input type="text" id="search" placeholder="Search Courses.." />
+        <label for="search" class="visually-hidden">Search Courses</label>
+        <input type="text" id="search" placeholder="Search Courses..." />
       </div>
 
       <div class="sort-container">
-        <select id="course-sort">
-          <option value="" selected disabled>Choose a category</option> 
+        <select id="course-sort" aria-label="Sort by category">
+          <option value="" selected disabled>Choose a category</option>
           <option value="CS">CS</option>
           <option value="NE">NE</option>
           <option value="IS">IS</option>
@@ -50,78 +47,79 @@
 
       <div id="course-grid" class="course-grid"></div>
       <div id="pagination" class="pagination"></div>
-
-    </section>
+  </section>
   </main>
 
   <footer>
     <div class="container">
-      <p>Made by Noora Sami</p>
+      <p>Made by Noora Sami &copy; 2025</p>
     </div>
   </footer>
 
-<script>
-  const API_URL = "";
+
+  <script>
   const courseGrid = document.getElementById("course-grid");
   const searchInput = document.getElementById("search");
   const sortSelect = document.getElementById("course-sort");
   const paginationDiv = document.getElementById("pagination");
 
-  let courses = [];
-  let filteredCourses = [];
+  let courses = [
+    { title: "IS103 - Intro to Programming", body: "Learn the basics of Python and how to write simple programs.", category: "IS" },
+    { title: "NE101 - Networking Basics", body: "Introduction to networks, IP addressing, and data flow.", category: "NE" },
+    { title: "IS213 - Database Systems", body: "Understanding relational databases and SQL queries.", category: "IS" },
+    { title: "CY110 - Cybersecurity Fundamentals", body: "Explore key principles in protecting digital systems.", category: "CY" },
+    { title: "CS342 - Digital Logic Design", body: "Basics of digital circuits and binary systems.", category: "CS" },
+    { title: "CS333 - Web Development", body: "Build modern websites using HTML, CSS, and JS.", category: "CS" },
+    { title: "NE231 - Advanced Networking", body: "Protocols, routing, and switching concepts.", category: "NE" },
+    { title: "IS310 - Systems Analysis", body: "How to analyze and design information systems.", category: "IS" },
+    { title: "CY470 - Ethical Hacking", body: "Learn about penetration testing techniques.", category: "CY" },
+    { title: "CE250 - Embedded Systems", body: "Programming microcontrollers and embedded devices.", category: "CE" },
+    { title: "Other Course", body: "Miscellaneous notes that don't fit other categories.", category: "ANOTHER" }
+  ];
+
+  let filteredCourses = [...courses];
   let currentPage = 1;
   const itemsPerPage = 5;
 
-  async function fetchCourses() {
-    courseGrid.innerHTML = "<p class='loading'>Loading...</p>";
-    try {
-      const res = await fetch(API_URL);
-      if (!res.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const data = await res.json();
-      courses = data.slice(0, 20);
-      filteredCourses = [...courses];
-      displayCourses();
-      setupPagination();
-    } catch (err) {
-      courseGrid.innerHTML = "<p class='error'>" + err.message + "</p>";
-    }
-  }
-
-  function displayCourses() {
+    function displayCourses() {
     courseGrid.innerHTML = "";
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const currentItems = filteredCourses.slice(start, end);
+
+    if (currentItems.length === 0) {
+      courseGrid.innerHTML = "<p class='error'>No courses found.</p>";
+      return;
+    }
 
     currentItems.forEach(course => {
       const div = document.createElement("div");
       div.className = "course-card";
       div.innerHTML = `
         <h3>${course.title}</h3>
-        <p>${course.body.slice(0, 50)}...</p>
+        <p>${course.body.slice(0, 80)}...</p>
         <a href="#" class="btn">View Notes</a>
       `;
       courseGrid.appendChild(div);
     });
   }
 
-  searchInput.addEventListener("input", function() {
+  searchInput.addEventListener("input", function () {
     const searchValue = this.value.toLowerCase();
-    filteredCourses = courses.filter(course => course.title.toLowerCase().includes(searchValue));
+    filteredCourses = courses.filter(course =>
+      course.title.toLowerCase().includes(searchValue)
+    );
     currentPage = 1;
     displayCourses();
     setupPagination();
   });
 
-  sortSelect.addEventListener("change", function() {
-    const value = this.value;
-    if (value) {
-      filteredCourses.sort((a, b) => a.title.localeCompare(b.title));
-      currentPage = 1;
-      displayCourses();
-    }
+  sortSelect.addEventListener("change", function () {
+    const selectedCategory = this.value;
+    filteredCourses = courses.filter(course => course.category === selectedCategory);
+    currentPage = 1;
+    displayCourses();
+    setupPagination();
   });
 
   function setupPagination() {
@@ -133,15 +131,15 @@
       if (i === currentPage) {
         btn.style.fontWeight = "bold";
       }
-      btn.addEventListener("click", function() {
+      btn.addEventListener("click", function () {
         currentPage = i;
         displayCourses();
       });
       paginationDiv.appendChild(btn);
     }
   }
-
-  fetchCourses();
+  displayCourses();
+  setupPagination();
 </script>
 </body>
 </html>
