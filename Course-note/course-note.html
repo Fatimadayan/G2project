@@ -48,6 +48,7 @@
       <div id="course-grid" class="course-grid"></div>
       <div id="pagination" class="pagination"></div>
   </section>
+  
   </main>
 
   <footer>
@@ -138,6 +139,11 @@
       paginationDiv.appendChild(btn);
     }
   }
+  function toggleInput() {
+      const type = document.getElementById('type-select').value;
+      document.getElementById('link-input').style.display = type === 'link' ? 'block' : 'none';
+      document.getElementById('pdf-input').style.display = type === 'pdf' ? 'block' : 'none';
+    }
   displayCourses();
   setupPagination();
 </script>
