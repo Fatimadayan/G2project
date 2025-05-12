@@ -1,6 +1,13 @@
 const EVENTS_API = "https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=events";
 fetch(EVENTS_API)
     .then(response => response.json())
+    fetch(EVENTS_API)
+    .then(response => {
+        console.log("Response Status:", response.status); // Debugging
+        return response.json();
+    })
+    .then(data => console.log("API Data:", data)) // Debugging API response
+    .catch(error => console.error("Fetch error:", error));
     .then(data => console.log("Events Data:", data))
     .catch(error => console.error("Error fetching events:", error));
 
