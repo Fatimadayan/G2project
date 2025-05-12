@@ -44,7 +44,11 @@ try {
   $stmt = $pdo->prepare("INSERT INTO notes (title, description, category, type, file_path) VALUES (?, ?, ?, ?, ?)");
   $stmt->execute([$title, $description, $category, $type, $file_path]);
 
-  echo "Note added successfully! <a href='index.php'>Go back</a>";
+  // Redirect to view-note page for the newly inserted note
+  $newNoteId = $pdo->lastInsertId();
+  header("Location: view-note.php?id=" . $newNoteId);
+  exit;
+
 } catch (PDOException $e) {
   echo "Error: " . $e->getMessage();
 }
