@@ -2,17 +2,22 @@ CREATE DATABASE IF NOT EXISTS course_notes;
 
 USE course_notes;
 
-CREATE TABLE notes (
+  CREATE TABLE notes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL
+  description TEXT NOT NULL,
+  category VARCHAR(50) NOT NULL,
+  type ENUM('pdf', 'link') NOT NULL DEFAULT 'link',
+  file_path TEXT
 );
+
+
 
 ALTER TABLE notes
 ADD COLUMN type ENUM('pdf', 'link') NOT NULL DEFAULT 'link',
 ADD COLUMN file_path TEXT;
 
---My data--
+--My data-->
 INSERT INTO notes (title, description) VALUES
 { title: "IS103 - Intro to Programming", body: "Learn the basics of Python and how to write simple programs.", category: "IS" },
     { title: "NE101 - Networking Basics", body: "Introduction to networks, IP addressing, and data flow.", category: "NE" },
