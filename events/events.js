@@ -1,4 +1,8 @@
-const EVENTS_API = "https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=eventhttps://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/s";
+const EVENTS_API = "https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=events";
+fetch(EVENTS_API)
+    .then(response => response.json())
+    .then(data => console.log("Events Data:", data))
+    .catch(error => console.error("Error fetching events:", error));
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector('input[placeholder="Search events..."]');
@@ -45,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const div = document.createElement("div");
       div.className = "event-card";
       div.innerHTML = `
-        <img src="${e.image}" alt="Event Image" class="event-image">
+       <img src="${e.image ? e.image : 'default.jpg'}" alt="Event Image" class="event-image">
         <div class="event-content">
           <div class="event-title">${e.title}</div>
           <p><strong>Description:</strong> ${e.description}</p>
