@@ -890,6 +890,15 @@ nav a:hover {
 
   
             
+<script>
+  fetch("https://c937d7c7-804f-4bbb-a295-e2109004f7bc-00-3g3fohubbj6h0.sisko.replit.dev/")
+  .then(response => response.json())
+  .then(data => {
+    console.log("Data from PHP:", data);
+    // display data in your page here
+  })
+  .catch(error => console.error("API error:", error));
 
+</script>
 </body>
 </html>
