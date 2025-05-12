@@ -813,7 +813,11 @@ nav a:hover {
       </div>
     </section>
   
-    
+    <!--chatbot-->
+    <script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="A19Qo0CnTFejZIAbTcryC";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
+
 
 <!-- video -->
 <div class="fullwidth-video">
@@ -891,13 +895,19 @@ nav a:hover {
   
             
 <script>
-  fetch("https://c937d7c7-804f-4bbb-a295-e2109004f7bc-00-3g3fohubbj6h0.sisko.replit.dev/")
-  .then(response => response.json())
+  fetch('https://c937d7c7-804f-4bbb-a295-e2109004f7bc-00-3g3fohubbj6h0.sisko.replit.dev/')
+  .then(res => res.json())
   .then(data => {
-    console.log("Data from PHP:", data);
+    console.log(data); // render your content
+  });
+
+ // fetch("https://c937d7c7-804f-4bbb-a295-e2109004f7bc-00-3g3fohubbj6h0.sisko.replit.dev/")
+  //.then(response => response.json())
+  //.then(data => {
+   // console.log("Data from PHP:", data);
     // display data in your page here
-  })
-  .catch(error => console.error("API error:", error));
+ // })
+ // .catch(error => console.error("API error:", error));
 
 </script>
 </body>

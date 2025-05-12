@@ -1,4 +1,4 @@
-const EVENTS_API = "https://6816567f32debfe95dbe28c5.mockapi.io/uob"; // API endpoint
+const EVENTS_API = "https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=eventhttps://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/s";
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.querySelector('input[placeholder="Search events..."]');
@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchEvents() {
     try {
       if (eventList) eventList.innerHTML = "<p>Loading events...</p>";
-      const response = await fetch(EVENTS_API);
 
+      const response = await fetch(EVENTS_API);
       if (!response.ok) throw new Error("Failed to load events");
 
       const data = await response.json();
@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (detailContainer) detailContainer.innerHTML = msg;
     }
   }
+
 
   function displayEvents(events = []) {
     eventList.innerHTML = "";
@@ -114,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === modal) modal.style.display = "none";
     });
   
-    // 💬 COMMENT FORM HANDLING (moved here)
+    //  COMMENT FORM HANDLING 
     const form = document.getElementById("comment-form");
     const commentList = document.getElementById("comment-list");
   
