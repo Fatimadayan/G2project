@@ -13,7 +13,7 @@ const API_URL = 'https://57e5913b-91fd-4c06-a71d-4b40722c3810-00-21exoncn8cqce.p
 
 let courseData = [];
 let currentUser = '';
-// Store the current user in localStorage to maintain user identity across pages
+
 if (localStorage.getItem('currentUser')) {
     currentUser = localStorage.getItem('currentUser');
 }
@@ -119,7 +119,6 @@ function handleReviewsPage() {
                 .catch(err => {
                     console.error('Error loading local JSON:', err);
                     
-                    // If HTML courses exist, use those
                     if (htmlCourses.length > 0) {
                         courseData = htmlCourses;
                         
@@ -189,7 +188,6 @@ function handleReviewsPage() {
     // Sort button functionality 
     if (sortButton) {
         sortButton.addEventListener('click', () => {
-            // Show loading indicator
             loading.style.display = 'block';
             
             //setTimeout to give UI time to update
@@ -240,7 +238,6 @@ function handleDetailsPage() {
         })
         .then(course => {
             displayCourseDetails(course);
-            // Load comments after displaying course details
             loadComments(courseId);
         })
         .catch(err => {
@@ -275,6 +272,7 @@ function handleDetailsPage() {
             const text = document.getElementById('comment-text').value;
             
             if (name && text) {
+                // Store current user name in localStorage
                 localStorage.setItem('currentUser', name);
                 currentUser = name;
                 
@@ -308,10 +306,12 @@ function loadComments(courseId) {
         .then(comments => {
             commentsContainer.innerHTML = '';
             
-            if (comments.length === 0) {
+            if (!Array.isArray(comments) || comments.length === 0) {
                 commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
                 return;
             }
+            
+            console.log('Comments loaded from API:', comments);
             
             comments.forEach(comment => {
                 const commentElement = createCommentElement(comment, courseId);
@@ -378,7 +378,7 @@ function addComment(courseId, name, text) {
         storedComments.push(comment);
         localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
         
-        loadComments(courseId); // Reload comments
+        loadComments(courseId);
     });
 }
 
@@ -386,6 +386,10 @@ function createCommentElement(comment, courseId) {
     const commentDiv = document.createElement('div');
     commentDiv.className = 'comment';
     commentDiv.id = `comment-${comment.id}`;
+    
+    if (!comment.name) comment.name = "Anonymous";
+    if (!comment.text) comment.text = "";
+    if (!comment.date) comment.date = new Date().toLocaleDateString();
     
     let displayDate = comment.date;
     if (typeof displayDate === 'string' && displayDate.includes('T')) {
@@ -414,7 +418,6 @@ function createCommentElement(comment, courseId) {
         </div>
     `;
     
-    // Create action buttons 
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'comment-actions';
     
