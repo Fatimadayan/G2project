@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once 'databaseHelper.php';
 
-$db = new DatabaseHelper('localhost', getenv("db_name"), getenv("db_user"), getenv("db_pass"));
+$db = new databaseHelper('localhost', getenv("db_name"), getenv("db_user"), getenv("db_pass"));
 
 $method = $_SERVER['REQUEST_METHOD'];
 
