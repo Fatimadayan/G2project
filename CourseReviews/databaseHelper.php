@@ -106,7 +106,7 @@ class DatabaseHelper {
                     'description' => 'Describes a set of commands that must be followed for a computer to perform calculations.',
                     'rating' => 4.7,
                     'comments' => []
-                ]
+                }
             ];
 
             $courseStmt = $this->prepare("INSERT INTO courses (
@@ -300,7 +300,66 @@ class DatabaseHelper {
         }
 
         $stmt = $this->prepare("INSERT INTO comments (course_id, name, text, date) VALUES (?, ?, ?, NOW())");
-        return $stmt->execute([$course_id, $name, $text]);
+        $result = $stmt->execute([$course_id, $name, $text]);
+        
+        if ($result) {
+            return $this->getPDO()->lastInsertId();
+        }
+        
+        return false;
+    }
+    
+    public function getComment($comment_id) {
+        $comment_id = filter_var($comment_id, FILTER_VALIDATE_INT);
+        if (!$comment_id) {
+            return false;
+        }
+        
+        $stmt = $this->prepare("SELECT * FROM comments WHERE id = ?");
+        $stmt->execute([$comment_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    public function updateComment($comment_id, $text) {
+        $comment_id = filter_var($comment_id, FILTER_VALIDATE_INT);
+        if (!$comment_id) {
+            return false;
+        }
+        
+        $text = trim(htmlspecialchars($text));
+        
+        if (empty($text) || strlen($text) > 2000) {
+            return false;
+        }
+        
+        $checkStmt = $this->prepare("SELECT COUNT(*) FROM comments WHERE id = ?");
+        $checkStmt->execute([$comment_id]);
+        $commentExists = (int)$checkStmt->fetchColumn() > 0;
+
+        if (!$commentExists) {
+            return false;
+        }
+
+        $stmt = $this->prepare("UPDATE comments SET text = ?, date = NOW() WHERE id = ?");
+        return $stmt->execute([$text, $comment_id]);
+    }
+    
+    public function deleteComment($comment_id) {
+        $comment_id = filter_var($comment_id, FILTER_VALIDATE_INT);
+        if (!$comment_id) {
+            return false;
+        }
+        
+        $checkStmt = $this->prepare("SELECT COUNT(*) FROM comments WHERE id = ?");
+        $checkStmt->execute([$comment_id]);
+        $commentExists = (int)$checkStmt->fetchColumn() > 0;
+
+        if (!$commentExists) {
+            return false;
+        }
+
+        $stmt = $this->prepare("DELETE FROM comments WHERE id = ?");
+        return $stmt->execute([$comment_id]);
     }
     
     private function sanitizeCourseData($course) {
