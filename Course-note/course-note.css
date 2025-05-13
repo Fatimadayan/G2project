@@ -49,9 +49,22 @@ main {
 .sort-container {
   margin-bottom: 1.5rem;
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
   align-items: center;
+}
+
+.sort-container {
+  gap: 0.8rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.sort-container input,
+.sort-container select,
+.sort-container textarea,
+.sort-container button {
+  margin-bottom: 0.5rem;
 }
 
 input,
@@ -64,13 +77,16 @@ textarea {
   outline: none;
   transition: border 0.3s ease;
   width: 100%;
-  max-width: 400px;
+  max-width: 220px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: #fff;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   border-color: #800000;
+  background: #fffdfd;
 }
 
 /* Unified Button Styling */
@@ -83,7 +99,7 @@ button,
   text-decoration: none;
   border: none;
   border-radius: 6px;
-    font-weight: bold;
+  font-weight: bold;
   cursor: pointer;
   font-size: 1rem;
   transition: background 0.3s ease, transform 0.2s ease;
@@ -138,7 +154,7 @@ button:hover,
   margin-bottom: 0.8rem;
 }
 
-  .pagination {
+.pagination {
   margin-top: 2rem;
   text-align: center;
 }
@@ -182,4 +198,25 @@ footer {
   font-size: 0.95rem;
   margin-top: 3rem;
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Flex row for note inputs */
+#noteForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: #fff9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+#noteForm input,
+#noteForm textarea,
+#noteForm select {
+  margin: 0;
+  flex: 1 1 200px;
+  max-width: 250px;
 }
