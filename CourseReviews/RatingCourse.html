@@ -1,112 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta name = "viewport" content = "width=device-width, initialscale = 1.0">
-    <title>Rate a Course</title>
-    <link rel="stylesheet" href = "Reviews.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Rating</title>
+    <link rel="stylesheet" href="Reviews.css">
     <style>
-        .modal {
+        .success-message {
             display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0);
-            background-color:rgba(0,0,0,0.4);
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            font-weight: 600;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+        .success-message.show {
+            display: block;
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .rating-container {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-top: 8px;
         }
 
-        .close:hover,
-        .close:focus{
-            color: black;
-            text-decoration: none;
+        .star-rating {
+            font-size: 30px;
             cursor: pointer;
+            color: #ddd;
+        }
+
+        .star-rating.selected {
+            color: #FFD700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: #d9534f;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        input.error, textarea.error, select.error {
+            border-color: #d9534f;
         }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Rate a Course</h1>
-        <nav>
-            <a href = "../index.html">Home</a>
-        </nav>
+        <div class="header-content">
+            <h1>Course Rating</h1>
+            <nav>
+                <a href="../index.html">Home</a>
+                <a href="reviews.html">Reviews</a>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <section class = "rating-form">
-            <form id = "rating-form">
-                <label for = "course-title">Course Title</label>
-                <input type = "text" id = "course-title" required placeholder = "Enter course title">
-                <label for = "rating">Rate the course</label>
-                <select id = "rating" name = "rating" required>
-                <option value = "1">1 star</option>
-                <option value = "2">2 stars</option>
-                <option value = "3">3 stars</option>
-                <option value = "4">4 stars</option>
-                <option value = "5">5 stars</option>
-                </select>
+        <div class="reviews-container">
+            <h2>Rate a Course</h2>
+            <p>Please share your experience with this course.</p>
 
-                <label for = "review-data">Review</label>
-                <textarea id = "review-data" name = "review-data" required placeholder = "Write your review here..."></textarea>
-                <button type = "submit">Submit</button>
-            </form>
-        </section>
-
-        <div id = "success-message" style = "display:none; color:green;">Your review has been submitted successfuly!</div>
-        <div class = "action-buttons">
-            <a href = "Reviews.html"><button>Back</button></a>
+            <div id="success-message" class="success-message">
+                Your submission is successful! Thank you for your feedback.
             </div>
+
+            <form id="rating-form">
+                <div class="form-group">
+                    <label for="course-select">Select Course:</label>
+                    <select id="course-select" name="course" required>
+                        <option value="">-- Select a Course --</option>
+                        <option value="course1">Course 333 - Database Systems</option>
+                        <option value="course2">Course 113 - Programming Fundamentals</option>
+                        <option value="course3">Course 214 - Data Structures</option>
+                        <option value="course4">Course 254 - Computer Networks</option>
+                    </select>
+                    <div class="error-message" id="course-error">Please select a course</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <div class="error-message" id="name-error">Please enter your name</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="email-error">Please enter a valid email</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Rating:</label>
+                    <div class="rating-container">
+                        <span class="star-rating" data-value="1">★</span>
+                        <span class="star-rating" data-value="2">★</span>
+                        <span class="star-rating" data-value="3">★</span>
+                        <span class="star-rating" data-value="4">★</span>
+                        <span class="star-rating" data-value="5">★</span>
+                    </div>
+                    <input type="hidden" id="rating-value" name="rating" value="">
+                    <div class="error-message" id="rating-error">Please select a rating</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="review">Your Review:</label>
+                    <textarea id="review" name="review" rows="5" required></textarea>
+                    <div class="error-message" id="review-error">Please enter your review</div>
+                </div>
+
+                <button type="submit" class="form-submit">Submit Review</button>
+            </form>
+        </div>
     </main>
 
-    <div id = "successModal" class="modal">
-        <div class = "modal-content">
-            <span class = "close">&times;</span>
-            <p>Your review has been submitted successfuly!</p>
-        </div>
-    </div>
-
     <footer>
-        <p>&copy; 2025 Course Review</p>
+            <div class="copyright">
+                &copy; 2025 Course Review System. All rights reserved.
+            </div>
     </footer>
 
     <script>
-        const modal = document.getElementById("successModal");
-        const closeBtn = document.getElementsByClassName("close")[0];
-        document.getElementById('rating-form').addEventListener('submit', function(event){
-            event.preventDefault();
-            modal.style.display = "block";
-            this.reset();
+        const starRatings = document.querySelectorAll('.star-rating');
+        const ratingValue = document.getElementById('rating-value');
+        
+        starRatings.forEach(star => {
+            star.addEventListener('click', () => {
+                const value = star.getAttribute('data-value');
+                ratingValue.value = value;
+                
+                // Reset stars
+                starRatings.forEach(s => s.classList.remove('selected'));
+                
+                // Select stars up to the clicked one
+                for (let i = 0; i < value; i++) {
+                    starRatings[i].classList.add('selected');
+                }
+            });
         });
 
-        closeBtn.onclick = function (){
-            modal.style.display = "none";
-        }
-        window.onclick = function (event){
-            if (event.target==modal){
-                modal.style.display = "none";
+        // Form validation and submission
+        const ratingForm = document.getElementById('rating-form');
+        const successMessage = document.getElementById('success-message');
+        
+        ratingForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Reset error messages
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => msg.style.display = 'none');
+            
+            // Validate form
+            let isValid = true;
+            
+            // Course validation
+            const courseSelect = document.getElementById('course-select');
+            if (!courseSelect.value) {
+                document.getElementById('course-error').style.display = 'block';
+                courseSelect.classList.add('error');
+                isValid = false;
+            } else {
+                courseSelect.classList.remove('error');
             }
-        }
+            
+            // Name validation
+            const nameInput = document.getElementById('name');
+            if (!nameInput.value.trim()) {
+                document.getElementById('name-error').style.display = 'block';
+                nameInput.classList.add('error');
+                isValid = false;
+            } else {
+                nameInput.classList.remove('error');
+            }
+            
+            // Email validation
+            const emailInput = document.getElementById('email');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailInput.value)) {
+                document.getElementById('email-error').style.display = 'block';
+                emailInput.classList.add('error');
+                isValid = false;
+            } else {
+                emailInput.classList.remove('error');
+            }
+            
+            // Rating validation
+            if (!ratingValue.value) {
+                document.getElementById('rating-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Review validation
+            const reviewInput = document.getElementById('review');
+            if (!reviewInput.value.trim()) {
+                document.getElementById('review-error').style.display = 'block';
+                reviewInput.classList.add('error');
+                isValid = false;
+            } else {
+                reviewInput.classList.remove('error');
+            }
+            
+            // If form is valid, show success message
+            if (isValid) {
+                successMessage.classList.add('show');
+                
+                // Reset form after submission
+                ratingForm.reset();
+                starRatings.forEach(s => s.classList.remove('selected'));
+                ratingValue.value = '';
+                
+                successMessage.scrollIntoView({ behavior: 'smooth' });
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 5000);
+            }
+        });
     </script>
-
 </body>
-
 </html>
