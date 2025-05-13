@@ -106,7 +106,7 @@ class databaseHelper {
                     'description' => 'Describes a set of commands that must be followed for a computer to perform calculations.',
                     'rating' => 4.7,
                     'comments' => []
-                }
+                ]
             ];
 
             $courseStmt = $this->prepare("INSERT INTO courses (
