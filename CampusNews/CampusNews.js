@@ -61,4 +61,3 @@ fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit
       loadingMessage.style.color = "red";
     }
   });
-
