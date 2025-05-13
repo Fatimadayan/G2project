@@ -149,5 +149,27 @@
     </footer>
 
     <script src="Reviews.js"></script>
+    <script>
+        // Star rating functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const starRatings = document.querySelectorAll('.star-rating');
+            const ratingValue = document.getElementById('rating-value');
+            
+            starRatings.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = star.getAttribute('data-value');
+                    ratingValue.value = value;
+                    
+                    // Reset stars
+                    starRatings.forEach(s => s.classList.remove('selected'));
+                    
+                    // Select stars up to the clicked one
+                    for (let i = 0; i < value; i++) {
+                        starRatings[i].classList.add('selected');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

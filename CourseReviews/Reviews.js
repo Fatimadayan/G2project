@@ -585,17 +585,74 @@ function handleRatingSubmission() {
         nameInput.value = currentUser;
     }
     
+    // Note: The star rating functionality is now handled in the HTML file directly
+    // to ensure it initializes properly without interfering with the form submission
+    
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
+            // Get form values
             const course = document.getElementById('course-select').value;
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const rating = document.getElementById('rating-value').value;
             const reviewText = document.getElementById('review').value;
             
-            if (course && name && email && rating && reviewText) {
+            // Reset error messages
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => msg.style.display = 'none');
+            
+            // Validate form
+            let isValid = true;
+            
+            // Course validation
+            const courseSelect = document.getElementById('course-select');
+            if (!courseSelect.value) {
+                document.getElementById('course-error').style.display = 'block';
+                courseSelect.classList.add('error');
+                isValid = false;
+            } else {
+                courseSelect.classList.remove('error');
+            }
+            
+            // Name validation
+            if (!name.trim()) {
+                document.getElementById('name-error').style.display = 'block';
+                nameInput.classList.add('error');
+                isValid = false;
+            } else {
+                nameInput.classList.remove('error');
+            }
+            
+            // Email validation
+            const emailInput = document.getElementById('email');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                document.getElementById('email-error').style.display = 'block';
+                emailInput.classList.add('error');
+                isValid = false;
+            } else {
+                emailInput.classList.remove('error');
+            }
+            
+            // Rating validation
+            if (!rating) {
+                document.getElementById('rating-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Review validation
+            const reviewInput = document.getElementById('review');
+            if (!reviewText.trim()) {
+                document.getElementById('review-error').style.display = 'block';
+                reviewInput.classList.add('error');
+                isValid = false;
+            } else {
+                reviewInput.classList.remove('error');
+            }
+            
+            if (isValid) {
                 // Save user name for future use
                 localStorage.setItem('currentUser', name);
                 currentUser = name;
