@@ -83,25 +83,7 @@
     let currentPage = 1;
     const itemsPerPage = 5;
 
-    async function fetchCourses() {
-      try {
-        const response = await fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=course_notes");
-        const data = await response.json();
-        if (data.status === "success") {
-          courses = data.data;
-          filteredCourses = [...courses];
-          displayCourses();
-          setupPagination();
-        } else {
-          courseGrid.innerHTML = "<p class='error'>Failed to load courses.</p>";
-        }
-      } catch (error) {
-        console.error("Fetch error:", error);
-        courseGrid.innerHTML = "<p class='error'>Connection error.</p>";
-      }
-    }
-
-    function displayCourses() {
+      function displayCourses() {
       courseGrid.innerHTML = "";
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
@@ -111,6 +93,33 @@
         courseGrid.innerHTML = "<p class='error'>No courses found.</p>";
         return;
       }
+
+    fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=course-note")
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Failed to fetch course notes");
+    }
+    return response.json();
+  })
+  .then((data) => {
+    if (data.status !== "success") {
+      courseGrid.innerHTML = "<p class='error'>Failed to load courses.</p>";
+      return;
+    }
+
+    courses = data.data;
+    filteredCourses = [...courses];
+
+    displayCourses();
+    setupPagination();
+  })
+  .catch((error) => {
+    console.error("Fetch error:", error);
+    courseGrid.innerHTML = "<p class='error'>Connection error.</p>";
+  });
+
+
+    
 
       currentItems.forEach(course => {
         const div = document.createElement("div");
