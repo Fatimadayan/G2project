@@ -31,17 +31,32 @@
       },
     };
   </script>
-  <!-- Animate on scroll -->
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-
+  
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
   
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+<!-- AOS Animation CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+
+<link rel="icon" href="path/to/favicon.ico">
+<meta name="description" content="Explore the University of Bahrain: programs, events, research, and more.">
+
+
   <!-- Custom Styles -->
   <style>
+    html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  height: auto;
+}
+
     .overlap-section {
       margin-top: -80px;
       position: relative;
@@ -384,27 +399,37 @@ h1{
   object-fit: cover;
 }
 
-/* Date Badge */
+
+/* Modern Event Date Badge */
 .event-date {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background-color: #2c2c2c;
+  top: 12px;
+  left: 12px;
+  width: 50px;
+  height: 50px;
+  background-color: #aa0023;
   color: white;
-  padding: 6px 10px;
-  border-radius: 4px;
-  text-align: center;
+  border-radius: 10px;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
 
 .event-month {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  display: block;
+  font-weight: bold;
+  line-height: 1;
 }
 
 .event-day {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 /* Content */
@@ -594,6 +619,130 @@ nav a:hover {
       font-size: 0.95rem;
       color: #666;
     }
+    .cloud-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: url('https://www.avoriaz.com/_nuxt/img/summer-domain-bg.08a1f30.webp') repeat-x;
+  background-size: cover;
+  animation: cloudMove 60s linear infinite;
+  z-index: 0;
+}
+html{
+scroll-behavior: smooth;
+}
+
+@keyframes cloudMove {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.uob-footer {
+  background-color: #000;
+  color: #fff;
+  padding: 3rem 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-col {
+  flex: 1 1 200px;
+}
+
+.logo-col p {
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+
+.footer-col h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #444;
+  padding-bottom: 0.3rem;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-col ul li a {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-col ul li a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.social-icons {
+  margin-top: 1rem;
+  display: flex;
+  gap: 10px;
+}
+
+.social-icons img {
+  height: 32px;
+  transition: transform 0.3s;
+}
+
+.social-icons img:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .footer-col {
+    flex: 1 1 100%;
+  }
+}
+.language-btn {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+.language-btn:hover {
+  background-color: white;
+  color: #002147;
+}
+
+@keyframes floatQuote {
+  0%,100% { transform: translateY(0);}
+  50% { transform: translateY(-12px);}
+}
+.animate-float {
+  animation: floatQuote 4s ease-in-out infinite;
+}
+
   </style>
 </head>
 <body class="bg-gray-50 font-inknut">
@@ -639,20 +788,7 @@ nav a:hover {
   </header>
 
   
-  <!-- Hero Section --
-  <section class="hero-section w-full h-[900px] overflow-hidden relative">
-    <img  src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/IMG-20240612-WA0005.jpg" alt="University of Bahrain Campus" class="w-full h-full object-cover object-center" loading="lazy" />
-
-    <div class="logo-overlay" style="top: 5%;">
-      <img src="../G2project/Images/logo.png" alt="University Logo" class="h-24 mx-auto">
-    </div>
-    <div class="hero-content" style="top: 20%;">
-      <h1 class="text-4xl md:text-5xl font-bold text-white">University of Bahrain</h1>
-    </div>
-  </section>
-    <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" alt="University Logo" class="w-40 h-40 object-contain" />
-
--->
+  
  <!-- Hero Section -->
  <section class="hero-section w-full h-[900px] relative overflow-hidden">
   <!-- Background Image -->
@@ -660,7 +796,13 @@ nav a:hover {
        class="absolute inset-0 w-full h-full object-cover object-center z-0" loading="lazy" />
 
   <!-- Dark Overlay -->
-  <div class="absolute inset-0 bg-black bg-opacity-60 z-10"></div>
+  <div class="absolute inset-0 bg-black bg-opacity-55 z-10"></div>
+
+  <!-- Blue Overlay -->
+    <div class="absolute inset-0 bg-blue-900 opacity-60"></div>
+    <!-- Floating shapes -->
+    <div class="absolute top-10 left-10 w-32 h-32 bg-indigo-400 rounded-full opacity-50 float"></div>
+    <div class="absolute bottom-20 right-10 w-24 h-24 bg-yellow-400 rounded-full opacity-50 float delay-2000"></div>
 
   <!-- Content Overlay -->
   <div class="relative z-20 flex flex-col items-center justify-center h-full text-white text-center">
@@ -669,7 +811,7 @@ nav a:hover {
     <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" alt="University Logo" class="w-36 h-36 object-contain mb-4" />
 
     <!-- Welcome Message -->
-    <h1 class="text-3xl font-bold mb-3">Welcome to the University of Bahrain</h1>
+    <h1 class="text-3xl font-bold mb-3">Your future begins here</h1>
 
     <!-- Buttons -->
     <div class="flex flex-wrap justify-center gap-4 mt-2">
@@ -690,89 +832,64 @@ nav a:hover {
 </section>
 
 <!-- Quote Section -->
-<section class="quote-section text-center py-24 px-6 md:px-12">
-  <p class="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed max-w-4xl mx-auto">
-    “Coming to UOB, I knew I would have a lot of opportunities to explore, but I didn’t know
-    the extent of it until I came here and realized I have the power to choose the course of my journey.”
-  </p>
-
- <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const quoteSection = document.querySelector(".quote-section");
-
-  window.addEventListener("scroll", function () {
-    const sectionTop = quoteSection.getBoundingClientRect().top;
-    const sectionBottom = quoteSection.getBoundingClientRect().bottom;
-
-    if (sectionTop < window.innerHeight * 0.5) {
-      quoteSection.classList.add("active"); // Expand & move up
-    } else {
-      quoteSection.classList.remove("active");
-      quoteSection.classList.add("reset"); // Restore original size smoothly
-    }
-  });
-});
-</script>
+<section class="quote-section flex flex-col items-center justify-center py-28 px-6 md:px-12" data-aos="fade-up">
+  <div class="relative max-w-3xl w-full bg-white/95 shadow-2xl border-l-8 border-[#aa0023] px-12 py-16 mx-auto"
+       style="backdrop-filter: blur(2px);">
+    <span class="absolute -left-10 top-10 text-[#aa0023] text-6xl opacity-70 select-none">
+      <i class="fas fa-quote-left"></i>
+    </span>
+    <p class="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed font-inknut animate-float">
+      “Coming to UOB, I knew I would have a lot of opportunities to explore, but I didn’t know
+      the extent of it until I came here and realized I have the power to choose the course of my journey.”
+    </p>
+    <div class="mt-10 text-right text-[#aa0023] font-bold text-xl font-inknut tracking-wide">
+      — UOB Student
+    </div>
+  </div>
+  <!-- See More Button -->
+  <a href="#stats" class="mt-10 flex flex-col items-center group focus:outline-none" style="text-decoration:none;">
+    <span class="text-[#aa0023] font-semibold text-lg group-hover:underline">See More</span>
+    <span class="mt-2 animate-bounce text-[#aa0023] text-3xl">
+      <i class="fas fa-chevron-down"></i>
+    </span>
+  </a>
 </section>
-<!-- Overlay -->
-    <div class="absolute inset-0 bg-blue-900 opacity-60"></div>
-    <!-- Floating shapes -->
-    <div class="absolute top-10 left-10 w-32 h-32 bg-indigo-400 rounded-full opacity-50 float"></div>
-    <div class="absolute bottom-20 right-10 w-24 h-24 bg-yellow-400 rounded-full opacity-50 float delay-2000"></div>
+
  <!-- Stats Section -->
   <section class="stats-section" data-aos="fade-up">
-  <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Impact in Numbers</h2>
+  <h2 class="text-3xl font-bold text-gray-800 mb-8 font-inknut">Our Impact in Numbers</h2>
   <div class="stats-grid">
-    <div class="stat-box">
+    <div class="stat-box flex flex-col items-center justify-center">
+      <div class="mb-4 text-[#aa0023]">
+        <i class="fas fa-user-graduate fa-3x"></i>
+      </div>
       <div class="stat-number">30,000+</div>
       <div class="stat-label">Students Enrolled</div>
     </div>
-    <div class="stat-box">
+    <div class="stat-box flex flex-col items-center justify-center">
+      <div class="mb-4 text-[#aa0023]">
+        <i class="fas fa-book-open fa-3x"></i>
+      </div>
       <div class="stat-number">250+</div>
       <div class="stat-label">Academic Programs</div>
     </div>
-    <div class="stat-box">
+    <div class="stat-box flex flex-col items-center justify-center">
+      <div class="mb-4 text-[#aa0023]">
+        <i class="fas fa-briefcase fa-3x"></i>
+      </div>
       <div class="stat-number">95%</div>
       <div class="stat-label">Graduate Employment Rate</div>
     </div>
-    <div class="stat-box">
-      <div class="stat-number">60+</div>
+    <div class="stat-box flex flex-col items-center justify-center">
+      <div class="mb-4 text-[#aa0023]">
+        <i class="fas fa-flask fa-3x"></i>
+      </div>
+      <div class="stat-number">60+</</div>
       <div class="stat-label">Research Labs</div>
     </div>
   </div>
 </section>
-  
-<!-- Accreditations Section 
-<section class="accreditations-rankings">
-  <div class="container">
-    <div class="left">
-      <h2>Accreditations</h2>
-      <div class="logos">
-        <img src="path/to/higher-education.png" alt="Higher Education Council" />
-        <img src="path/to/education-quality.png" alt="Education & Training Quality Authority" />
-        <img src="path/to/ministry-education.png" alt="Ministry of Education" />
-        <img src="path/to/aacsb.png" alt="AACSB Accredited" />
-        <img src="path/to/abet.png" alt="ABET Accreditation" />
-      </div>
-    </div>
-    <div class="right">
-      <h2>Rankings</h2>
-      <ul class="ranking-text">
-        <li>Ranked the <strong>1<sup>st</sup></strong> university in Bahrain by Times Higher Education Impact Ranking for the year 2024</li>
-        <li>Ranked <strong>10<sup>th</sup></strong> worldwide for SDG4 related to Quality Education</li>
-        <li>Ranked <strong>33<sup>rd</sup></strong> in the Arab region by QS and classified among the World University Rankings.</li>
-      </ul>
-      <div class="ranking-logos">
-        <img src="path/to/the1.png" alt="THE Impact Rankings" />
-        <img src="path/to/the2.png" alt="THE SDG4 Ranking" />
-        <img src="path/to/qs.png" alt="QS University Rankings" />
-      </div>
-    </div>
-  </div>
-</section>
--->
-ّ<!--800000
-    caa472-->
+
     <section class="study-research">
       <div class="container study-container">
         <!-- Left Column -->
@@ -822,22 +939,93 @@ document.addEventListener("DOMContentLoaded", function () {
   AOS.init({ duration: 1000, once: true });
 </script>
 
- <!-- Testimonials Section -->
-<section class="alumni-section" data-aos="fade-up">
-  <h2 class="text-3xl font-bold text-gray-800 mb-4">What Our Alumni Say</h2>
-  <div class="alumni-grid">
-    <div class="alumni-card">
-      <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alumnus" />
-      <blockquote>“UOB empowered me with real-world skills and lifelong friendships.”</blockquote>
-      <div class="alumni-name">Ahmed Al Khalifa<br><span class="text-sm text-gray-600">Software Engineer, Aramco</span></div>
-    </div>
-    <div class="alumni-card">
-      <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Alumna" />
-      <blockquote>“I’m proud to be a UOB graduate. The experience was unforgettable.”</blockquote>
-      <div class="alumni-name">Fatima Yousif<br><span class="text-sm text-gray-600">Data Analyst, Batelco</span></div>
+<!-- Cloud Background Wrapper -->
+
+
+<section class="relative bg-white overflow-hidden py-20" data-aos="fade-up">
+  <!-- Cloud BG -->
+  <div class="absolute inset-0 z-0 pointer-events-none">
+    <div class="cloud-bg opacity-20"></div>
+  </div>
+  <div class="relative z-10 max-w-6xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-gray-800 mb-12 font-inknut text-left">What Our Alumni Say</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <!-- Alumni 1 -->
+      <div class="flex bg-white border-l-4 border-[#aa0023] shadow-md p-0">
+        <img class="w-24 h-24 object-cover my-8 ml-8" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Ahmed Al Khalifa" />
+        <div class="flex flex-col justify-center pl-8 pr-8 py-8">
+          <div class="font-bold text-[#aa0023] text-lg mb-1">Ahmed Al Khalifa</div>
+          <div class="text-sm text-gray-500 mb-4">Software Engineer, Aramco</div>
+          <blockquote class="italic text-gray-700 text-base leading-relaxed border-l-2 border-[#aa0023] pl-4">“UOB empowered me with real-world skills and lifelong friendships.”</blockquote>
+        </div>
+      </div>
+      <!-- Alumni 2 -->
+      <div class="flex bg-white border-l-4 border-[#aa0023] shadow-md p-0">
+        <img class="w-24 h-24 object-cover my-8 ml-8" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Fatima Yousif" />
+        <div class="flex flex-col justify-center pl-8 pr-8 py-8">
+          <div class="font-bold text-[#aa0023] text-lg mb-1">Fatima Yousif</div>
+          <div class="text-sm text-gray-500 mb-4">Data Analyst, Batelco</div>
+          <blockquote class="italic text-gray-700 text-base leading-relaxed border-l-2 border-[#aa0023] pl-4">“I’m proud to be a UOB graduate. The experience was unforgettable.”</blockquote>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- Slider Section -->
+<section class="slider-section relative bg-gradient-to-br from-[#f7f7f7] to-[#fff] py-20 overflow-hidden">
+  <!-- Cloud BG -->
+  <div class="absolute inset-0 z-0 pointer-events-none">
+    <div class="cloud-bg opacity-10"></div>
+  </div>
+  <div class="relative z-10 max-w-5xl mx-auto px-4">
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        <!-- Slide 1 -->
+        <div class="swiper-slide flex flex-col md:flex-row items-center gap-0 bg-white shadow-lg border border-gray-200 p-0 overflow-hidden">
+          <div class="relative w-full md:w-1/2 h-72 md:h-[400px]">
+            <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/ManamaSkyView.jpg" alt="Capital of Bahrain" class="w-full h-full object-cover" />
+            <div class="absolute top-0 left-0 w-1 h-full bg-[#aa0023]"></div>
+          </div>
+          <div class="w-full md:w-1/2 p-10 flex flex-col justify-center">
+            <h2 class="text-2xl font-bold mb-2 text-[#aa0023] tracking-tight font-inknut uppercase">Bahraini Life</h2>
+            <p class="text-gray-700 text-base mb-6 font-custom">The Kingdom of Bahrain is an archipelago made up of 33 islands located in the Arabian Gulf between the Kingdom of Saudi Arabia and Qatar.</p>
+            <a href="#" class="inline-block bg-[#aa0023] hover:bg-[#88001b] text-white font-semibold py-2 px-6 shadow transition text-base uppercase tracking-wide">Discover</a>
+          </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="swiper-slide flex flex-col md:flex-row items-center gap-0 bg-white shadow-lg border border-gray-200 p-0 overflow-hidden">
+          <div class="relative w-full md:w-1/2 h-72 md:h-[400px]">
+            <img src="https://law.uob.edu.bh/wp-content/uploads/sites/3/2021/03/P1001013@2x.png" alt="Students" class="w-full h-full object-cover" />
+            <div class="absolute top-0 left-0 w-1 h-full bg-[#aa0023]"></div>
+          </div>
+          <div class="w-full md:w-1/2 p-10 flex flex-col justify-center">
+            <h2 class="text-2xl font-bold mb-2 text-[#aa0023] tracking-tight font-inknut uppercase">Academic Journey</h2>
+            <p class="text-gray-700 text-base mb-6 font-custom">Information to help you make a decision about continuing your academic journey at the University of Bahrain.</p>
+            <a href="#" class="inline-block bg-[#aa0023] hover:bg-[#88001b] text-white font-semibold py-2 px-6 shadow transition text-base uppercase tracking-wide">Discover</a>
+          </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="swiper-slide flex flex-col md:flex-row items-center gap-0 bg-white shadow-lg border border-gray-200 p-0 overflow-hidden">
+          <div class="relative w-full md:w-1/2 h-72 md:h-[400px]">
+            <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/IMG_2418.jpg" alt="Contact us" class="w-full h-full object-cover" />
+            <div class="absolute top-0 left-0 w-1 h-full bg-[#aa0023]"></div>
+          </div>
+          <div class="w-full md:w-1/2 p-10 flex flex-col justify-center">
+            <h2 class="text-2xl font-bold mb-2 text-[#aa0023] tracking-tight font-inknut uppercase">Contact Us</h2>
+            <p class="text-gray-700 text-base mb-6 font-custom">If you have any questions before or after arrival, you can get in touch via Call, WhatsApp, Email, or visit us in person.</p>
+            <a href="#" class="inline-block bg-[#aa0023] hover:bg-[#88001b] text-white font-semibold py-2 px-6 shadow transition text-base uppercase tracking-wide">Discover</a>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination mt-8"></div>
+    </div>
+  </div>
+</section>
+
+
+
+
 
 
 <!-- Upcoming Events Preview Section -->
@@ -925,23 +1113,6 @@ document.addEventListener("DOMContentLoaded", function () {
   </script>
 </section>
 
-  <!-- Overlapping Section 
-  <section class="overlap-section container mx-auto px-0">
-    <div class="bg-[#800000] text-white shadow-xl rounded-lg flex flex-col md:flex-row">
-      <div class="p-8 md:w-1/2">
-        <h2 class="text-3xl font-bold mb-4">University of Bahrain</h2>
-        <p class="text-sm leading-relaxed">
-          The University of Bahrain is a leading institution of higher education committed to excellence in teaching, research, and community engagement. As a hub for innovation and knowledge, the university offers diverse academic programs designed to empower students with the skills and expertise needed for a dynamic and evolving world. With a strong emphasis on academic excellence, technological advancement, and cultural enrichment, the University of Bahrain continues to shape future leaders and contribute to national and global development.
-        </p>
-      </div>
-      <div class="md:w-1/2 relative">
-        <div class="absolute -top-20 -bottom-20 right-0 h-[calc(100%+120px)] w-full md:w-[75%]">
-          <img src="Images/pic2.jpg" alt="University Campus Life" class="w-full h-full object-cover rounded-tr-lg rounded-br-lg shadow-lg" loading="lazy">
-        </div>
-      </div>
-    </div>
-  </section>
--->
  
   <!-- tour -->
  
@@ -1008,66 +1179,91 @@ document.addEventListener("DOMContentLoaded", function () {
     <source src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/04/DJI_0037_v2-1.mp4" type="video/mp4">
   </video></div>
 
-  <footer style="background-color: #000; color: white; padding: 3rem 1rem;">
+<footer class="uob-footer" style="background-color:#0a0a0a; color:white; font-family:'Montserrat',sans-serif;">
+  <div class="footer-container" style="display:flex; flex-wrap:wrap; justify-content:space-between; max-width:1248px; margin:auto; padding:40px 20px;">
 
-    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem;">
-      
-      <!-- UOB Logo and Address -->
-      <div style="flex: 1 1 250px;">
-        <img class="alignleft" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" alt="شعار UOB" width="72" height="85">        <p>University of Bahrain<br>P.O. Box 32038<br>Sakhir – Kingdom of Bahrain<br>1017 Road 5418<br>Zallaq 1054</p>
-        <div style="margin-top: 1rem;">
-
-          <a title="فيسبوك" href="https://www.facebook.com/uobedubh/"><img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/fb_footer.png" alt="فيسبوك"></a>
-          
-          <a title="يوتيوب" href="https://www.youtube.com/user/uobedubh"><img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/icons-youtube.png" alt="يوتيوب"></a>
-          
-          <a title="إنستغرام" href="https://www.instagram.com/uobedubh/"><img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/Group-373@2x-e1623205451501.png" alt="إنستغرام"></a>
-          <a title="لينكدإن" href="https://www.linkedin.com/company/bahrain-university">
-            <img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/Linkedin.png" alt="لينكدإن">
-         
-          
-        </div>
+    <!-- Logo + Address -->
+    <div class="footer-col logo-col" style="flex:1 1 250px; min-width:240px;">
+      <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" alt="UOB Logo" width="72" height="85">
+      <p style="line-height:22px; font-size:14px; margin-top:10px;">
+        University of Bahrain<br>
+        P.O. Box 32038, Sakhir – Kingdom of Bahrain<br>
+        1017 Road 5418, Zallaq 1054
+      </p>
+      <div class="social-icons" style="margin-top:10px;">
+        <a href="https://www.facebook.com/uobedubh/" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/fb_footer.png" alt="Facebook" style="height:28px; margin-right:8px;"></a>
+        <a href="https://www.youtube.com/user/uobedubh" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/icons-youtube.png" alt="YouTube" style="height:28px; margin-right:8px;"></a>
+        <a href="https://www.instagram.com/uobedubh/" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/Group-373@2x-e1623205451501.png" alt="Instagram" style="height:28px; margin-right:8px;"></a>
+        <a href="https://www.linkedin.com/company/bahrain-university" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/Linkedin.png" alt="LinkedIn" style="height:28px;"></a>
       </div>
-  
-      <!-- Footer Links -->
-      <div style="flex: 1 1 200px;">
-        <h3>COLLEGES</h3>
-        <ul style="list-style: none; padding: 0;">
-          <li><a href="#">College of Arts</a></li>
-          <li><a href="#">Teachers College</a></li>
-          <li><a href="#">Business Administration</a></li>
-          <li><a href="#">Engineering</a></li>
-          <li><a href="#">IT</a></li>
-        </ul>
-      </div>
-  
-      <div style="flex: 1 1 200px;">
-        <h3>INFORMATION</h3>
-        <ul style="list-style: none; padding: 0;">
-          <li><a href="#">Graduate Studies</a></li>
-          <li><a href="#">Scientific Research</a></li>
-        </ul>
-        <h3>QUICK LINKS</h3>
-        <ul style="list-style: none; padding: 0;">
-          <li><a href="#">Join UOB</a></li>
-          <li><a href="#">Students</a></li>
-          <li><a href="#">Schedule</a></li>
-        </ul>
-      </div>
-  
-      <div style="flex: 1 1 200px;">
-        <h3>ABOUT</h3>
-        <ul style="list-style: none; padding: 0;">
-          <li><a href="#">Policies</a></li>
-          <li><a href="#">Leadership</a></li>
-          <li><a href="#">Map</a></li>
-          <li><a href="#">Careers</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </div>
-  
     </div>
-  </footer>
+
+    <!-- Colleges -->
+    <div class="footer-col" style="flex:1 1 180px; min-width:180px;">
+      <h3 style="margin-bottom:10px;">COLLEGES</h3>
+      <ul style="list-style:none; padding:0;">
+        <li><a href="https://www.uob.edu.bh/college-of-arts/" target="_blank">College of Arts</a></li>
+        <li><a href="https://www.uob.edu.bh/teachers-college/" target="_blank">Teachers College</a></li>
+        <li><a href="https://www.uob.edu.bh/college-of-business-administration/" target="_blank">Business Administration</a></li>
+        <li><a href="https://www.uob.edu.bh/college-of-engineering/" target="_blank">Engineering</a></li>
+        <li><a href="https://www.uob.edu.bh/college-of-information-technology/" target="_blank">Information Technology</a></li>
+      </ul>
+    </div>
+
+    <!-- Info + Quick Links -->
+    <div class="footer-col" style="flex:1 1 180px; min-width:180px;">
+      <h3 style="margin-bottom:10px;">INFORMATION</h3>
+      <ul style="list-style:none; padding:0;">
+        <li><a href="https://www.uob.edu.bh/deanship-of-graduate-studies/" target="_blank">Graduate Studies</a></li>
+        <li><a href="https://www.uob.edu.bh/scientific-research/" target="_blank">Scientific Research</a></li>
+      </ul>
+      <h3 style="margin:16px 0 10px;">QUICK LINKS</h3>
+      <ul style="list-style:none; padding:0;">
+        <li><a href="https://www.uob.edu.bh/join-uob/" target="_blank">Join UOB</a></li>
+        <li><a href="https://www.uob.edu.bh/students/" target="_blank">Students</a></li>
+        <li><a href="https://www.uob.edu.bh/class-schedule/" target="_blank">Schedule</a></li>
+      </ul>
+    </div>
+
+    <!-- About -->
+    <div class="footer-col" style="flex:1 1 180px; min-width:180px;">
+      <h3 style="margin-bottom:10px;">ABOUT</h3>
+      <ul style="list-style:none; padding:0;">
+        <li><a href="https://www.uob.edu.bh/policies/" target="_blank">Policies</a></li>
+        <li><a href="https://www.uob.edu.bh/leadership/" target="_blank">Leadership</a></li>
+        <li><a href="https://www.uob.edu.bh/contact/map/" target="_blank">Map</a></li>
+        <li><a href="https://www.uob.edu.bh/careers/" target="_blank">Careers</a></li>
+        <li><a href="https://www.uob.edu.bh/contact/" target="_blank">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+
+  
+<script>
+  // Header active on scroll
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('.header');
+    if (window.scrollY > 50) {
+      header.classList.add('active');
+    } else {
+      header.classList.remove('active');
+    }
+  });
+
+  // Quote section animation trigger
+  const quote = document.querySelector('.quote-section');
+  window.addEventListener('scroll', () => {
+    const rect = quote.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 100) {
+      quote.classList.add('active');
+      setTimeout(() => {
+        quote.classList.add('reset');
+      }, 1500);
+    }
+  });
+</script>
+
+  
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
@@ -1075,7 +1271,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
   
-            
+   <!--chatbot-->         
 <script>
   fetch('https://c937d7c7-804f-4bbb-a295-e2109004f7bc-00-3g3fohubbj6h0.sisko.replit.dev/')
   .then(res => res.json())
@@ -1092,5 +1288,53 @@ document.addEventListener("DOMContentLoaded", function () {
  // .catch(error => console.error("API error:", error));
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.swiper', {
+    loop: true,
+    autoplay: {
+      delay: 3000,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+  });
+</script>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+<!-- AOS Animation JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<!-- Init Scripts -->
+<script>
+  // Initialize AOS
+  AOS.init();
+
+  // Initialize Swiper
+  const swiper = new Swiper(".mySwiper", {
+    loop: true,
+    pagination: {
+      el: ".swiper-pagination",
+    },
+    autoplay: {
+      delay: 5000,
+    },
+  });
+</script>
+
+<!-- AOS JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+
 </body>
+
 </html>

@@ -36,32 +36,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function displayEvents(events = []) {
-    eventList.innerHTML = "";
+  eventList.innerHTML = "";
 
-    if (events.length === 0) {
-      eventList.innerHTML = "<p>No events found.</p>";
-      return;
-    }
-
-    events.forEach(e => {
-      const div = document.createElement("div");
-      div.className = "event-card";
-      div.innerHTML = `
-        <img src="${e.image ? e.image : 'default.jpg'}" alt="Event Image" class="event-image">
-        <div class="event-content">
-          <div class="event-title">${e.title}</div>
-         <div class="calendar-box">
-  <div class="calendar-day">${new Date(e.date).getDate()}</div>
-  <div class="calendar-month">${new Date(e.date).toLocaleString('default', { month: 'short' })}</div>
-</div>
-<p><strong>Description:</strong> ${e.description}</p>
-
-          <a href="event-detail.html?id=${e.id}" class="event-button">View Details</a>
-        </div>
-      `;
-      eventList.appendChild(div);
-    });
+  if (events.length === 0) {
+    eventList.innerHTML = "<p>No events found.</p>";
+    return;
   }
+
+  events.forEach((e, index) => {
+    const div = document.createElement("div");
+    div.className = "event-card"; // Initial state without animation
+
+    div.innerHTML = `
+      <img src="${e.image ? e.image : 'default.jpg'}" alt="Event Image" class="event-image">
+      <div class="event-content">
+        <div class="event-title">${e.title}</div>
+        <div class="calendar-box">
+          <div class="calendar-day">${new Date(e.date).getDate()}</div>
+          <div class="calendar-month">${new Date(e.date).toLocaleString('default', { month: 'short' })}</div>
+        </div>
+        <p><strong>Description:</strong> ${e.description}</p>
+        <a href="event-detail.html?id=${e.id}" class="event-button">View Details</a>
+      </div>
+    `;
+
+    eventList.appendChild(div);
+
+    // **Trigger transition after a delay**
+    setTimeout(() => {
+      div.classList.add("show"); // Apply transition class
+    }, index * 150); // Creates a staggered effect for smooth loading
+  });
+}
 
   function displayEventDetail(event) {
     if (!event) {
