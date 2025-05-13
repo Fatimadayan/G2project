@@ -46,7 +46,7 @@ try {
 
   // Redirect to view-note page for the newly inserted note
   $newNoteId = $pdo->lastInsertId();
-  header("Location: view-note.php?id=" . $newNoteId);
+  header("Location: course-note.php?id=" . $newNoteId);
   exit;
 
 } catch (PDOException $e) {
