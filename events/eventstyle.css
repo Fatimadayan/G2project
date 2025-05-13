@@ -271,3 +271,68 @@ article a {
   animation: fadeIn 0.4s ease-in-out;
   font-family: 'Poppins', sans-serif;
 }
+.calendar-box {
+  background: #800000;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  display: inline-block;
+  font-weight: bold;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-card {
+  animation: fadeInUp 0.8s ease-out;
+}
+.calendar-box {
+  display: inline-block;
+  text-align: center;
+  background-color: #800000;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  width: 60px;
+  margin-bottom: 1rem;
+}
+
+.calendar-day {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.calendar-month {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+.event-card {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+.event-card:nth-child(1) { animation-delay: 0.1s; }
+.event-card:nth-child(2) { animation-delay: 0.2s; }
+.event-card:nth-child(3) { animation-delay: 0.3s; }
+.mt-4 a:hover,
+form button:hover,
+.comment-btn:hover,
+article button:hover {
+  background-color: #a60000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+footer a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .UE {
+      font-style: italic;
+    }
