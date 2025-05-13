@@ -68,6 +68,9 @@ function handleReviewsPage() {
     const sortButton = document.getElementById('sort-button');
     const filterMode = document.getElementById('filter-mode');
     
+    // Track sort order state
+    let sortOrder = 'asc'; // Start with ascending
+    
     // Extract course data from HTML first
     const htmlCourses = extractCoursesFromHTML();
     if (htmlCourses.length > 0) {
@@ -198,8 +201,20 @@ function handleReviewsPage() {
                     sortedCourses.sort((a, b) => {
                         const aText = a.title.toLowerCase();
                         const bText = b.title.toLowerCase();
-                        return aText.localeCompare(bText);
+                        
+                        // Toggle between ascending and descending
+                        if (sortOrder === 'asc') {
+                            return bText.localeCompare(aText); // Sort Z-A
+                        } else {
+                            return aText.localeCompare(bText); // Sort A-Z
+                        }
                     });
+                    
+                    // Toggle the sort order for next click
+                    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                    
+                    // Update button text
+                    sortButton.textContent = sortOrder === 'asc' ? 'Sort A-Z' : 'Sort Z-A';
                     
                     // Display the sorted courses
                     displayCourses(sortedCourses);
@@ -304,38 +319,50 @@ function loadComments(courseId) {
             return res.json();
         })
         .then(comments => {
-            commentsContainer.innerHTML = '';
-            
-            if (!Array.isArray(comments) || comments.length === 0) {
-                commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
-                return;
-            }
-            
-            console.log('Comments loaded from API:', comments);
-            
-            comments.forEach(comment => {
-                const commentElement = createCommentElement(comment, courseId);
-                commentsContainer.appendChild(commentElement);
-            });
+            displayComments(comments, courseId, commentsContainer);
         })
         .catch(err => {
             console.error('Error loading comments from API:', err);
             
             // Fallback to localStorage
             const storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
-            
-            commentsContainer.innerHTML = '';
-            
-            if (storedComments.length === 0) {
-                commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
-                return;
-            }
-            
-            storedComments.forEach(comment => {
-                const commentElement = createCommentElement(comment, courseId);
-                commentsContainer.appendChild(commentElement);
-            });
+            displayComments(storedComments, courseId, commentsContainer);
         });
+}
+
+function displayComments(comments, courseId, commentsContainer) {
+    commentsContainer.innerHTML = '';
+    
+    if (!Array.isArray(comments) || comments.length === 0) {
+        commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+        return;
+    }
+    
+    // Also check localStorage for additional comments that might not be in the API yet
+    const storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+    
+    // Combine API comments with localStorage comments
+    // Create a map of existing comment IDs to avoid duplicates
+    const existingCommentIds = new Set(comments.map(c => c.id));
+    
+    // Add localStorage comments that aren't already in the API results
+    storedComments.forEach(comment => {
+        if (!existingCommentIds.has(comment.id)) {
+            comments.push(comment);
+        }
+    });
+    
+    // Sort comments by date
+    comments.sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateA - dateB;
+    });
+    
+    comments.forEach(comment => {
+        const commentElement = createCommentElement(comment, courseId);
+        commentsContainer.appendChild(commentElement);
+    });
 }
 
 function addComment(courseId, name, text) {
@@ -559,11 +586,78 @@ function handleRatingSubmission() {
     }
     
     if (form) {
-        form.addEventListener('submit', function() {
-            const nameInput = document.getElementById('name');
-            if (nameInput && nameInput.value) {
-                localStorage.setItem('currentUser', nameInput.value);
-                currentUser = nameInput.value;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const course = document.getElementById('course-select').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const rating = document.getElementById('rating-value').value;
+            const reviewText = document.getElementById('review').value;
+            
+            if (course && name && email && rating && reviewText) {
+                // Save user name for future use
+                localStorage.setItem('currentUser', name);
+                currentUser = name;
+                
+                // Try to submit to API first
+                fetch(`${API_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'comments',
+                        course_id: course,
+                        name: name,
+                        text: reviewText
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Failed to add comment');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log('Comment added successfully:', data);
+                    showSuccessMessage();
+                })
+                .catch(err => {
+                    console.error('Error adding comment to API:', err);
+                    
+                    // Fallback to localStorage
+                    const comment = {
+                        id: Date.now(),
+                        course_id: parseInt(course),
+                        name: name,
+                        text: reviewText,
+                        date: new Date().toLocaleDateString()
+                    };
+                    
+                    let storedComments = JSON.parse(localStorage.getItem(`comments_${course}`)) || [];
+                    storedComments.push(comment);
+                    localStorage.setItem(`comments_${course}`, JSON.stringify(storedComments));
+                    
+                    showSuccessMessage();
+                });
+            }
+            
+            function showSuccessMessage() {
+                // Show success message
+                successMessage.classList.add('show');
+                
+                // Reset form after submission
+                form.reset();
+                document.querySelectorAll('.star-rating').forEach(s => s.classList.remove('selected'));
+                document.getElementById('rating-value').value = '';
+                
+                successMessage.scrollIntoView({ behavior: 'smooth' });
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 5000);
             }
         });
     }
