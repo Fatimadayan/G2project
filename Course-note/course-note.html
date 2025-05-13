@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Course Notes</title>
   <link rel="stylesheet" href="course-note.css" />
+  
+    
 </head>
 <body>
   <header>
@@ -21,46 +23,71 @@
       <div class="search-container">
         <label for="search" class="visually-hidden">Search Courses</label>
         <input type="text" id="search" placeholder="Search Courses..." />
+
+        <div class="category-filter">
+  <label for="filterCategory">Filter by Category:</label>
+  <select id="filterCategory">
+    <option value="">All</option>
+    <option value="CS">CS</option>
+    <option value="NE">NE</option>
+    <option value="IS">IS</option>
+    <option value="CY">CY</option>
+    <option value="CE">CE</option>
+    <option value="ANOTHER">Another</option>
+  </select>
+</div>
+
       </div>
 
-      <form id="noteForm" enctype="multipart/form-data" method="POST" action="course-note.php">
-        <input type="text" name="title" placeholder="Title" required>
-        <textarea name="description" placeholder="Description" required></textarea>
-        <input type="hidden" name="type" id="noteType" />
-
-        <select name="category" required>
-          <option value="" selected disabled>Choose a category</option>
-          <option value="CS">CS</option>
-          <option value="NE">NE</option>
-          <option value="IS">IS</option>
-          <option value="CY">CY</option>
-          <option value="CE">CE</option>
-          <option value="ANOTHER">Another</option>
+      <div class="controls">
+        <label for="itemType">Add new item:</label>
+        <select id="itemType">
+          <option value="">-- Choose type --</option>
+          <option value="pdf">PDF</option>
+          <option value="link">Link</option>
         </select>
 
-        <div id="pdf-upload" style="display: none;">
-          <label>Upload PDF:</label>
-          <input type="file" name="file_path_pdf" accept="application/pdf" />
-        </div>
+        <button id="addButton" class="btn">Add</button>
+      </div>
 
-        <div id="link-input" style="display: none;">
-          <label>Link URL:</label>
-          <input type="url" name="file_path_link" placeholder="https://example.com" />
-        </div>
+      <div id="formWrapper" class="form-wrapper">
+        <h3>Add New Course Note</h3>
+        <form id="noteForm" enctype="multipart/form-data">
+          <input type="text" name="title" placeholder="Title" required>
+          <textarea name="description" placeholder="Description" required></textarea>
+          <input type="hidden" name="type" id="noteType" />
 
-        <br><br>
-        <button type="submit" class="btn">Submit</button>
-      </form>
+          <select name="category" required>
+            <option value="" selected disabled>Choose a category</option>
+            <option value="CS">CS</option>
+            <option value="NE">NE</option>
+            <option value="IS">IS</option>
+            <option value="CY">CY</option>
+            <option value="CE">CE</option>
+            <option value="ANOTHER">Another</option>
+          </select>
 
-      <label for="itemType">Add new item:</label>
-      <select id="itemType">
-        <option value="">-- Choose type --</option>
-        <option value="pdf">PDF</option>
-        <option value="link">Link</option>
-      </select>
+          <div id="pdf-upload" style="display: none;">
+            <label>Upload PDF:</label>
+            <input type="file" name="file_path_pdf" accept="application/pdf" />
+          </div>
 
-      <button id="addButton">Add</button>
+          <div id="link-input" style="display: none;">
+            <label>Link URL:</label>
+            <input type="url" name="file_path_link" placeholder="https://example.com" />
+          </div>
 
+          <div class="form-buttons">
+            <button type="submit" class="btn">Submit</button>
+            <button type="button" id="cancelButton" class="btn" style="background-color: #6c757d;">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="loading" style="text-align: center; display: none;">
+        <p>Loading courses...</p>
+      </div>
+      
       <div id="course-grid" class="course-grid"></div>
       <div id="pagination" class="pagination"></div>
     </section>
@@ -73,27 +100,205 @@
   </footer>
 
   <script>
-      const courseGrid = document.getElementById("course-grid");
-      const searchInput = document.getElementById("search");
-      const paginationDiv = document.getElementById("pagination");
-      const noteTypeInput = document.getElementById("noteType");
-
+    // DOM Elements
+    const courseGrid = document.getElementById("course-grid");
+    const searchInput = document.getElementById("search");
+    const paginationDiv = document.getElementById("pagination");
+    const noteTypeInput = document.getElementById("noteType");
+    const noteForm = document.getElementById("noteForm");
+    const formWrapper = document.getElementById("formWrapper");
+    const addButton = document.getElementById("addButton");
+    const cancelButton = document.getElementById("cancelButton");
+    const loadingElement = document.getElementById("loading");
+    
+    // State management
     let courses = [];
     let filteredCourses = [];
     let currentPage = 1;
     const itemsPerPage = 5;
+    
+    // API paths
+    const API_BASE = "https://3f4a06db-f0b9-4d21-84e9-7b88bbacae3a-00-2kmk8spylbzqr.pike.replit.dev/course-notes-api.php";
+const API_ENDPOINTS = {
+  PING: `${API_BASE}?action=ping`,
+  GET_COURSES: `${API_BASE}?action=get-courses`,
+  ADD_COURSE: `${API_BASE}?action=add-course`,
+  VIEW_NOTE: (id) => `${API_BASE}?action=view-note&id=${id}`
+};
 
-    function fetchCourses() {
-      fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=course-note")
-        .then((response) => {
+    
+    // Initialize application
+    function initApp() {
+      // Set up event listeners
+      setupEventListeners();
+      
+      // Check server connection and fetch courses
+      checkServerConnection();
+    }
+    
+    // Set up event listeners for the application
+    function setupEventListeners() {
+      // Search input listener
+      searchInput.addEventListener("input", function() {
+        const searchValue = this.value.toLowerCase();
+        filterCourses(searchValue);
+      });
+      
+      // Add button listener
+      addButton.addEventListener("click", toggleAddForm);
+      
+      // Cancel button listener
+      cancelButton.addEventListener("click", hideAddForm);
+      
+      // Item type selection listener
+      document.getElementById("itemType").addEventListener("change", updateFormFields);
+      
+      // Form submission listener
+      noteForm.addEventListener("submit", submitForm);
+    }
+    
+    // Filter courses based on search term
+    function filterCourses(searchValue) {
+      filteredCourses = courses.filter(course =>
+        course.title.toLowerCase().includes(searchValue) || 
+        course.description.toLowerCase().includes(searchValue)
+      );
+      currentPage = 1;
+      displayCourses();
+      setupPagination();
+    }
+    
+    // Toggle the visibility of the add form
+    function toggleAddForm() {
+      const type = document.getElementById("itemType").value;
+      
+      if (!type) {
+        alert("Please select a type (PDF or Link) first");
+        return;
+      }
+      
+      noteTypeInput.value = type;
+      updateFormFields();
+      formWrapper.style.display = "block";
+    }
+    
+    // Hide the add form
+    function hideAddForm() {
+      formWrapper.style.display = "none";
+      noteForm.reset();
+    }
+
+    const categoryFilter = document.getElementById("filterCategory");
+
+categoryFilter.addEventListener("change", () => {
+  fetchCourses(categoryFilter.value);
+});
+
+    
+    // Update form fields based on selected item type
+    function updateFormFields() {
+      const type = noteTypeInput.value || document.getElementById("itemType").value;
+      
+      // Reset field requirements and visibility
+      document.getElementById("pdf-upload").style.display = "none";
+      document.getElementById("link-input").style.display = "none";
+      
+      const pdfInput = document.querySelector('input[name="file_path_pdf"]');
+      const linkInput = document.querySelector('input[name="file_path_link"]');
+      
+      if (pdfInput) pdfInput.required = false;
+      if (linkInput) linkInput.required = false;
+      
+      // Set appropriate field requirements and visibility
+      if (type === "pdf") {
+        document.getElementById("pdf-upload").style.display = "block";
+        if (pdfInput) pdfInput.required = true;
+      } else if (type === "link") {
+        document.getElementById("link-input").style.display = "block";
+        if (linkInput) linkInput.required = true;
+      }
+    }
+    
+    // Submit the form data to the API
+    function submitForm(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(noteForm);
+      
+      // Show loading state
+      const submitButton = noteForm.querySelector('button[type="submit"]');
+      const originalButtonText = submitButton.textContent;
+      submitButton.textContent = "Submitting...";
+      submitButton.disabled = true;
+      
+      fetch(API_ENDPOINTS.ADD_COURSE, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(data => {
+            throw new Error(data.message || 'Failed to add course note');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.status === 'success') {
+          alert('Course note added successfully!');
+          hideAddForm();
+          fetchCourses(); // Refresh course list
+        } else {
+          throw new Error(data.message || 'Unknown error occurred');
+        }
+      })
+      .catch(error => {
+        console.error('Submission error:', error);
+        alert('Error adding course note: ' + error.message);
+      })
+      .finally(() => {
+        // Reset button state
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
+      });
+    }
+    
+    // Check if the server is accessible
+    function checkServerConnection() {
+      showLoading(true);
+      
+      const startTime = Date.now();
+      fetch(API_ENDPOINTS.PING)
+        .then(response => {
           if (!response.ok) {
-            throw new Error("Failed to fetch course notes");
+            throw new Error("Server is not responding correctly");
+          }
+          console.log(`Server responded in ${Date.now() - startTime}ms`);
+          fetchCourses();
+        })
+        .catch(error => {
+          console.error("Server connection check failed:", error);
+          showLoading(false);
+          useLocalData();
+        });
+    }
+    
+    // Fetch courses from the API
+    function fetchCourses() {
+      showLoading(true);
+      
+      fetch(API_ENDPOINTS.GET_COURSES)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch course notes: ${response.status} ${response.statusText}`);
           }
           return response.json();
         })
-        .then((data) => {
+        .then(data => {
+          showLoading(false);
+          
           if (data.status !== "success") {
-            courseGrid.innerHTML = "<p class='error'>Failed to load courses.</p>";
+            courseGrid.innerHTML = `<p class='error'>Failed to load courses: ${data.message || 'Unknown error'}</p>`;
             return;
           }
 
@@ -102,12 +307,73 @@
           displayCourses();
           setupPagination();
         })
-        .catch((error) => {
+        .catch(error => {
+          showLoading(false);
           console.error("Fetch error:", error);
-          courseGrid.innerHTML = "<p class='error'>Connection error.</p>";
+          courseGrid.innerHTML = `<p class='error'>Connection error: ${error.message}. Please check your internet connection or try again later.</p>`;
+          
+          //  local data if API fails
+          useLocalData();
         });
     }
+    
+    // Display loading
+    function showLoading(isLoading) {
+      loadingElement.style.display = isLoading ? "block" : "none";
+      if (isLoading) {
+        courseGrid.innerHTML = "";
+        paginationDiv.innerHTML = "";
+      }
+    }
+    
+    // Use local data as fallback
+    function useLocalData() {
+      console.log("Using local data as fallback");
+      const sampleData = [
+        { 
+          id: 1, 
+          title: "IS103 - Intro to Programming", 
+          description: "Learn the basics of Python and how to write simple programs.",
+          category: "IS",
+          file_type: "link&PDF"
+        },
+        { 
+          id: 2, 
+          title: "NE101 - Networking Basics", 
+          description: "Introduction to networks, IP addressing, and data flow.",
+          category: "NE",
+          file_type: "link&PDF"
+        },
+        { 
+          id: 3, 
+          title: "IS213 - Database Systems", 
+          description: "Understanding relational databases and SQL queries.",
+          category: "IS",
+          file_type: "link&PDF"
+        },
+        { 
+          id: 4, 
+          title: "CY110 - Cybersecurity Fundamentals", 
+          description: "Explore key principles in protecting digital systems.",
+          category: "CY",
+          file_type: "link&PDF"
+        },
+        { 
+          id: 5, 
+          title: "CS342 - Digital Logic Design", 
+          description: "Basics of digital circuits and binary systems.",
+          category: "CS",
+          file_type: "link&PDF"
+        }
+      ];
+      
+      courses = sampleData;
+      filteredCourses = [...courses];
+      displayCourses();
+      setupPagination();
+    }
 
+    // Display courses in the grid
     function displayCourses() {
       courseGrid.innerHTML = "";
       const start = (currentPage - 1) * itemsPerPage;
@@ -124,63 +390,66 @@
         div.className = "course-card";
         div.innerHTML = `
           <h3>${course.title}</h3>
-          <p>${course.description.slice(0, 80)}...</p>
-          <a href="view-note.php?id=${course.id}" class="btn">View Notes</a>
+          <p>${course.description.slice(0, 80)}${course.description.length > 80 ? '...' : ''}</p>
+          <div class="course-meta">
+            <span class="category-badge">${course.category}</span>
+            <span class="type-badge">${course.file_type === 'pdf' ? 'PDF' : 'Link'}</span>
+          </div>
+          <a href="view-note.html?id=${course.id}" class="btn">View Notes</a>
         `;
         courseGrid.appendChild(div);
       });
     }
 
-      function setupPagination() {
+    // Set up pagination controls
+    function setupPagination() {
       paginationDiv.innerHTML = "";
       const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-      for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement("button");
-        btn.innerText = i;
-        if (i === currentPage) {
-          btn.style.fontWeight = "bold";
-        }
-        btn.addEventListener("click", function () {
-          currentPage = i;
-          displayCourses();
-        });
-        paginationDiv.appendChild(btn);
+      
+      // Only show pagination if we have multiple pages
+      if (totalPages <= 1) return;
+      
+      // Add previous page button
+      if (currentPage > 1) {
+        addPaginationButton('&laquo;', currentPage - 1);
+      }
+      
+      // Add page buttons
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, startPage + 4);
+      
+      // Adjust start if we're near the end
+      if (endPage - startPage < 4) {
+        startPage = Math.max(1, endPage - 4);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        addPaginationButton(i, i);
+      }
+      
+      // Add next page button
+      if (currentPage < totalPages) {
+        addPaginationButton('&raquo;', currentPage + 1);
       }
     }
-
-    searchInput.addEventListener("input", function () {
-      const searchValue = this.value.toLowerCase();
-      filteredCourses = courses.filter(course =>
-        course.title.toLowerCase().includes(searchValue)
-      );
-      currentPage = 1;
-      displayCourses();
-      setupPagination();
-    });
-
-    document.getElementById("addButton").addEventListener("click", () => {
-      const type = document.getElementById("itemType").value;
-      noteTypeInput.value = type;
-
-      if (type === "pdf") {
-        document.getElementById("pdf-upload").style.display = "block";
-        document.getElementById("link-input").style.display = "none";
-        document.querySelector('input[name="file_path_pdf"]').required = true;
-        document.querySelector('input[name="file_path_link"]').required = false;
-      } else if (type === "link") {
-        document.getElementById("pdf-upload").style.display = "none";
-        document.getElementById("link-input").style.display = "block";
-        document.querySelector('input[name="file_path_pdf"]').required = false;
-        document.querySelector('input[name="file_path_link"]').required = true;
-      } else {
-        document.getElementById("pdf-upload").style.display = "none";
-        document.getElementById("link-input").style.display = "none";
-        document.querySelector('input[name="file_path_pdf"]').required = false;
-        document.querySelector('input[name="file_path_link"]').required = false;
+    
+    // Add a pagination button
+    function addPaginationButton(text, pageNum) {
+      const btn = document.createElement("button");
+      btn.innerHTML = text;
+      if (pageNum === currentPage) {
+        btn.classList.add("active");
       }
-    });
-
-    fetchCourses();
+      btn.addEventListener("click", function() {
+        currentPage = pageNum;
+        displayCourses();
+        setupPagination();
+      });
+      paginationDiv.appendChild(btn);
+    }
+    
+    // Initialize the application when DOM is loaded
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
-</html>
+  </html>
