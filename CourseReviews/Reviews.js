@@ -8,8 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// API URL 
+const API_URL = 'https://57e5913b-91fd-4c06-a71d-4b40722c3810-00-21exoncn8cqce.pike.replit.dev/'; 
+
 let courseData = [];
 let currentUser = '';
+
+if (localStorage.getItem('currentUser')) {
+    currentUser = localStorage.getItem('currentUser');
+}
 
 function createCourseCard(course) {
     const article = document.createElement('article');
@@ -73,10 +80,22 @@ function handleReviewsPage() {
         loading.style.display = 'none';
     }
 
-    fetch('reviews.json')
-        .then(res => res.json())
+    // First try to load from API
+    fetch(`${API_URL}?action=courses`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return res.json();
+        })
         .then(data => {
-            courseData = data.courses;
+            if (Array.isArray(data)) {
+                courseData = data;
+            } else if (data.courses && Array.isArray(data.courses)) {
+                courseData = data.courses;
+            } else {
+                throw new Error('Invalid data format');
+            }
             
             if (!searchInput.value.trim()) {
                 displayCourses(courseData);
@@ -84,35 +103,37 @@ function handleReviewsPage() {
             loading.style.display = 'none';
         })
         .catch(err => {
-            console.error('Error loading local JSON:', err);
+            console.error('Error loading from API:', err);
             
-            if (htmlCourses.length > 0) {
-                courseData = htmlCourses;
-                
-                if (!searchInput.value.trim()) {
-                    displayCourses(courseData);
-                }
-                loading.style.display = 'none';
-            } else {
-                // Try API 
-                fetch('https://57e5913b-91fd-4c06-a71d-4b40722c3810-00-21exoncn8cqce.pike.replit.dev/')
-                    .then(res => res.json())
-                    .then(courses => {
-                        courseData = courses;
+            // Fallback to local JSON
+            fetch('reviews.json')
+                .then(res => res.json())
+                .then(data => {
+                    courseData = data.courses;
+                    
+                    if (!searchInput.value.trim()) {
+                        displayCourses(courseData);
+                    }
+                    loading.style.display = 'none';
+                })
+                .catch(err => {
+                    console.error('Error loading local JSON:', err);
+                    
+                    // If HTML courses exist, use those
+                    if (htmlCourses.length > 0) {
+                        courseData = htmlCourses;
                         
                         if (!searchInput.value.trim()) {
                             displayCourses(courseData);
                         }
-                        loading.style.display = 'none';
-                    })
-                    .catch(err => {
-                        console.error('Error loading courses from API:', err);
-                        loading.style.display = 'none';
-                        if (searchInput.value.trim()) {
-                            noData.style.display = 'block';
-                        }
-                    });
-            }
+                    }
+                    
+                    loading.style.display = 'none';
+                    
+                    if (courseData.length === 0 && searchInput.value.trim()) {
+                        noData.style.display = 'block';
+                    }
+                });
         });
 
     function displayCourses(courses) {
@@ -209,31 +230,36 @@ function handleDetailsPage() {
         return;
     }
 
-    // try to load from local JSON
-    fetch('reviews.json')
-        .then(res => res.json())
-        .then(data => {
-            const course = data.courses.find(c => c.id === parseInt(courseId));
-            if (course) {
-                displayCourseDetails(course);
-                // Load comments after displaying course details
-                loadComments(courseId);
-            } else {
-                throw new Error('Course not found in local data');
+    // First try the API
+    fetch(`${API_URL}?action=courses&id=${courseId}`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Network response was not ok');
             }
+            return res.json();
+        })
+        .then(course => {
+            displayCourseDetails(course);
+            loadComments(courseId);
         })
         .catch(err => {
-            console.error('Error loading from local JSON:', err);
-            // Fallback to PHP API 
-            fetch(`https://57e5913b-91fd-4c06-a71d-4b40722c3810-00-21exoncn8cqce.pike.replit.dev/${courseId}`)
+            console.error('Error loading from API:', err);
+            
+            // Fallback to local JSON
+            fetch('reviews.json')
                 .then(res => res.json())
-                .then(course => {
-                    displayCourseDetails(course);
-                    // Load comments after displaying course details
-                    loadComments(courseId);
+                .then(data => {
+                    const course = data.courses.find(c => c.id === parseInt(courseId));
+                    if (course) {
+                        displayCourseDetails(course);
+                        // Load comments after displaying course details
+                        loadComments(courseId);
+                    } else {
+                        throw new Error('Course not found in local data');
+                    }
                 })
                 .catch(err => {
-                    console.error('Error fetching course details:', err);
+                    console.error('Error:', err);
                     document.getElementById('course-title').textContent = "Failed to load course details.";
                 });
         });
@@ -248,7 +274,8 @@ function handleDetailsPage() {
             const text = document.getElementById('comment-text').value;
             
             if (name && text) {
-                // Store current user name
+                // Store current user name in localStorage
+                localStorage.setItem('currentUser', name);
                 currentUser = name;
                 
                 addComment(courseId, name, text);
@@ -268,36 +295,91 @@ function loadComments(courseId) {
     const commentsContainer = document.getElementById('comments-container');
     if (!commentsContainer) return;
     
-    const storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+    commentsContainer.innerHTML = '<p>Loading comments...</p>';
     
-    commentsContainer.innerHTML = '';
-    
-    if (storedComments.length === 0) {
-        commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
-        return;
-    }
-    
-    storedComments.forEach(comment => {
-        const commentElement = createCommentElement(comment, courseId);
-        commentsContainer.appendChild(commentElement);
-    });
+    // Try API first
+    fetch(`${API_URL}?action=comments&id=${courseId}`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Failed to load comments');
+            }
+            return res.json();
+        })
+        .then(comments => {
+            commentsContainer.innerHTML = '';
+            
+            if (comments.length === 0) {
+                commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+                return;
+            }
+            
+            comments.forEach(comment => {
+                const commentElement = createCommentElement(comment, courseId);
+                commentsContainer.appendChild(commentElement);
+            });
+        })
+        .catch(err => {
+            console.error('Error loading comments from API:', err);
+            
+            // Fallback to localStorage
+            const storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+            
+            commentsContainer.innerHTML = '';
+            
+            if (storedComments.length === 0) {
+                commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+                return;
+            }
+            
+            storedComments.forEach(comment => {
+                const commentElement = createCommentElement(comment, courseId);
+                commentsContainer.appendChild(commentElement);
+            });
+        });
 }
 
 function addComment(courseId, name, text) {
-    const comment = {
-        id: Date.now(), 
-        name: name,
-        text: text,
-        date: new Date().toLocaleDateString()
-    };
-    
-    let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
-    
-    storedComments.push(comment);
-    
-    localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
-    
-    loadComments(courseId);
+    // Try API first
+    fetch(`${API_URL}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            action: 'comments',
+            course_id: courseId,
+            name: name,
+            text: text
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Failed to add comment');
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log('Comment added successfully:', data);
+        loadComments(courseId); // Reload comments
+    })
+    .catch(err => {
+        console.error('Error adding comment to API:', err);
+        
+        // Fallback to localStorage
+        const comment = {
+            id: Date.now(),
+            course_id: parseInt(courseId),
+            name: name,
+            text: text,
+            date: new Date().toLocaleDateString()
+        };
+        
+        let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+        storedComments.push(comment);
+        localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
+        
+        loadComments(courseId); // Reload comments
+    });
 }
 
 function createCommentElement(comment, courseId) {
@@ -305,13 +387,18 @@ function createCommentElement(comment, courseId) {
     commentDiv.className = 'comment';
     commentDiv.id = `comment-${comment.id}`;
     
+    let displayDate = comment.date;
+    if (typeof displayDate === 'string' && displayDate.includes('T')) {
+        displayDate = new Date(displayDate).toLocaleDateString();
+    }
+    
     // Create comment content
     const contentDiv = document.createElement('div');
     contentDiv.className = 'comment-content';
     contentDiv.innerHTML = `
         <div class="comment-header">
             <span class="comment-author">${comment.name}</span>
-            <span class="comment-date">${comment.date}</span>
+            <span class="comment-date">${displayDate}</span>
         </div>
         <div class="comment-text">${comment.text}</div>
     `;
@@ -327,7 +414,6 @@ function createCommentElement(comment, courseId) {
         </div>
     `;
     
-    // Create action buttons 
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'comment-actions';
     
@@ -388,35 +474,93 @@ function createCommentElement(comment, courseId) {
 }
 
 function updateComment(courseId, commentId, newText) {
-    let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
-    
-    const commentIndex = storedComments.findIndex(comment => comment.id === commentId);
-    
-    if (commentIndex !== -1) {
-        storedComments[commentIndex].text = newText;
-        storedComments[commentIndex].date = `${new Date().toLocaleDateString()} (edited)`;
+    // Try API first
+    fetch(`${API_URL}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            action: 'comments',
+            comment_id: commentId,
+            text: newText
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Failed to update comment');
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log('Comment updated successfully:', data);
+        loadComments(courseId); // Reload comments
+    })
+    .catch(err => {
+        console.error('Error updating comment via API:', err);
+        
+        // Fallback to localStorage
+        let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+        
+        const commentIndex = storedComments.findIndex(comment => comment.id === commentId);
+        
+        if (commentIndex !== -1) {
+            storedComments[commentIndex].text = newText;
+            storedComments[commentIndex].date = `${new Date().toLocaleDateString()} (edited)`;
+            
+            localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
+            
+            loadComments(courseId);
+        }
+    });
+}
+
+function deleteComment(courseId, commentId) {
+    // Try API first
+    fetch(`${API_URL}?action=comments&comment_id=${commentId}`, {
+        method: 'DELETE'
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Failed to delete comment');
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log('Comment deleted successfully:', data);
+        loadComments(courseId); // Reload comments
+    })
+    .catch(err => {
+        console.error('Error deleting comment via API:', err);
+        
+        // Fallback to localStorage
+        let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+        
+        // Filter out the comment to be deleted
+        storedComments = storedComments.filter(comment => comment.id !== commentId);
         
         localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
         
         loadComments(courseId);
-    }
-}
-
-function deleteComment(courseId, commentId) {
-    let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
-    
-    // Filter out the comment to be deleted
-    storedComments = storedComments.filter(comment => comment.id !== commentId);
-    
-    localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
-    
-    loadComments(courseId);
+    });
 }
 
 function handleRatingSubmission() {
     const form = document.getElementById('rating-form');
     const successMessage = document.getElementById('success-message');
     
-    // This function is now handled in the RatingCourse.html file itself
-    // We're keeping the function here for compatibility
+    const nameInput = document.getElementById('name');
+    if (nameInput && currentUser) {
+        nameInput.value = currentUser;
+    }
+    
+    if (form) {
+        form.addEventListener('submit', function() {
+            const nameInput = document.getElementById('name');
+            if (nameInput && nameInput.value) {
+                localStorage.setItem('currentUser', nameInput.value);
+                currentUser = nameInput.value;
+            }
+        });
+    }
 }

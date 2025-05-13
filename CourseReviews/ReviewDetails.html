@@ -110,6 +110,29 @@
             font-style: italic;
             color: #666;
         }
+        
+        .user-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        .user-info p {
+            margin: 0;
+        }
+        
+        .user-info .username {
+            font-weight: bold;
+        }
+        
+        .clear-user {
+            color: #666;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 
@@ -118,6 +141,7 @@
         <h1>Review Details</h1>
         <nav>
             <a href="../index.html">Home</a>
+            <a href="Reviews.html">All Reviews</a>
         </nav>
     </header>
 
@@ -136,8 +160,12 @@
             
             <div class="comment-form">
                 <h4>Add a Comment</h4>
+                <div id="user-info" class="user-info hidden">
+                    <p>Posting as: <span class="username" id="username"></span> 
+                    <span class="clear-user" id="clear-user">(Not you? Click here)</span></p>
+                </div>
                 <form id="comment-form">
-                    <div>
+                    <div id="name-input-container">
                         <input type="text" id="comment-name" placeholder="Your Name" required>
                     </div>
                     <div>
@@ -158,6 +186,31 @@
     </footer>
 
     <script src="Reviews.js"></script>
-   
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const nameInput = document.getElementById('comment-name');
+                const nameContainer = document.getElementById('name-input-container');
+                const userInfo = document.getElementById('user-info');
+                const username = document.getElementById('username');
+                
+                nameInput.value = currentUser;
+                nameContainer.style.display = 'none';
+                userInfo.classList.remove('hidden');
+                username.textContent = currentUser;
+                
+                // Set up clear user functionality
+                document.getElementById('clear-user').addEventListener('click', function() {
+                    localStorage.removeItem('currentUser');
+                    nameInput.value = '';
+                    nameContainer.style.display = 'block';
+                    userInfo.classList.add('hidden');
+                    location.reload(); 
+                });
+            }
+        });
+    </script>
 </body>
 </html>
