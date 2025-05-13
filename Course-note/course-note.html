@@ -117,11 +117,7 @@
     console.error("Fetch error:", error);
     courseGrid.innerHTML = "<p class='error'>Connection error.</p>";
   });
-
-
-    
-
-      currentItems.forEach(course => {
+  currentItems.forEach(course => {
         const div = document.createElement("div");
         div.className = "course-card";
         div.innerHTML = `
@@ -169,29 +165,32 @@
     }
 
     document.getElementById("addButton").addEventListener("click", () => {
-      const type = document.getElementById("itemType").value;
-      if (type === "pdf" || type === "link") {
-        window.location.href = `upload.php?type=${type}`;
-      } else {
-        alert("Please choose a type (PDF or Link) before clicking Add.");
-      }
-    });
+  const type = document.getElementById("itemType").value;
+  if (type === "pdf" || type === "link") {
+    window.location.href = `upload.php?type=${type}`;
+  } else {
+    alert("Please choose a type (PDF or Link) before clicking Add.");
+  }
+});
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const type = urlParams.get('type');
-    document.getElementById('noteType').value = type;
+const urlParams = new URLSearchParams(window.location.search);
+const type = urlParams.get("type");
 
-    if (type === 'pdf') {
-      document.getElementById('form-title').innerText = "Add New PDF Note";
-      document.getElementById('pdf-upload').style.display = "block";
-      document.querySelector('input[name="file_path_pdf"]').required = true;
-    } else if (type === 'link') {
-      document.getElementById('form-title').innerText = "Add New Link Note";
-      document.getElementById('link-input').style.display = "block";
-      document.querySelector('input[name="file_path_link"]').required = true;
-    } else 
-  alert("Invalid...");
+if (type === "pdf" || type === "link") {
+  document.getElementById("noteType").value = type;
+
+  if (type === "pdf") {
+    document.getElementById("pdf-upload").style.display = "block";
+    document.querySelector('input[name="file_path_pdf"]').required = true;
+  } else {
+    document.getElementById("link-input").style.display = "block";
+    document.querySelector('input[name="file_path_link"]').required = true;
+  }
+} else {
+  alert("Invalid or missing type.");
   window.location.href = "index.php";
+}
+
 
 
     fetchCourses();
