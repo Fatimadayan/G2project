@@ -1,39 +1,56 @@
 <!DOCTYPE html>
-<html lang = "en">
+<html lang="en">
 
 <head>
-    <meta name = "viewport" content="width=device-width, initial-scale = 1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>More Course Reviews</title>
-    <link rel = "stylesheet" href = "Reviews.css">
+    <link rel="stylesheet" href="Reviews.css">
 </head>
 
 <body>
     <header>
         <h1>More Course Reviews</h1>
         <nav>
-            <a href = "../index.html">Home</a>
-            <a href = "RatingCourse.html">Rate a Course</a>
+            <a href="../index.html">Home</a>
+            <a href="RatingCourse.html">Rate a Course</a>
+            <a href="Reviews.html">All Reviews</a>
         </nav>
     </header>
 
-    <main id = "main list">
-         <div id = "loading" style = "display:none;">Loading...</div>
-            <section class = "reviews-list" id="reviews-list">
-                 <article class = "review-item" data-course="course5">
-                    <h2>ITCS342: Design of algorithms</h2>
-                    <a href = "ReviewDetails.html?course=5">View Details...</a>
-                 </article>
-            </section>
+    <main>
+        <div id="loading" style="display:none;">Loading...</div>
+        <section class="search-bar">
+            <select id="filter-mode" aria-label="Filter Mode">
+                <option value="code">Course Code</option>
+                <option value="title">Course Title</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search for reviews" aria-label="Search reviews">
+            <button id="sort-button">Sort A-Z</button>
+        </section>
+        
+        <section class="reviews-list" id="reviews-list">
+            <article class="review-item" data-course="course5">
+                <h2>ITCS342: Design of Algorithms</h2>
+                <a href="ReviewDetails.html?course=5" class="button">View Details...</a>
+            </article>
+        </section>
 
-        <div class = "pagination">
+        <div id="no-data" style="display:none;">No data found for your search query</div>
+
+        <div class="pagination">
             <button onclick="window.location.href='Reviews.html'">Back</button>
         </div>
 
-        <div style = "margin-top:20px;">
-            <div class = "action-buttons" style= "text-align:center;">
-                <a href = "RatingCourse.html"><button>Add new review</button></a>
-            </div>
+        <div class="action-buttons">
+            <a href="RatingCourse.html"><button>Add New Review</button></a>
         </div>
     </main>
+
+    <footer>
+        <p>&copy; 2025 Course Review</p>
+    </footer>
+    
+    <script src="Reviews.js"></script>
 </body>
+
 </html>
