@@ -1,4 +1,15 @@
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.body.contains(document.getElementById('reviews-list'))) {
+        handleReviewsPage();
+    } else if (document.body.contains(document.getElementById('course-title')) && window.location.href.includes("ReviewDetails.html")) {
+        handleDetailsPage();
+    } else if (document.body.contains(document.getElementById('rating-form'))) {
+        handleRatingSubmission();
+    }
+});
+
 let courseData = [];
+let currentUser = '';
 
 function createCourseCard(course) {
     const article = document.createElement('article');
@@ -124,64 +135,75 @@ function handleReviewsPage() {
     }
 
     // Search functionality
-    searchInput.addEventListener('input', () => {
-        const term = searchInput.value.toLowerCase().trim();
-        
-        if (!term) {
-            displayCourses(courseData);
-            return;
-        }
-        
-        const mode = filterMode.value; 
-        const filteredCourses = courseData.filter(course => {
-            const titleText = course.title.toLowerCase();
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const term = searchInput.value.toLowerCase().trim();
             
-            if (mode === 'code') {
-                // Extract course code from title 
-                const codeMatch = titleText.match(/([a-z]+\d+):/i);
-                if (codeMatch && codeMatch[1]) {
-                    return codeMatch[1].toLowerCase().includes(term);
-                }
-                return false;
-            } else {
-                // Search in full title
-                return titleText.includes(term);
+            if (!term) {
+                displayCourses(courseData);
+                return;
             }
+            
+            const mode = filterMode.value; 
+            const filteredCourses = courseData.filter(course => {
+                const titleText = course.title.toLowerCase();
+                
+                if (mode === 'code') {
+                    // Extract course code from title 
+                    const codeMatch = titleText.match(/([a-z]+\d+):/i);
+                    if (codeMatch && codeMatch[1]) {
+                        return codeMatch[1].toLowerCase().includes(term);
+                    }
+                    return false;
+                } else {
+                    // Search in full title
+                    return titleText.includes(term);
+                }
+            });
+            
+            displayCourses(filteredCourses);
         });
-        
-        displayCourses(filteredCourses);
-    });
+    }
 
     // Sort button functionality 
-    sortButton.addEventListener('click', () => {
-        // Show loading indicator
-        loading.style.display = 'block';
-        
-        //setTimeout to give UI time to update
-        setTimeout(() => {
-            try {
-                const sortedCourses = [...courseData];
-                
-                sortedCourses.sort((a, b) => {
-                    const aText = a.title.toLowerCase();
-                    const bText = b.title.toLowerCase();
-                    return aText.localeCompare(bText);
-                });
-                
-                // Display the sorted courses
-                displayCourses(sortedCourses);
-            } catch (error) {
-                console.error('Error during sort:', error);
-            } finally {
-                loading.style.display = 'none';
-            }
-        }, 300);
-    });
+    if (sortButton) {
+        sortButton.addEventListener('click', () => {
+            // Show loading indicator
+            loading.style.display = 'block';
+            
+            //setTimeout to give UI time to update
+            setTimeout(() => {
+                try {
+                    const sortedCourses = [...courseData];
+                    
+                    sortedCourses.sort((a, b) => {
+                        const aText = a.title.toLowerCase();
+                        const bText = b.title.toLowerCase();
+                        return aText.localeCompare(bText);
+                    });
+                    
+                    // Display the sorted courses
+                    displayCourses(sortedCourses);
+                } catch (error) {
+                    console.error('Error during sort:', error);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            }, 300);
+        });
+    }
+}
+
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    const results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
 function handleDetailsPage() {
-    const courseId = new URLSearchParams(window.location.search).get('course');
-
+    const courseId = getUrlParameter('course');
+    
     if (!courseId) {
         document.getElementById('course-title').textContent = "Invalid course ID.";
         return;
@@ -194,6 +216,8 @@ function handleDetailsPage() {
             const course = data.courses.find(c => c.id === parseInt(courseId));
             if (course) {
                 displayCourseDetails(course);
+                // Load comments after displaying course details
+                loadComments(courseId);
             } else {
                 throw new Error('Course not found in local data');
             }
@@ -205,12 +229,33 @@ function handleDetailsPage() {
                 .then(res => res.json())
                 .then(course => {
                     displayCourseDetails(course);
+                    // Load comments after displaying course details
+                    loadComments(courseId);
                 })
                 .catch(err => {
                     console.error('Error fetching course details:', err);
                     document.getElementById('course-title').textContent = "Failed to load course details.";
                 });
         });
+        
+    // Set up comment form handling
+    const commentForm = document.getElementById('comment-form');
+    if (commentForm) {
+        commentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('comment-name').value;
+            const text = document.getElementById('comment-text').value;
+            
+            if (name && text) {
+                // Store current user name
+                currentUser = name;
+                
+                addComment(courseId, name, text);
+                commentForm.reset();
+            }
+        });
+    }
 }
 
 function displayCourseDetails(course) {
@@ -219,226 +264,159 @@ function displayCourseDetails(course) {
     document.getElementById('course-rating').textContent = `Rating: ${course.rating} / 5`;
 }
 
-function handleRatingSubmission() {
-    const form = document.getElementById('rating-form');
-    const modal = document.getElementById('successModal');
-    const closeBtn = document.querySelector('.close');
+function loadComments(courseId) {
+    const commentsContainer = document.getElementById('comments-container');
+    if (!commentsContainer) return;
     
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const courseTitle = document.getElementById('course-title').value;
-            const rating = document.getElementById('rating').value;
-            const reviewData = document.getElementById('review-data').value;
-            
-            console.log('Submitted review:', { courseTitle, rating, reviewData });
-            
-            // Show success message
-            modal.style.display = 'block';
-            
-            // Clear form
-            form.reset();
-        });
+    const storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+    
+    commentsContainer.innerHTML = '';
+    
+    if (storedComments.length === 0) {
+        commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+        return;
     }
     
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
-    }
-    
-    // Close modal 
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
+    storedComments.forEach(comment => {
+        const commentElement = createCommentElement(comment, courseId);
+        commentsContainer.appendChild(commentElement);
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.body.contains(document.getElementById('reviews-list'))) {
-        handleReviewsPage();
-    } else if (document.body.contains(document.getElementById('course-title')) && window.location.href.includes("ReviewDetails.html")) {
-        handleDetailsPage();
-    } else if (document.body.contains(document.getElementById('rating-form'))) {
-        handleRatingSubmission();
+function addComment(courseId, name, text) {
+    const comment = {
+        id: Date.now(), 
+        name: name,
+        text: text,
+        date: new Date().toLocaleDateString()
+    };
+    
+    let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+    
+    storedComments.push(comment);
+    
+    localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
+    
+    loadComments(courseId);
+}
+
+function createCommentElement(comment, courseId) {
+    const commentDiv = document.createElement('div');
+    commentDiv.className = 'comment';
+    commentDiv.id = `comment-${comment.id}`;
+    
+    // Create comment content
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'comment-content';
+    contentDiv.innerHTML = `
+        <div class="comment-header">
+            <span class="comment-author">${comment.name}</span>
+            <span class="comment-date">${comment.date}</span>
+        </div>
+        <div class="comment-text">${comment.text}</div>
+    `;
+    
+    // Create edit form 
+    const editFormDiv = document.createElement('div');
+    editFormDiv.className = 'edit-form hidden';
+    editFormDiv.innerHTML = `
+        <textarea id="edit-text-${comment.id}">${comment.text}</textarea>
+        <div>
+            <button class="save-btn" data-id="${comment.id}">Save</button>
+            <button class="cancel-btn" data-id="${comment.id}">Cancel</button>
+        </div>
+    `;
+    
+    // Create action buttons 
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'comment-actions';
+    
+    // Check if this comment belongs to the current user
+    if (currentUser === comment.name) {
+        actionsDiv.innerHTML = `
+            <button class="edit-btn" data-id="${comment.id}">Edit</button>
+            <button class="delete-btn" data-id="${comment.id}">Delete</button>
+        `;
     }
-});
-let currentUser = '';
-        
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            const results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const courseId = getUrlParameter('course');
-            
-            loadComments(courseId);
-            
-            const commentForm = document.getElementById('comment-form');
-            commentForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('comment-name').value;
-                const text = document.getElementById('comment-text').value;
-                
-                if (name && text) {
-                    // Store current user name
-                    currentUser = name;
-                    
-                    addComment(courseId, name, text);
-                    commentForm.reset();
-                }
-            });
+    
+    commentDiv.appendChild(contentDiv);
+    commentDiv.appendChild(editFormDiv);
+    commentDiv.appendChild(actionsDiv);
+    
+    // Add event listeners
+    commentDiv.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-id');
+            const commentEl = document.getElementById(`comment-${commentId}`);
+            commentEl.querySelector('.comment-content').classList.add('hidden');
+            commentEl.querySelector('.edit-form').classList.remove('hidden');
+            commentEl.querySelector('.comment-actions').classList.add('hidden');
         });
-
-        function loadComments(courseId) {
-            const commentsContainer = document.getElementById('comments-container');
-            const storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+    });
+    
+    commentDiv.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-id');
+            const commentEl = document.getElementById(`comment-${commentId}`);
+            commentEl.querySelector('.comment-content').classList.remove('hidden');
+            commentEl.querySelector('.edit-form').classList.add('hidden');
+            commentEl.querySelector('.comment-actions').classList.remove('hidden');
+        });
+    });
+    
+    commentDiv.querySelectorAll('.save-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = parseInt(this.getAttribute('data-id'));
+            const newText = document.getElementById(`edit-text-${commentId}`).value;
             
-            commentsContainer.innerHTML = '';
-            
-            if (storedComments.length === 0) {
-                commentsContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
-                return;
+            if (newText.trim()) {
+                updateComment(courseId, commentId, newText);
             }
-            
-            storedComments.forEach(comment => {
-                const commentElement = createCommentElement(comment, courseId);
-                commentsContainer.appendChild(commentElement);
-            });
-        }
-
-        function addComment(courseId, name, text) {
-            const comment = {
-                id: Date.now(), 
-                name: name,
-                text: text,
-                date: new Date().toLocaleDateString()
-            };
-            
-            let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
-            
-            storedComments.push(comment);
-            
-            localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
-            
-            loadComments(courseId);
-        }
-
-        function createCommentElement(comment, courseId) {
-            const commentDiv = document.createElement('div');
-            commentDiv.className = 'comment';
-            commentDiv.id = `comment-${comment.id}`;
-            
-            // Create comment content
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'comment-content';
-            contentDiv.innerHTML = `
-                <div class="comment-header">
-                    <span class="comment-author">${comment.name}</span>
-                    <span class="comment-date">${comment.date}</span>
-                </div>
-                <div class="comment-text">${comment.text}</div>
-            `;
-            
-            // Create edit form 
-            const editFormDiv = document.createElement('div');
-            editFormDiv.className = 'edit-form hidden';
-            editFormDiv.innerHTML = `
-                <textarea id="edit-text-${comment.id}">${comment.text}</textarea>
-                <div>
-                    <button class="save-btn" data-id="${comment.id}">Save</button>
-                    <button class="cancel-btn" data-id="${comment.id}">Cancel</button>
-                </div>
-            `;
-            
-            // Create action buttons 
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'comment-actions';
-            
-            // Check if this comment belongs to the current user
-            if (currentUser === comment.name) {
-                actionsDiv.innerHTML = `
-                    <button class="edit-btn" data-id="${comment.id}">Edit</button>
-                    <button class="delete-btn" data-id="${comment.id}">Delete</button>
-                `;
+        });
+    });
+    
+    commentDiv.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this comment?')) {
+                const commentId = parseInt(this.getAttribute('data-id'));
+                deleteComment(courseId, commentId);
             }
-            
-            commentDiv.appendChild(contentDiv);
-            commentDiv.appendChild(editFormDiv);
-            commentDiv.appendChild(actionsDiv);
-            
-            // Add event listeners
-            commentDiv.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const commentId = this.getAttribute('data-id');
-                    const commentEl = document.getElementById(`comment-${commentId}`);
-                    commentEl.querySelector('.comment-content').classList.add('hidden');
-                    commentEl.querySelector('.edit-form').classList.remove('hidden');
-                    commentEl.querySelector('.comment-actions').classList.add('hidden');
-                });
-            });
-            
-            commentDiv.querySelectorAll('.cancel-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const commentId = this.getAttribute('data-id');
-                    const commentEl = document.getElementById(`comment-${commentId}`);
-                    commentEl.querySelector('.comment-content').classList.remove('hidden');
-                    commentEl.querySelector('.edit-form').classList.add('hidden');
-                    commentEl.querySelector('.comment-actions').classList.remove('hidden');
-                });
-            });
-            
-            commentDiv.querySelectorAll('.save-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const commentId = parseInt(this.getAttribute('data-id'));
-                    const newText = document.getElementById(`edit-text-${commentId}`).value;
-                    
-                    if (newText.trim()) {
-                        updateComment(courseId, commentId, newText);
-                    }
-                });
-            });
-            
-            commentDiv.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (confirm('Are you sure you want to delete this comment?')) {
-                        const commentId = parseInt(this.getAttribute('data-id'));
-                        deleteComment(courseId, commentId);
-                    }
-                });
-            });
-            
-            return commentDiv;
-        }
+        });
+    });
+    
+    return commentDiv;
+}
+
+function updateComment(courseId, commentId, newText) {
+    let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+    
+    const commentIndex = storedComments.findIndex(comment => comment.id === commentId);
+    
+    if (commentIndex !== -1) {
+        storedComments[commentIndex].text = newText;
+        storedComments[commentIndex].date = `${new Date().toLocaleDateString()} (edited)`;
         
-        function updateComment(courseId, commentId, newText) {
-            let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
-            
-            const commentIndex = storedComments.findIndex(comment => comment.id === commentId);
-            
-            if (commentIndex !== -1) {
-                storedComments[commentIndex].text = newText;
-                storedComments[commentIndex].date = `${new Date().toLocaleDateString()} (edited)`;
-                
-                localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
-                
-                loadComments(courseId);
-            }
-        }
+        localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
         
-        function deleteComment(courseId, commentId) {
-            let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
-            
-            // Filter out the comment to be deleted
-            storedComments = storedComments.filter(comment => comment.id !== commentId);
-            
-            localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
-            
-            loadComments(courseId);
-        }
+        loadComments(courseId);
+    }
+}
+
+function deleteComment(courseId, commentId) {
+    let storedComments = JSON.parse(localStorage.getItem(`comments_${courseId}`)) || [];
+    
+    // Filter out the comment to be deleted
+    storedComments = storedComments.filter(comment => comment.id !== commentId);
+    
+    localStorage.setItem(`comments_${courseId}`, JSON.stringify(storedComments));
+    
+    loadComments(courseId);
+}
+
+function handleRatingSubmission() {
+    const form = document.getElementById('rating-form');
+    const successMessage = document.getElementById('success-message');
+    
+    // This function is now handled in the RatingCourse.html file itself
+    // We're keeping the function here for compatibility
+}
