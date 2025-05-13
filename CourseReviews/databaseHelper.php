@@ -1,5 +1,5 @@
 <?php
-class DatabaseHelper {
+class databaseHelper {
     private $host;
     private $dbName;
     private $username;

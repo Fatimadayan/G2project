@@ -8,9 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// API URL - Update this with your server URL
-const API_URL = '/index.php'; // If on the same domain
-// const API_URL = 'https://your-domain.com/index.php'; // If using a separate domain
+// API URL 
+const API_URL = 'https://57e5913b-91fd-4c06-a71d-4b40722c3810-00-21exoncn8cqce.pike.replit.dev/index.php'; 
 
 let courseData = [];
 let currentUser = '';
