@@ -453,18 +453,22 @@ function renderClubCards() {
         const clubCard = document.createElement('div');
         clubCard.className = 'bg-cover bg-center shadow-md p-6 rounded-[2rem] text-center hover:shadow-lg';
         
-        // Use club logo if available, otherwise use default background
-        const bgImage = club.logo ? `url('${club.logo}')` : `url('./images/default-club-bg.jpg')`;
-        clubCard.style.backgroundImage = bgImage;
+       const bgImage = club.logo
+       ? `url('https://f023b77e-ddd3-4b2a-83b2-04e0be6c5df2-00-3sfdt77xdn4hi.sisko.replit.dev/${club.logo}')` : `url('./images/default-club-bg.jpg')`;
+
+clubCard.style.backgroundImage = bgImage;
+;
+;
+
+        
 
         clubCard.innerHTML = `
             <h3 class="text-xl font-bold bg-lightBg bg-opacity-70 inline-block px-2 py-1 rounded text-black">${club.name}</h3>
-            <p class="mt-4 bg-lightBg bg-opacity-80 p-2 rounded">${club.description}</p>
-            <div class="mt-2 bg-lightBg bg-opacity-80 p-2 rounded">
+            <p class="mt-4 bg-lightBg bg-opacity-80 p-2 rounded">${club.description}</p>            <div class="mt-2 bg-lightBg bg-opacity-80 p-2 rounded">
                 <span class="font-semibold">Category:</span> ${club.category} | 
                 <span class="font-semibold">Members:</span> ${club.members}
             </div>
-            <a href="clubs-info.html?id=${club.id}" class="mt-6 inline-block px-6 py-3 bg-primaryBg text-primaryText rounded-lg hover:bg-gray-100">
+            <a href="clubs-info.html?id=${club.id}" class="mt-6 inline-block px-6 py-3 bg-[rgb(202,164,114)] text-secondaryText rounded-lg hover:bg-gray-100">
                 Learn More
             </a>
         `;
