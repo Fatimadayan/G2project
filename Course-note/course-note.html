@@ -5,17 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Course Notes</title>
   <link rel="stylesheet" href="course-note.css" />
-  <style>
-    .loading { text-align: center; font-size: 18px; }
-    .error { color: red; text-align: center; }
-    .pagination button { margin: 3px; }
-  </style>
-</head>
+  </head>
 <body>
   <header>
     <div class="container">
       <h1>Course Notes</h1>
-      <p class="subheading">I hope that will help you</p>
+      <p class="subheading">I hope this helps you in your journey 🌱</p>
     </div>
   </header>
 
@@ -24,20 +19,24 @@
       <h2>Available Courses</h2>
 
       <div class="search-container">
-        <input type="text" id="search" placeholder="Search Courses.." />
+        <label for="search" class="visually-hidden">Search Courses</label>
+        <input type="text" id="search" placeholder="Search Courses..." />
+
+        <div class="category-filter">
+          <label for="filterCategory">Filter by Category:</label>
+          <select id="filterCategory">
+            <option value="">All</option>
+            <option value="CS">CS</option>
+            <option value="NE">NE</option>
+            <option value="IS">IS</option>
+            <option value="CY">CY</option>
+            <option value="CE">CE</option>
+            <option value="ANOTHER">Another</option>
+          </select>
+        </div>
       </div>
 
-      <div class="sort-container">
-        <select id="course-sort">
-          <option value="" selected disabled>Choose a category</option> 
-          <option value="CS">CS</option>
-          <option value="NE">NE</option>
-          <option value="IS">IS</option>
-          <option value="CY">CY</option>
-          <option value="CE">CE</option>
-          <option value="ANOTHER">Another</option>
-        </select>
-
+      <div class="controls">
         <label for="itemType">Add new item:</label>
         <select id="itemType">
           <option value="">-- Choose type --</option>
@@ -45,103 +44,325 @@
           <option value="link">Link</option>
         </select>
 
-        <button id="addButton">Add</button>
+        <button id="addButton" class="btn">Add</button>
       </div>
 
+      <div id="formWrapper" class="form-wrapper">
+        <h3>Add New Course Note</h3>
+        <form id="noteForm" enctype="multipart/form-data">
+          <input type="text" name="title" placeholder="Title" required>
+          <textarea name="description" placeholder="Description" required></textarea>
+          <input type="hidden" name="type" id="noteType" />
+
+          <select name="category" required>
+            <option value="" selected disabled>Choose a category</option>
+            <option value="CS">CS</option>
+            <option value="NE">NE</option>
+            <option value="IS">IS</option>
+            <option value="CY">CY</option>
+            <option value="CE">CE</option>
+            <option value="ANOTHER">Another</option>
+          </select>
+
+          <div id="pdf-upload" style="display: none;">
+            <label>Upload PDF:</label>
+            <input type="file" name="file_path_pdf" accept="application/pdf" />
+          </div>
+
+          <div id="link-input" style="display: none;">
+            <label>Link URL:</label>
+            <input type="url" name="file_path_link" placeholder="https://example.com" />
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn">Submit</button>
+            <button type="button" id="cancelButton" class="btn" style="background-color: #6c757d;">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="loading" style="text-align: center; display: none;">
+        <p>Loading courses...</p>
+      </div>
+      
       <div id="course-grid" class="course-grid"></div>
       <div id="pagination" class="pagination"></div>
-
-    </section>
+      </section>
   </main>
 
   <footer>
     <div class="container">
-      <p>Made by Noora Sami</p>
+      <p>Made by Noora Sami &copy; 2025</p>
     </div>
   </footer>
 
-<script>
-  const API_URL = "";
+  <script>
+  const API_BASE = "https://5d6a8d96-bb85-474d-8d42-7dc61b926a7f-00-ru1at66zkfc8.pike.replit.dev/course-notes-api.php";
+  const API_ENDPOINTS = {
+    PING: `${API_BASE}?action=ping`,
+    GET_COURSES: `${API_BASE}?action=get-courses`,
+    ADD_COURSE: `${API_BASE}?action=add-course`,
+    VIEW_NOTE: (id) => `${API_BASE}?action=view-note&id=${id}`,
+  };
+
   const courseGrid = document.getElementById("course-grid");
   const searchInput = document.getElementById("search");
-  const sortSelect = document.getElementById("course-sort");
+  const categoryFilter = document.getElementById("filterCategory");
   const paginationDiv = document.getElementById("pagination");
+  const noteTypeInput = document.getElementById("noteType");
+  const noteForm = document.getElementById("noteForm");
+  const formWrapper = document.getElementById("formWrapper");
+  const addButton = document.getElementById("addButton");
+  const cancelButton = document.getElementById("cancelButton");
+  const loadingElement = document.getElementById("loading");
 
   let courses = [];
   let filteredCourses = [];
   let currentPage = 1;
-  const itemsPerPage = 5;
+  let itemsPerPage = 10;
+  let totalPages = 1;
 
-  async function fetchCourses() {
-    courseGrid.innerHTML = "<p class='loading'>Loading...</p>";
-    try {
-      const res = await fetch(API_URL);
-      if (!res.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const data = await res.json();
-      courses = data.slice(0, 20);
-      filteredCourses = [...courses];
-      displayCourses();
-      setupPagination();
-    } catch (err) {
-      courseGrid.innerHTML = "<p class='error'>" + err.message + "</p>";
-    }
+  // Initialize the application when DOM is loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    setupEventListeners();
+    checkServerConnection();
+  });
+
+  function setupEventListeners() {
+    searchInput.addEventListener("input", () => {
+      currentPage = 1;
+      fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+    });
+
+    categoryFilter.addEventListener("change", () => {
+      currentPage = 1;
+      fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+    });
+
+    addButton.addEventListener("click", () => {
+      const type = document.getElementById("itemType").value;
+      if (!type) return alert("Please select a type first.");
+      noteTypeInput.value = type;
+      updateFormFields();
+      formWrapper.style.display = "block";
+    });
+
+    cancelButton.addEventListener("click", () => {
+      formWrapper.style.display = "none";
+      noteForm.reset();
+    });
+
+    document.getElementById("itemType").addEventListener("change", updateFormFields);
+
+    noteForm.addEventListener("submit", submitForm);
   }
 
-  function displayCourses() {
-    courseGrid.innerHTML = "";
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const currentItems = filteredCourses.slice(start, end);
+  function updateFormFields() {
+    const type = noteTypeInput.value || document.getElementById("itemType").value;
+    const pdfField = document.getElementById("pdf-upload");
+    const linkField = document.getElementById("link-input");
 
-    currentItems.forEach(course => {
+    pdfField.style.display = type === "pdf" ? "block" : "none";
+    linkField.style.display = type === "link" ? "block" : "none";
+
+    // Update required status based on type
+    const pdfInput = document.querySelector('input[name="file_path_pdf"]');
+    const linkInput = document.querySelector('input[name="file_path_link"]');
+    
+    if (pdfInput) pdfInput.required = type === "pdf";
+    if (linkInput) linkInput.required = type === "link";
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    const formData = new FormData(noteForm);
+    const submitButton = noteForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    fetch(API_ENDPOINTS.ADD_COURSE, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Note added successfully!");
+          noteForm.reset();
+          formWrapper.style.display = "none";
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        } else {
+          throw new Error(data.message || "Failed to add note");
+        }
+      })
+      .catch((err) => alert("Error: " + err.message))
+      .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit";
+      });
+  }
+
+  function checkServerConnection() {
+    showLoading(true);
+    fetch(API_ENDPOINTS.PING)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          fetchCourses('', '');
+        } else {
+          throw new Error("Server responded but failed to validate.");
+        }
+      })
+      .catch((err) => {
+        console.error("Server connection failed:", err.message);
+        showLoading(false);
+        useLocalData();
+      });
+  }
+
+  function fetchCourses(search = '', category = '') {
+    showLoading(true);
+    
+    // Construct the API URL with proper query parameters
+    let url = API_ENDPOINTS.GET_COURSES;
+    const params = new URLSearchParams();
+    
+    if (search) params.append('search', search);
+    if (category) params.append('category', category);
+    params.append('page', currentPage);
+    params.append('per_page', itemsPerPage);
+    
+    if (params.toString()) {
+      url += '&' + params.toString();
+    }
+    
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        showLoading(false);
+        if (data.status !== "success") throw new Error(data.message || "Failed to fetch courses");
+        
+        courses = data.data;
+        
+        // Update pagination info from API response
+        if (data.pagination) {
+          totalPages = data.pagination.total_pages;
+          currentPage = data.pagination.current_page;
+          itemsPerPage = data.pagination.per_page;
+        }
+        
+        displayCourses();
+        setupPagination();
+      })
+      .catch((err) => {
+        console.error("Fetch failed:", err.message);
+        showLoading(false);
+        courseGrid.innerHTML = `<p class='error'>Connection failed: ${err.message}</p>`;
+        useLocalData();
+      });
+  }
+
+    function displayCourses() {
+    courseGrid.innerHTML = "";
+    
+    if (!courses || !courses.length) {
+      courseGrid.innerHTML = "<p class='error'>No courses found.</p>";
+      return;
+    }
+
+    for (const course of courses) {
       const div = document.createElement("div");
       div.className = "course-card";
       div.innerHTML = `
         <h3>${course.title}</h3>
-        <p>${course.body.slice(0, 50)}...</p>
-        <a href="#" class="btn">View Notes</a>
+        <p>${course.description.slice(0, 80)}${course.description.length > 80 ? "..." : ""}</p>
+        <div class="course-meta">
+          <span class="category-badge">${course.category}</span>
+          <span class="type-badge">${course.file_type}</span>
+        </div>
+        <a href="#" class="btn view-note" data-id="${course.id}">View Notes</a>
       `;
+      div.querySelector(".view-note").addEventListener("click", (e) => {
+        e.preventDefault();
+        viewCourseNote(course.id);
+      });
       courseGrid.appendChild(div);
-    });
+    }
   }
 
-  searchInput.addEventListener("input", function() {
-    const searchValue = this.value.toLowerCase();
-    filteredCourses = courses.filter(course => course.title.toLowerCase().includes(searchValue));
-    currentPage = 1;
-    displayCourses();
-    setupPagination();
-  });
-
-  sortSelect.addEventListener("change", function() {
-    const value = this.value;
-    if (value) {
-      filteredCourses.sort((a, b) => a.title.localeCompare(b.title));
-      currentPage = 1;
-      displayCourses();
-    }
-  });
+  function viewCourseNote(id) {
+    fetch(API_ENDPOINTS.VIEW_NOTE(id))
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status !== "success") throw new Error(data.message || "Failed to view note");
+        const note = data.data;
+        if (note.file_path) window.open(note.file_path, "_blank");
+      })
+      .catch((err) => alert("View error: " + err.message));
+  }
 
   function setupPagination() {
-    paginationDiv.innerHTML = "";
-    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-    for (let i = 1; i <= totalPages; i++) {
+      paginationDiv.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const addButton = (label, page, isActive = false) => {
       const btn = document.createElement("button");
-      btn.innerText = i;
-      if (i === currentPage) {
-        btn.style.fontWeight = "bold";
-      }
-      btn.addEventListener("click", function() {
-        currentPage = i;
-        displayCourses();
+      btn.innerHTML = label;
+      if (isActive) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        if (page !== currentPage) {
+          currentPage = page;
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        }
       });
       paginationDiv.appendChild(btn);
+    };
+
+    // First page
+    if (currentPage > 1) {
+      addButton("&laquo;", 1);
+    }
+    
+    // Previous page
+    if (currentPage > 1) {
+      addButton("Prev", currentPage - 1);
+    }
+    
+    // Current page and neighbors
+    const startPage = Math.max(1, currentPage - 1);
+    const endPage = Math.min(totalPages, currentPage + 1);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      addButton(i, i, i === currentPage);
+    }
+    
+    // Next page
+    if (currentPage < totalPages) {
+      addButton("Next", currentPage + 1);
+    }
+    
+    // Last page
+    if (currentPage < totalPages) {
+      addButton("&raquo;", totalPages);
     }
   }
 
-  fetchCourses();
+  function showLoading(show) {
+    loadingElement.style.display = show ? "block" : "none";
+    if (show) {
+      courseGrid.innerHTML = "";
+      paginationDiv.innerHTML = "";
+    }
+  }
+
+  function useLocalData() {
+    const sample = [
+      { id: 1, title: "Offline - Intro to HTML", description: "Learn the basics of HTML.", category: "CS", file_type: "link" },
+      { id: 2, title: "Offline - Network Intro", description: "Understand basics of networks.", category: "NE", file_type: "link" },
+    ];
+    courses = sample;
+    displayCourses();
+  }
 </script>
 </body>
 </html>
