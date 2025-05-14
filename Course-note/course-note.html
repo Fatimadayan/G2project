@@ -116,13 +116,14 @@
     const itemsPerPage = 5;
     
     // API paths
-    const API_BASE = "https://3f4a06db-f0b9-4d21-84e9-7b88bbacae3a-00-2kmk8spylbzqr.pike.replit.dev/course-notes-api.php?action=ping";
-    const API_ENDPOINTS = {
-      PING: `${API_BASE}?action=ping`,
-      GET_COURSES: `${API_BASE}?action=get-courses`,
-      ADD_COURSE: `${API_BASE}?action=add-course`,
-      VIEW_NOTE: (id) => `${API_BASE}?action=view-note&id=${id}`
-    };
+    const API_BASE = "https://3f4a06db-f0b9-4d21-84e9-7b88bbacae3a-00-2kmk8spylbzqr.pike.replit.dev/";
+  const API_ENDPOINTS = {
+  PING: `${API_BASE}?action=ping`,
+  GET_COURSES: `${API_BASE}?action=get-courses`,
+  ADD_COURSE: `${API_BASE}?action=add-course`,
+  VIEW_NOTE: (id) => `${API_BASE}?action=view-note&id=${id}`
+};
+
     
     // Initialize application
     function initApp() {

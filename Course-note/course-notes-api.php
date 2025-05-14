@@ -1,12 +1,12 @@
 <?php
-//  CORS Headers
+
+
+// CORS Headers
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-//  Handle preflight
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
@@ -18,8 +18,7 @@ require_once 'CourseNotesDatabaseHelper.php';
 $db_host = 'localhost';
 $db_name = getenv('db_name') ?: 'noora';
 $db_user = getenv('db_user') ?: 'user1';
-$db_pass = getenv('db_pass') ?: 'shahad123';
-$dbHelper = new CourseNotesDatabaseHelper($db_host, $db_name, $db_user, $db_pass);
+    $db_pass = getenv('db_pass') ?: 'shahad123';
 
 //  Router
 $action = $_GET['action'] ?? '';
