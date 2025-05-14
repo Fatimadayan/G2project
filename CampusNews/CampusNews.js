@@ -52,7 +52,7 @@ fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit
         <p>${item.body}</p>
         <a href="${item.url}" target="_blank">Read More →</a>
       `;
-      featuresSection.appendChild(card);
+      document.querySelector('.features-container').appendChild(card);
     });
   })
   .catch((error) => {
@@ -61,3 +61,19 @@ fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit
       loadingMessage.style.color = "red";
     }
   });
+
+// Navigation scroll effect
+const header = document.querySelector('.header');
+let lastScroll = 0;
+
+window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    
+    if (currentScroll > 100) {
+        header.classList.add('active');
+    } else {
+        header.classList.remove('active');
+    }
+    
+    lastScroll = currentScroll;
+});
