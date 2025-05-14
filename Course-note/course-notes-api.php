@@ -1,26 +1,22 @@
 <?php
-
-
-// CORS Headers
+//  CORS HEADERS - must be first!
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-    
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+header("Content-Type: application/json");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-//  Include DB helper
+//  Include the DB helper (SQLite version)
 require_once 'CourseNotesDatabaseHelper.php';
 
-//  DB config
-$db_host = 'localhost';
-$db_name = getenv('db_name') ?: 'noora';
-$db_user = getenv('db_user') ?: 'user1';
-    $db_pass = getenv('db_pass') ?: 'shahad123';
+//  Initialize DB helper using SQLite
+$dbHelper = new CourseNotesDatabaseHelper();
 
-//  Router
+//  Routing by action
 $action = $_GET['action'] ?? '';
 
 try {
@@ -55,12 +51,15 @@ try {
             $filePath = '';
 
             if ($type === 'pdf') {
-                if (!isset($_FILES['file_path_pdf'])) throw new Exception('No PDF uploaded');
-                $uploadDir = 'uploads/';
+                if (!isset($_FILES['file_path_pdf'])) {
+                    throw new Exception('No PDF uploaded');
+                }
+
+                $uploadDir = __DIR__ . '/uploads/';
                 if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                 $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_.-]/', '_', basename($_FILES['file_path_pdf']['name']));
-                $filePath = $uploadDir . $fileName;
-                if (!move_uploaded_file($_FILES['file_path_pdf']['tmp_name'], $filePath)) {
+                $filePath = 'uploads/' . $fileName;
+                if (!move_uploaded_file($_FILES['file_path_pdf']['tmp_name'], $uploadDir . $fileName)) {
                     throw new Exception('Failed to upload PDF');
                 }
             } elseif ($type === 'link') {
@@ -91,3 +90,4 @@ try {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
+?>

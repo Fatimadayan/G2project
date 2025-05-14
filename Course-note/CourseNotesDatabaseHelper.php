@@ -12,7 +12,7 @@
 
         // Create table and insert sample data if needed
         $this->createCourseNotesTable();
-        $this->populateSampleCourseNotes(); // Optional: comment this after first run
+        //$this->populateSampleCourseNotes();//
     }
 
         public function getPDO() {
@@ -112,62 +112,7 @@
             if ($count == 0) {
            // Sample course notes data
             $sampleNotes = [
-                [
-                    'title' => 'Introduction to Computer Science',
-                    'description' => 'Basic concepts of computer science including algorithms, data structures, and computational thinking.',
-                    'category' => 'CS',
-                    'file_path' => 'https://example.com/intro-cs',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'Network Fundamentals',
-                    'description' => 'Overview of computer networking concepts including OSI model, TCP/IP, and routing principles.',
-                    'category' => 'NE',
-                    'file_path' => 'sample_files/network_basics.pdf',
-                    'file_type' => 'pdf'
-                ],
-                [
-                    'title' => 'Information Security Basics',
-                    'description' => 'Introduction to information security principles, threat modeling, and basic security controls.',
-                    'category' => 'IS',
-                    'file_path' => 'https://example.com/security-basics',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'Cybersecurity Essentials',
-                    'description' => 'Overview of cybersecurity concepts, attack vectors, defense strategies, and common vulnerabilities.',
-                    'category' => 'CY',
-                    'file_path' => 'sample_files/cybersecurity.pdf',
-                    'file_type' => 'pdf'
-                ],
-                [
-                    'title' => 'Computer Engineering Principles',
-                    'description' => 'Study of digital logic, computer architecture, and hardware/software integration.',
-                    'category' => 'CE',
-                    'file_path' => 'https://example.com/computer-engineering',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'Advanced Data Structures',
-                    'description' => 'Implementation and analysis of complex data structures including trees, graphs, and advanced algorithms.',
-                    'category' => 'CS',
-                    'file_path' => 'sample_files/advanced_ds.pdf',
-                    'file_type' => 'pdf'
-                ],
-                [
-                    'title' => 'Cloud Computing',
-                    'description' => 'Introduction to cloud architectures, services, deployment models, and security considerations.',
-                    'category' => 'NE',
-                    'file_path' => 'https://example.com/cloud-computing',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'Database Management Systems',
-                    'description' => 'Database design, normalization, SQL, transaction processing, and modern database technologies.',
-                    'category' => 'IS',
-                    'file_path' => 'sample_files/dbms.pdf',
-                    'file_type' => 'pdf'
-                ],
+                
                     [
                     'title' => 'IS103 - Intro to Programming',
                     'description' => 'Learn the basics of Python and how to write simple programs.',
