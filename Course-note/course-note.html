@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Course Notes</title>
   <link rel="stylesheet" href="course-note.css" />
-  
-    
 </head>
 <body>
   <header>
@@ -25,18 +23,17 @@
         <input type="text" id="search" placeholder="Search Courses..." />
 
         <div class="category-filter">
-  <label for="filterCategory">Filter by Category:</label>
-  <select id="filterCategory">
-    <option value="">All</option>
-    <option value="CS">CS</option>
-    <option value="NE">NE</option>
-    <option value="IS">IS</option>
-    <option value="CY">CY</option>
-    <option value="CE">CE</option>
-    <option value="ANOTHER">Another</option>
-  </select>
-</div>
-
+          <label for="filterCategory">Filter by Category:</label>
+          <select id="filterCategory">
+            <option value="">All</option>
+            <option value="CS">CS</option>
+            <option value="NE">NE</option>
+            <option value="IS">IS</option>
+            <option value="CY">CY</option>
+            <option value="CE">CE</option>
+            <option value="ANOTHER">Another</option>
+          </select>
+        </div>
       </div>
 
       <div class="controls">
@@ -103,6 +100,7 @@
     // DOM Elements
     const courseGrid = document.getElementById("course-grid");
     const searchInput = document.getElementById("search");
+    const categoryFilter = document.getElementById("filterCategory");
     const paginationDiv = document.getElementById("pagination");
     const noteTypeInput = document.getElementById("noteType");
     const noteForm = document.getElementById("noteForm");
@@ -119,13 +117,12 @@
     
     // API paths
     const API_BASE = "https://3f4a06db-f0b9-4d21-84e9-7b88bbacae3a-00-2kmk8spylbzqr.pike.replit.dev/course-notes-api.php";
-const API_ENDPOINTS = {
-  PING: `${API_BASE}?action=ping`,
-  GET_COURSES: `${API_BASE}?action=get-courses`,
-  ADD_COURSE: `${API_BASE}?action=add-course`,
-  VIEW_NOTE: (id) => `${API_BASE}?action=view-note&id=${id}`
-};
-
+    const API_ENDPOINTS = {
+      PING: `${API_BASE}?action=ping`,
+      GET_COURSES: `${API_BASE}?action=get-courses`,
+      ADD_COURSE: `${API_BASE}?action=add-course`,
+      VIEW_NOTE: (id) => `${API_BASE}?action=view-note&id=${id}`
+    };
     
     // Initialize application
     function initApp() {
@@ -141,7 +138,13 @@ const API_ENDPOINTS = {
       // Search input listener
       searchInput.addEventListener("input", function() {
         const searchValue = this.value.toLowerCase();
-        filterCourses(searchValue);
+        filterCourses(searchValue, categoryFilter.value);
+      });
+      
+      // Category filter listener
+      categoryFilter.addEventListener("change", function() {
+        const searchValue = searchInput.value.toLowerCase();
+        filterCourses(searchValue, this.value);
       });
       
       // Add button listener
@@ -157,12 +160,18 @@ const API_ENDPOINTS = {
       noteForm.addEventListener("submit", submitForm);
     }
     
-    // Filter courses based on search term
-    function filterCourses(searchValue) {
-      filteredCourses = courses.filter(course =>
-        course.title.toLowerCase().includes(searchValue) || 
-        course.description.toLowerCase().includes(searchValue)
-      );
+    // Filter courses based on search term and category
+    function filterCourses(searchValue, categoryValue) {
+      filteredCourses = courses.filter(course => {
+        const matchesSearch = !searchValue || 
+          course.title.toLowerCase().includes(searchValue) || 
+          course.description.toLowerCase().includes(searchValue);
+        
+        const matchesCategory = !categoryValue || course.category === categoryValue;
+        
+        return matchesSearch && matchesCategory;
+      });
+      
       currentPage = 1;
       displayCourses();
       setupPagination();
@@ -187,13 +196,6 @@ const API_ENDPOINTS = {
       formWrapper.style.display = "none";
       noteForm.reset();
     }
-
-    const categoryFilter = document.getElementById("filterCategory");
-
-categoryFilter.addEventListener("change", () => {
-  fetchCourses(categoryFilter.value);
-});
-
     
     // Update form fields based on selected item type
     function updateFormFields() {
@@ -284,10 +286,15 @@ categoryFilter.addEventListener("change", () => {
     }
     
     // Fetch courses from the API
-    function fetchCourses() {
+    function fetchCourses(category = '') {
       showLoading(true);
       
-      fetch(API_ENDPOINTS.GET_COURSES)
+      let url = API_ENDPOINTS.GET_COURSES;
+      if (category) {
+        url += `&category=${encodeURIComponent(category)}`;
+      }
+      
+      fetch(url)
         .then(response => {
           if (!response.ok) {
             throw new Error(`Failed to fetch course notes: ${response.status} ${response.statusText}`);
@@ -303,21 +310,21 @@ categoryFilter.addEventListener("change", () => {
           }
 
           courses = data.data;
-          filteredCourses = [...courses];
-          displayCourses();
-          setupPagination();
+          const searchValue = searchInput.value.toLowerCase();
+          const categoryValue = categoryFilter.value;
+          filterCourses(searchValue, categoryValue);
         })
         .catch(error => {
           showLoading(false);
           console.error("Fetch error:", error);
           courseGrid.innerHTML = `<p class='error'>Connection error: ${error.message}. Please check your internet connection or try again later.</p>`;
           
-          //  local data if API fails
+          // Use local data if API fails
           useLocalData();
         });
     }
     
-    // Display loading
+    // Display loading indicator
     function showLoading(isLoading) {
       loadingElement.style.display = isLoading ? "block" : "none";
       if (isLoading) {
@@ -335,42 +342,42 @@ categoryFilter.addEventListener("change", () => {
           title: "IS103 - Intro to Programming", 
           description: "Learn the basics of Python and how to write simple programs.",
           category: "IS",
-          file_type: "link&PDF"
+          file_type: "link"
         },
         { 
           id: 2, 
           title: "NE101 - Networking Basics", 
           description: "Introduction to networks, IP addressing, and data flow.",
           category: "NE",
-          file_type: "link&PDF"
+          file_type: "link"
         },
         { 
           id: 3, 
           title: "IS213 - Database Systems", 
           description: "Understanding relational databases and SQL queries.",
           category: "IS",
-          file_type: "link&PDF"
+          file_type: "link"
         },
         { 
           id: 4, 
           title: "CY110 - Cybersecurity Fundamentals", 
           description: "Explore key principles in protecting digital systems.",
           category: "CY",
-          file_type: "link&PDF"
+          file_type: "link"
         },
         { 
           id: 5, 
           title: "CS342 - Digital Logic Design", 
           description: "Basics of digital circuits and binary systems.",
           category: "CS",
-          file_type: "link&PDF"
+          file_type: "link"
         }
       ];
       
       courses = sampleData;
-      filteredCourses = [...courses];
-      displayCourses();
-      setupPagination();
+      const searchValue = searchInput.value.toLowerCase();
+      const categoryValue = categoryFilter.value;
+      filterCourses(searchValue, categoryValue);
     }
 
     // Display courses in the grid
@@ -393,12 +400,51 @@ categoryFilter.addEventListener("change", () => {
           <p>${course.description.slice(0, 80)}${course.description.length > 80 ? '...' : ''}</p>
           <div class="course-meta">
             <span class="category-badge">${course.category}</span>
-            <span class="type-badge">${course.file_type === 'pdf' ? 'PDF' : 'Link'}</span>
+            <span class="type-badge">${course.file_type}</span>
           </div>
-          <a href="view-note.html?id=${course.id}" class="btn">View Notes</a>
+          <a href="#" class="btn view-note" data-id="${course.id}">View Notes</a>
         `;
+        
+        // Add event listener for view button
+        const viewButton = div.querySelector('.view-note');
+        viewButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          const noteId = this.getAttribute('data-id');
+          viewCourseNote(noteId);
+        });
+        
         courseGrid.appendChild(div);
       });
+    }
+    
+    // View course note details
+    function viewCourseNote(id) {
+      fetch(API_ENDPOINTS.VIEW_NOTE(id))
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch note details: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.status !== "success") {
+            alert(`Failed to load note details: ${data.message || 'Unknown error'}`);
+            return;
+          }
+          
+          const note = data.data;
+          
+          // Handle note viewing based on type
+          if (note.file_type === 'pdf') {
+            window.open(note.file_path, '_blank');
+          } else if (note.file_type === 'link') {
+            window.open(note.file_path, '_blank');
+          }
+        })
+        .catch(error => {
+          console.error("Error viewing note:", error);
+          alert(`Error viewing note: ${error.message}`);
+        });
     }
 
     // Set up pagination controls
@@ -452,4 +498,4 @@ categoryFilter.addEventListener("change", () => {
     document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
-  </html>
+</html>

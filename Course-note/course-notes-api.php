@@ -16,9 +16,9 @@ require_once 'CourseNotesDatabaseHelper.php';
 
 //  DB config
 $db_host = 'localhost';
-$db_name = getenv('db_name') ?: 'course_notes_db';
-$db_user = getenv('db_user') ?: 'root';
-$db_pass = getenv('db_pass') ?: '';
+$db_name = getenv('db_name') ?: 'noora';
+$db_user = getenv('db_user') ?: 'user1';
+$db_pass = getenv('db_pass') ?: 'shahad123';
 $dbHelper = new CourseNotesDatabaseHelper($db_host, $db_name, $db_user, $db_pass);
 
 //  Router
