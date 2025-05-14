@@ -1,192 +1,95 @@
 <?php
 /**
- * Database Helper Class for Course Notes
- * 
- * This class provides methods for database operations
- * using PDO for MySQL connections for the Course Notes application.
+ * Database Helper Class for Course Notes using SQLite (for Replit)
  */
-class CourseNotesDatabaseHelper {
-    private $host;
-    private $dbName;
-    private $username;
-    private $password;
+    class CourseNotesDatabaseHelper {
     private $pdo;
 
-    /**
-     * Constructor
-     * 
-     * @param string $host Database host
-     * @param string $dbName Database name
-     * @param string $username Database username
-     * @param string $password Database password
-     */
-    public function __construct($host, $dbName, $username, $password) {
-        $this->host = $host;
-        $this->dbName = $dbName;
-        $this->username = $username;
-        $this->password = $password;
+    public function __construct() {
+        //  Use SQLite file (works on Replit)
+        $this->pdo = new PDO("sqlite:" . __DIR__ . "/course_notes.db");
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Create table and insert sample data if needed
+        $this->createCourseNotesTable();
+        $this->populateSampleCourseNotes(); // Optional: comment this after first run
     }
 
-    /**
-     * Get PDO connection
-     * 
-     * @return PDO The PDO connection object
-     * @throws PDOException If connection fails
-     */
-    public function getPDO() {
-        if (!$this->pdo) {
-            // Create initial connection to MySQL server
-            $this->pdo = new PDO("mysql:host={$this->host};charset=utf8mb4", 
-                                $this->username, 
-                                $this->password);
-
-            // Set error mode to exceptions
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            // Create database if it doesn't exist
-            $this->pdo->exec("CREATE DATABASE IF NOT EXISTS `{$this->dbName}`");
-            $this->pdo->exec("USE `{$this->dbName}`");
-        }
-
+        public function getPDO() {
         return $this->pdo;
     }
 
-    /**
-     * Execute a query
-     * 
-     * @param string $sql SQL query to execute
-     * @return PDOStatement The result of the query
-     * @throws PDOException If query fails
-     */
-    public function query($sql) {
-        return $this->getPDO()->query($sql);
+        public function query($sql) {
+        return $this->pdo->query($sql);
     }
 
-    /**
-     * Prepare a statement
-     * 
-     * @param string $sql SQL statement to prepare
-     * @return PDOStatement The prepared statement
-     * @throws PDOException If preparation fails
-     */
-    public function prepare($sql) {
-        return $this->getPDO()->prepare($sql);
+        public function prepare($sql) {
+        return $this->pdo->prepare($sql);
     }
 
-    /**
-     * Execute a SQL statement directly
-     * 
-     * @param string $sql SQL statement to execute
-     * @return int Number of affected rows
-     * @throws PDOException If execution fails
-     */
-    public function exec($sql) {
-        return $this->getPDO()->exec($sql);
+        public function exec($sql) {
+        return $this->pdo->exec($sql);
     }
 
-    /**
-     * Create course_notes table if it doesn't exist
-     * 
-     * @return bool True if successful
-     * @throws PDOException If creation fails
-     */
-    public function createCourseNotesTable() {
-        $sql = "CREATE TABLE IF NOT EXISTS `course_notes` (
-            `id` INT AUTO_INCREMENT PRIMARY KEY,
-            `title` VARCHAR(255) NOT NULL,
-            `description` TEXT NOT NULL,
-            `category` VARCHAR(50) NOT NULL,
-            `file_path` VARCHAR(255),
-            `file_type` ENUM('pdf', 'link') NOT NULL,
-            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-
+        public function createCourseNotesTable() {
+        // SQLite-compatible schema
+        $sql = "CREATE TABLE IF NOT EXISTS course_notes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            category TEXT NOT NULL,
+            file_path TEXT,
+            file_type TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )";
         $this->exec($sql);
-        return true;
-    }
+     }
 
-    /**
-     * Insert a new course note
-     * 
-     * @param string $title The title of the course note
-     * @param string $description The description of the course note
-     * @param string $category The category of the course note
-     * @param string $filePath The file path or URL of the note resource
-     * @param string $fileType The type of the file (pdf or link)
-     * @return bool True if successful
-     * @throws PDOException If insertion fails
-     */
-    public function insertCourseNote($title, $description, $category, $filePath, $fileType) {
-        // Make sure the course_notes table exists
+        public function insertCourseNote($title, $description, $category, $filePath, $fileType) {
         $this->createCourseNotesTable();
-
-        // Prepare and execute the insert statement
-        $stmt = $this->prepare("INSERT INTO `course_notes` (`title`, `description`, `category`, `file_path`, `file_type`) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $this->prepare("INSERT INTO course_notes (title, description, category, file_path, file_type) VALUES (?, ?, ?, ?, ?)");
         return $stmt->execute([$title, $description, $category, $filePath, $fileType]);
     }
 
-    /**
-     * Get course notes with optional search and filter
-     * 
-     * @param string $searchTerm Optional search term to filter notes
-     * @param string $category Optional category to filter notes
-     * @param int $page Optional page number for pagination
-     * @param int $perPage Optional number of items per page
-     * @return array Array of course note objects and total count
-     * @throws PDOException If query fails
-     */
-    public function getCourseNotes($searchTerm = '', $category = '', $page = 1, $perPage = 5) {
-        // Make sure the course_notes table exists and populate with sample data if empty
+        public function getCourseNotes($searchTerm = '', $category = '', $page = 1, $perPage = 5) {
         $this->createCourseNotesTable();
         $this->populateSampleCourseNotes();
 
-        // Calculate offset for pagination
-        $offset = ($page - 1) * $perPage;
-
-        // Build base SQL for counting total results
-        $countSql = "SELECT COUNT(*) FROM `course_notes`";
+            $offset = ($page - 1) * $perPage;
+        $sql = "SELECT * FROM course_notes";
+        $countSql = "SELECT COUNT(*) FROM course_notes";
         $params = [];
 
-        // Build the SQL query based on search term and category
-        $sql = "SELECT * FROM `course_notes`";
-
-        // Add where clauses if needed
-        $whereClause = "";
+            $whereClause = "";
 
         if (!empty($searchTerm)) {
-            $whereClause .= " `title` LIKE ? OR `description` LIKE ?";
+            $whereClause .= " title LIKE ? OR description LIKE ?";
             $params[] = "%$searchTerm%";
             $params[] = "%$searchTerm%";
         }
 
         if (!empty($category)) {
             if (!empty($whereClause)) {
-                $whereClause = "($whereClause) AND `category` = ?";
+                $whereClause = "($whereClause) AND category = ?";
             } else {
-                $whereClause = " `category` = ?";
+                $whereClause = " category = ?";
             }
             $params[] = $category;
         }
 
-        // Finalize SQL with where clause if needed
-        if (!empty($whereClause)) {
+            if (!empty($whereClause)) {
             $sql .= " WHERE $whereClause";
             $countSql .= " WHERE $whereClause";
         }
 
-        // Add order and limit
-        $sql .= " ORDER BY `created_at` DESC LIMIT ? OFFSET ?";
+        $sql .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
         $limitParams = $params;
         $limitParams[] = $perPage;
         $limitParams[] = $offset;
-
-        // Execute count query
-        $countStmt = $this->prepare($countSql);
+            $countStmt = $this->prepare($countSql);
         $countStmt->execute($params);
         $totalCount = $countStmt->fetchColumn();
-
-        // Execute main query
-        $stmt = $this->prepare($sql);
+         $stmt = $this->prepare($sql);
         $stmt->execute($limitParams);
         $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -196,33 +99,18 @@ class CourseNotesDatabaseHelper {
         ];
     }
 
-    /**
-     * Get a single course note by ID
-     * 
-     * @param int $id The ID of the course note to retrieve
-     * @return array|false The course note data or false if not found
-     * @throws PDOException If query fails
-     */
-    public function getCourseNoteById($id) {
-        $stmt = $this->prepare("SELECT * FROM `course_notes` WHERE `id` = ?");
+        public function getCourseNoteById($id) {
+        $stmt = $this->prepare("SELECT * FROM course_notes WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Populate the course_notes table with sample data if it's empty
-     * 
-     * @return array The sample notes that were inserted (if any)
-     * @throws PDOException If insertion fails
-     */
-    public function populateSampleCourseNotes() {
-        // Check if the table is empty
-        $stmt = $this->query("SELECT COUNT(*) FROM `course_notes`");
+        public function populateSampleCourseNotes() {
+        $stmt = $this->query("SELECT COUNT(*) FROM course_notes");
         $count = $stmt->fetchColumn();
 
-        // If table is empty, insert sample data
-        if ($count == 0) {
-            // Sample course notes data
+            if ($count == 0) {
+           // Sample course notes data
             $sampleNotes = [
                 [
                     'title' => 'Introduction to Computer Science',
@@ -280,8 +168,7 @@ class CourseNotesDatabaseHelper {
                     'file_path' => 'sample_files/dbms.pdf',
                     'file_type' => 'pdf'
                 ],
-                // Added new course entries
-                [
+                    [
                     'title' => 'IS103 - Intro to Programming',
                     'description' => 'Learn the basics of Python and how to write simple programs.',
                     'category' => 'IS',
@@ -360,10 +247,7 @@ class CourseNotesDatabaseHelper {
                 ]
             ];
 
-            // Prepare insert statement
-            $stmt = $this->prepare("INSERT INTO `course_notes` (`title`, `description`, `category`, `file_path`, `file_type`) VALUES (?, ?, ?, ?, ?)");
-
-            // Insert each note
+            $stmt = $this->prepare("INSERT INTO course_notes (title, description, category, file_path, file_type) VALUES (?, ?, ?, ?, ?)");
             foreach ($sampleNotes as $note) {
                 $stmt->execute([
                     $note['title'],
@@ -372,51 +256,30 @@ class CourseNotesDatabaseHelper {
                     $note['file_path'],
                     $note['file_type']
                 ]);
-            }
-
-            return $sampleNotes;
-        }
-
-        return [];
+         }
+     }
     }
 
-    /**
-     * Delete a course note by ID
-     * 
-     * @param int $id The ID of the course note to delete
-     * @return bool True if successful
-     * @throws PDOException If deletion fails
-     */
-    public function deleteCourseNote($id) {
-        $stmt = $this->prepare("DELETE FROM `course_notes` WHERE `id` = ?");
+     public function deleteCourseNote($id) {
+        $stmt = $this->prepare("DELETE FROM course_notes WHERE id = ?");
         return $stmt->execute([$id]);
     }
 
-    /**
-     * Update a course note
-     * 
-     * @param int $id The ID of the course note to update
-     * @param array $data The data to update
-     * @return bool True if successful
-     * @throws PDOException If update fails
-     */
-    public function updateCourseNote($id, $data) {
+        public function updateCourseNote($id, $data) {
         $allowedFields = ['title', 'description', 'category', 'file_path', 'file_type'];
         $setClause = [];
         $params = [];
 
         foreach ($data as $field => $value) {
             if (in_array($field, $allowedFields)) {
-                $setClause[] = "`$field` = ?";
+                $setClause[] = "$field = ?";
                 $params[] = $value;
             }
         }
 
-        if (empty($setClause)) {
-            return false;
-        }
+        if (empty($setClause)) return false;
 
-        $sql = "UPDATE `course_notes` SET " . implode(', ', $setClause) . " WHERE `id` = ?";
+        $sql = "UPDATE course_notes SET " . implode(', ', $setClause) . " WHERE id = ?";
         $params[] = $id;
 
         $stmt = $this->prepare($sql);
@@ -424,3 +287,9 @@ class CourseNotesDatabaseHelper {
     }
 }
 ?>
+
+
+
+            
+
+        
