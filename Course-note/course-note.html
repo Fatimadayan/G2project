@@ -119,8 +119,10 @@
   let courses = [];
   let filteredCourses = [];
   let currentPage = 1;
-  const itemsPerPage = 20;
+  let itemsPerPage = 10;
+  let totalPages = 1;
 
+  // Initialize the application when DOM is loaded
   document.addEventListener("DOMContentLoaded", () => {
     setupEventListeners();
     checkServerConnection();
@@ -128,11 +130,13 @@
 
   function setupEventListeners() {
     searchInput.addEventListener("input", () => {
-      filterCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+      currentPage = 1;
+      fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
     });
 
     categoryFilter.addEventListener("change", () => {
-      filterCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+      currentPage = 1;
+      fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
     });
 
     addButton.addEventListener("click", () => {
@@ -161,8 +165,12 @@
     pdfField.style.display = type === "pdf" ? "block" : "none";
     linkField.style.display = type === "link" ? "block" : "none";
 
-    document.querySelector('input[name="file_path_pdf"]').required = type === "pdf";
-    document.querySelector('input[name="file_path_link"]').required = type === "link";
+    // Update required status based on type
+    const pdfInput = document.querySelector('input[name="file_path_pdf"]');
+    const linkInput = document.querySelector('input[name="file_path_link"]');
+    
+    if (pdfInput) pdfInput.required = type === "pdf";
+    if (linkInput) linkInput.required = type === "link";
   }
 
   function submitForm(e) {
@@ -182,9 +190,9 @@
           alert("Note added successfully!");
           noteForm.reset();
           formWrapper.style.display = "none";
-          fetchCourses();
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
         } else {
-          throw new Error(data.message);
+          throw new Error(data.message || "Failed to add note");
         }
       })
       .catch((err) => alert("Error: " + err.message))
@@ -199,8 +207,11 @@
     fetch(API_ENDPOINTS.PING)
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === "success") fetchCourses();
-        else throw new Error("Server responded but failed to validate.");
+        if (data.status === "success") {
+          fetchCourses('', '');
+        } else {
+          throw new Error("Server responded but failed to validate.");
+        }
       })
       .catch((err) => {
         console.error("Server connection failed:", err.message);
@@ -209,15 +220,39 @@
       });
   }
 
-  function fetchCourses() {
+  function fetchCourses(search = '', category = '') {
     showLoading(true);
-    fetch(API_ENDPOINTS.GET_COURSES)
+    
+    // Construct the API URL with proper query parameters
+    let url = API_ENDPOINTS.GET_COURSES;
+    const params = new URLSearchParams();
+    
+    if (search) params.append('search', search);
+    if (category) params.append('category', category);
+    params.append('page', currentPage);
+    params.append('per_page', itemsPerPage);
+    
+    if (params.toString()) {
+      url += '&' + params.toString();
+    }
+    
+    fetch(url)
       .then((res) => res.json())
       .then((data) => {
         showLoading(false);
-        if (data.status !== "success") throw new Error(data.message);
+        if (data.status !== "success") throw new Error(data.message || "Failed to fetch courses");
+        
         courses = data.data;
-        filterCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        
+        // Update pagination info from API response
+        if (data.pagination) {
+          totalPages = data.pagination.total_pages;
+          currentPage = data.pagination.current_page;
+          itemsPerPage = data.pagination.per_page;
+        }
+        
+        displayCourses();
+        setupPagination();
       })
       .catch((err) => {
         console.error("Fetch failed:", err.message);
@@ -227,29 +262,15 @@
       });
   }
 
-  function filterCourses(search, category) {
-    filteredCourses = courses.filter((c) => {
-      const matchesSearch = !search || c.title.toLowerCase().includes(search) || c.description.toLowerCase().includes(search);
-      const matchesCat = !category || c.category === category;
-      return matchesSearch && matchesCat;
-    });
-    currentPage = 1;
-    displayCourses();
-    setupPagination();
-  }
-
-  function displayCourses() {
+    function displayCourses() {
     courseGrid.innerHTML = "";
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const items = filteredCourses.slice(start, end);
-
-    if (!items.length) {
+    
+    if (!courses || !courses.length) {
       courseGrid.innerHTML = "<p class='error'>No courses found.</p>";
       return;
     }
 
-    for (const course of items) {
+    for (const course of courses) {
       const div = document.createElement("div");
       div.className = "course-card";
       div.innerHTML = `
@@ -273,7 +294,7 @@
     fetch(API_ENDPOINTS.VIEW_NOTE(id))
       .then((res) => res.json())
       .then((data) => {
-        if (data.status !== "success") throw new Error(data.message);
+        if (data.status !== "success") throw new Error(data.message || "Failed to view note");
         const note = data.data;
         if (note.file_path) window.open(note.file_path, "_blank");
       })
@@ -281,25 +302,49 @@
   }
 
   function setupPagination() {
-    paginationDiv.innerHTML = "";
-    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+      paginationDiv.innerHTML = "";
     if (totalPages <= 1) return;
 
-    const addButton = (label, page) => {
+    const addButton = (label, page, isActive = false) => {
       const btn = document.createElement("button");
       btn.innerHTML = label;
-      if (page === currentPage) btn.classList.add("active");
+      if (isActive) btn.classList.add("active");
       btn.addEventListener("click", () => {
-        currentPage = page;
-        displayCourses();
-        setupPagination();
+        if (page !== currentPage) {
+          currentPage = page;
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        }
       });
       paginationDiv.appendChild(btn);
     };
 
-    if (currentPage > 1) addButton("&laquo;", currentPage - 1);
-    for (let i = 1; i <= totalPages; i++) addButton(i, i);
-    if (currentPage < totalPages) addButton("&raquo;", currentPage + 1);
+    // First page
+    if (currentPage > 1) {
+      addButton("&laquo;", 1);
+    }
+    
+    // Previous page
+    if (currentPage > 1) {
+      addButton("Prev", currentPage - 1);
+    }
+    
+    // Current page and neighbors
+    const startPage = Math.max(1, currentPage - 1);
+    const endPage = Math.min(totalPages, currentPage + 1);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      addButton(i, i, i === currentPage);
+    }
+    
+    // Next page
+    if (currentPage < totalPages) {
+      addButton("Next", currentPage + 1);
+    }
+    
+    // Last page
+    if (currentPage < totalPages) {
+      addButton("&raquo;", totalPages);
+    }
   }
 
   function showLoading(show) {
@@ -316,11 +361,8 @@
       { id: 2, title: "Offline - Network Intro", description: "Understand basics of networks.", category: "NE", file_type: "link" },
     ];
     courses = sample;
-    filterCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+    displayCourses();
   }
-
-    // Initialize the application when DOM is loaded
-    document.addEventListener('DOMContentLoaded', initApp);
-  </script>
+</script>
 </body>
 </html>

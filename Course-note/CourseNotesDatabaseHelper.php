@@ -105,105 +105,103 @@
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-        public function populateSampleCourseNotes() {
-        $stmt = $this->query("SELECT COUNT(*) FROM course_notes");
-        $count = $stmt->fetchColumn();
+       public function populateSampleCourseNotes() {
+    $stmt = $this->query("SELECT COUNT(*) FROM course_notes");
+    $count = $stmt->fetchColumn();
 
-            if ($count == 0) {
-           // Sample course notes data
-            $sampleNotes = [
-                
-                    [
-                    'title' => 'IS103 - Intro to Programming',
-                    'description' => 'Learn the basics of Python and how to write simple programs.',
-                    'category' => 'IS',
-                    'file_path' => 'https://example.com/is103',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'NE101 - Networking Basics',
-                    'description' => 'Introduction to networks, IP addressing, and data flow.',
-                    'category' => 'NE',
-                    'file_path' => 'https://example.com/ne101',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'IS213 - Database Systems',
-                    'description' => 'Understanding relational databases and SQL queries.',
-                    'category' => 'IS',
-                    'file_path' => 'https://example.com/is213',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'CY110 - Cybersecurity Fundamentals',
-                    'description' => 'Explore key principles in protecting digital systems.',
-                    'category' => 'CY',
-                    'file_path' => 'https://example.com/cy110',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'CS342 - Digital Logic Design',
-                    'description' => 'Basics of digital circuits and binary systems.',
-                    'category' => 'CS',
-                    'file_path' => 'https://example.com/cs342',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'CS333 - Web Development',
-                    'description' => 'Build modern websites using HTML, CSS, and JS.',
-                    'category' => 'CS',
-                    'file_path' => 'https://example.com/cs333',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'NE231 - Advanced Networking',
-                    'description' => 'Protocols, routing, and switching concepts.',
-                    'category' => 'NE',
-                    'file_path' => 'https://example.com/ne231',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'IS310 - Systems Analysis',
-                    'description' => 'How to analyze and design information systems.',
-                    'category' => 'IS',
-                    'file_path' => 'https://example.com/is310',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'CY470 - Ethical Hacking',
-                    'description' => 'Learn about penetration testing techniques.',
-                    'category' => 'CY',
-                    'file_path' => 'https://example.com/cy470',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'CE250 - Embedded Systems',
-                    'description' => 'Programming microcontrollers and embedded devices.',
-                    'category' => 'CE',
-                    'file_path' => 'https://example.com/ce250',
-                    'file_type' => 'link'
-                ],
-                [
-                    'title' => 'Other Course',
-                    'description' => 'Miscellaneous notes that don\'t fit other categories.',
-                    'category' => 'ANOTHER',
-                    'file_path' => 'https://example.com/other',
-                    'file_type' => 'link'
-                ]
-            ];
+    if ($count == 0) {
+        // Sample course notes data with mix of PDFs and links
+        $sampleNotes = [
+            [
+                'title' => 'IS103 - Intro to Programming',
+                'description' => 'Learn the basics of Python and how to write simple programs.',
+                'category' => 'IS',
+                'file_path' => 'https://mega.nz/folder/rZZzkT7Z#IwsLrv3P0wOFCiDgyX2p_A',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'NE101 - Networking Basics',
+                'description' => 'Introduction to networks, IP addressing, and data flow.',
+                'category' => 'NE',
+                'file_path' => 'https://mega.nz/folder/YyNyVQKJ#tPStlD1hZr3rxirWG4oYFA',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'IS213 - Database Systems',
+                'description' => 'Understanding relational databases and SQL queries.',
+                'category' => 'IS',
+                'file_path' => 'https://mega.nz/folder/OZRB2Tya#npXve64QwwbefErJmKL3UQ',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'CY110 - Cybersecurity Fundamentals',
+                'description' => 'Explore key principles in protecting digital systems.',
+                'category' => 'CY',
+                'file_path' => 'https://mega.nz/folder/c6UV2YbS#dNu0vF_-eV1ayu4VK2_PRw',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'CS342 - Digital Logic Design',
+                'description' => 'Basics of digital circuits and binary systems.',
+                'category' => 'CS',
+                'file_path' => 'https://mega.nz/folder/yuYWVLCS#1oli7rAVpY7JhCQ-9m6A0g',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'CS333 - Web Development',
+                'description' => 'Build modern websites using HTML, CSS, and JS.',
+                'category' => 'CS',
+                'file_path' => 'https://mega.nz/folder/ajZSCZbZ#yBPxapL1axXpsEJ-YS6ddA',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'NE231 - Advanced Networking',
+                'description' => 'Protocols, routing, and switching concepts.',
+                'category' => 'NE',
+                'file_path' => 'https://mega.nz/folder/dztAiS6a#0xqng34TzvtL29fp5tjW8g',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'IS310 - Systems Analysis',
+                'description' => 'How to analyze and design information systems.',
+                'category' => 'IS',
+                'file_path' => 'https://mega.nz/folder/mIZngZra#ZNmYk_sfC2-jjkOjLwN8Iw',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'CY470 - Ethical Hacking',
+                'description' => 'Learn about penetration testing techniques.',
+                'category' => 'CY',
+                'file_path' => 'https://mega.nz/folder/0rt1CLbZ#tQEL0fsFTpRdtWoB33utEA',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'CE250 - Embedded Systems',
+                'description' => 'Programming microcontrollers and embedded devices.',
+                'category' => 'CE',
+                'file_path' => 'https://mega.nz/folder/3EA2SaSZ#97CEKeLEoUliqFsAqL-DzA',
+                'file_type' => 'link'
+            ],
+            [
+                'title' => 'Other Course',
+                'description' => 'Miscellaneous notes that don\'t fit other categories.',
+                'category' => 'ANOTHER',
+                'file_path' => 'https://linktr.ee/uobFiles',
+                'file_type' => 'link'
+            ]
+        ];
 
-            $stmt = $this->prepare("INSERT INTO course_notes (title, description, category, file_path, file_type) VALUES (?, ?, ?, ?, ?)");
-            foreach ($sampleNotes as $note) {
-                $stmt->execute([
-                    $note['title'],
-                    $note['description'],
-                    $note['category'],
-                    $note['file_path'],
-                    $note['file_type']
-                ]);
-         }
-     }
-    }
+        $stmt = $this->prepare("INSERT INTO course_notes (title, description, category, file_path, file_type) VALUES (?, ?, ?, ?, ?)");
+        foreach ($sampleNotes as $note) {
+            $stmt->execute([
+                $note['title'],
+                $note['description'],
+                $note['category'],
+                $note['file_path'],
+                $note['file_type']
+            ]);
+        }
+    }}
 
      public function deleteCourseNote($id) {
         $stmt = $this->prepare("DELETE FROM course_notes WHERE id = ?");
