@@ -1,22 +1,19 @@
 <?php
-//  CORS HEADERS - must be first!
+// ✅ Enable CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
+    header("Access-Control-Allow-Headers: Content-Type");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-//  Include the DB helper (SQLite version)
-require_once 'CourseNotesDatabaseHelper.php';
-
-//  Initialize DB helper using SQLite
+// ✅ Include database helper (uses SQLite)
+    require_once 'CourseNotesDatabaseHelper.php';
 $dbHelper = new CourseNotesDatabaseHelper();
 
-//  Routing by action
+// ✅ Read requested action
 $action = $_GET['action'] ?? '';
 
 try {
@@ -55,32 +52,50 @@ try {
                     throw new Exception('No PDF uploaded');
                 }
 
-                $uploadDir = __DIR__ . '/uploads/';
-                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $uploadDir = 'uploads/';
+if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+
+
                 $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_.-]/', '_', basename($_FILES['file_path_pdf']['name']));
-                $filePath = 'uploads/' . $fileName;
-                if (!move_uploaded_file($_FILES['file_path_pdf']['tmp_name'], $uploadDir . $fileName)) {
+                $filePathRel = 'uploads/' . $fileName;
+                $filePathAbs = $uploadDir . $fileName;
+
+                if (!move_uploaded_file($_FILES['file_path_pdf']['tmp_name'], $filePathAbs)) {
                     throw new Exception('Failed to upload PDF');
                 }
+
+                $filePath = $filePathRel;
             } elseif ($type === 'link') {
                 $filePath = $_POST['file_path_link'] ?? '';
                 if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
-                    throw new Exception('Invalid link');
+                    throw new Exception('Invalid URL');
                 }
             } else {
-                throw new Exception('Invalid type');
+                throw new Exception('Invalid file type');
             }
 
             $saved = $dbHelper->insertCourseNote($title, $description, $category, $filePath, $type);
-            echo json_encode(['status' => $saved ? 'success' : 'error', 'message' => $saved ? 'Note added' : 'Save failed']);
+            echo json_encode([
+                'status' => $saved ? 'success' : 'error',
+                'message' => $saved ? 'Course note added' : 'Failed to save'
+            ]);
             break;
 
         case 'view-note':
             $id = (int)($_GET['id'] ?? 0);
-            if (!$id) throw new Exception('Invalid ID');
+            if (!$id) {
+                throw new Exception('Invalid ID');
+            }
+
             $note = $dbHelper->getCourseNoteById($id);
-            if (!$note) throw new Exception('Note not found');
-            echo json_encode(['status' => 'success', 'data' => $note]);
+            if (!$note) {
+                throw new Exception('Note not found');
+            }
+
+            echo json_encode([
+                'status' => 'success',
+                'data' => $note
+            ]);
             break;
 
         default:
@@ -88,6 +103,9 @@ try {
     }
 } catch (Exception $e) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    echo json_encode([
+        'status' => 'error',
+        'message' => $e->getMessage()
+    ]);
 }
-?>
+    ?>

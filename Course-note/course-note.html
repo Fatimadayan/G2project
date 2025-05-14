@@ -97,7 +97,7 @@
   </footer>
 
   <script>
-  const API_BASE = "https://3f4a06db-f0b9-4d21-84e9-7b88bbacae3a-00-2kmk8spylbzqr.pike.replit.dev/course-notes-api.php";
+  const API_BASE = "https://5d6a8d96-bb85-474d-8d42-7dc61b926a7f-00-ru1at66zkfc8.pike.replit.dev/course-notes-api.php";
   const API_ENDPOINTS = {
     PING: `${API_BASE}?action=ping`,
     GET_COURSES: `${API_BASE}?action=get-courses`,
@@ -119,7 +119,7 @@
   let courses = [];
   let filteredCourses = [];
   let currentPage = 1;
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
 
   document.addEventListener("DOMContentLoaded", () => {
     setupEventListeners();
