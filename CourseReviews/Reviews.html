@@ -1,71 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
-        <title>Course Reviews</title>
-        <link rel = "stylesheet" href = "Reviews.css">
-    </head>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Reviews</title>
+    <link rel="stylesheet" href="Reviews.css">
+</head>
 
-    <body>
-        <header>
-            <h1>Course Reviews</h1>
-            <nav>
-                <a href = "index.html">Home</a>
-                <a href = "rating">Rate a Course</a>
-            </nav>
-        </header>
+<body>
+    <header>
+        <h1>Course Reviews</h1>
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="RatingCourse.html">Rate a Course</a>
+        </nav>
+    </header>
 
-        <main id = "main list">
-            <section class = "search-bar">
-                <input type = "text" placeholder = "Search for reviews" aria-label = "Search reviews">
-                    <select aria-label = "Filter options">
-                        <option value = "">Filter by course</option>
-                        <option value = "Course1">First Course</option>
-                        <option value = "Course2">Second Course</option>
-                    </select>
-                    <button>Sort</button>
-            </section>
-
-            <section class = "reviews-list">
-                <article class = "review-item">
-                    <h2>Course 1</h2>
-                    <a href = "review detail">View Details...</a>
-                </article>
-
-                <article class = "review-item">
-                    <h2>Course 2</h2>
-                    <a href = "review detail">View Details...</a>
-                </article>
-            </section>
-
-            <div class = "pagination">
-                <button>Back</button>
-                <button>Next</button>
-            </div>
-
-            <div style = "margin-top:20px;">
-                <div class = "add-review-containter" style = "text-align:center;">
-            <button class = "add-item" id="add-review">Add new review</button>
-                </div>
-            </div>
-        </main>
-
-        <section id = "item-creation-form" class="modal" style = "display:none;">
-            <h2>Create your review</h2>
-            <form>
-                <label for = "course-title">Course Title</label>
-                <input type = "text" id="course-title" name = "course-title" required placeholder = "Enter course title">
-                <label for = "review-content">Review</label>
-                <textarea id = "review-content" name = "review-content" required placeholder = "Write your review here"></textarea>
-                <button type = "submit">Submit review</button>
-                <div class = "cancel-container"></div>
-                <a href="#main list" class="cancel">Cancel</a>
-            </form>
+    <main>
+        <div id="loading">Loading...</div>
+        <section class="search-bar">
+            <select id="filter-mode" aria-label="Filter Mode">
+                <option value="code">Course Code</option>
+                <option value="title">Course Title</option>
+            </select>
+            <input type="text" id="search-input" placeholder="Search for reviews" aria-label="Search reviews">
+            <button id="sort-button">Sort A-Z</button>
         </section>
 
-        <footer>
-            <p>&copy; 2025 Campus Hub</p>
-        </footer>
-    </body>
+        <section class="reviews-list" id="reviews-list">
+            <article class="review-item" data-course="course1">
+                <h2>ITCS333: Internet Software Development</h2>
+                <a href="ReviewDetails.html?course=1" class="button">View Details</a>
+            </article>
+        
+            <article class="review-item" data-course="course2">
+                <h2>ITCS113: Introduction to Programming</h2>
+                <a href="ReviewDetails.html?course=2" class="button">View Details</a>
+            </article>
+        
+            <article class="review-item" data-course="course3">
+                <h2>ITCS214: Data Structures</h2>
+                <a href="ReviewDetails.html?course=3" class="button">View Details</a>
+            </article>
+        
+            <article class="review-item" data-course="course4">
+                <h2>ITCS254: Discrete Structures I</h2>
+                <a href="ReviewDetails.html?course=4" class="button">View Details</a>
+            </article>
+        </section>
+        
+        <div id="no-data" style="display:none;">No data found</div>
+
+        <div class="pagination">
+            <button onclick="window.location.href='../index.html'">Back</button>
+            <button onclick="window.location.href='MoreReviews.html'">Next</button>
+        </div>
+
+        <div class="action-buttons">
+            <a href="RatingCourse.html"><button>Add New Review</button></a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Campus Hub</p>
+    </footer>
+
+    <script src="Reviews.js"></script>
+
+</body>
 </html>

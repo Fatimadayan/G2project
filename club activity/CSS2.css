@@ -1,3 +1,12 @@
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "tailwindcss";
+
+
+
 /* Reset */
 * {
     margin: 0;
@@ -121,6 +130,7 @@
     background: #f7f7f7;
     padding: 100px 0 60px;
     text-align: center;
+  
   }
   .join-us {
     display: inline-block;
@@ -132,6 +142,7 @@
   .join-us h2 {
     font-size: 2rem;
     color: #800000;
+    
   }
   
   /* Upcoming Event */
