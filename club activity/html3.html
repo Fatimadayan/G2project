@@ -124,20 +124,184 @@
     </button>
   </div>
    
-  <!-- "Add new item" button -->
   <!-- Join Us -->
   <section class="bg-accentBg text-secondaryText py-12 text-center rounded-lg mx-8 mb-8 shadow-lg">
     <div class="bg-lightBg inline-block px-16 py-6 rounded-full shadow-md">
-      <h2 class="text-3xl font-bold text-secondaryBg">Join us now</h2>
+      <h2 class="text-3xl font-bold text-secondaryBg">Get Involved</h2>
       <p class="mt-4">Be part of our vibrant campus community and make a difference!</p>
-      <input
-        type="button"
-        class="mt-4 px-6 py-2 bg-primaryBg text-primaryText font-semibold rounded-lg shadow-md hover:bg-gray-100"
-        value="Join"
-        onclick="location.href='clubs/join-a-club.html'"
-      />
+      <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+        <button id="join-button" class="px-6 py-2 bg-primaryBg text-primaryText font-semibold rounded-lg shadow-md hover:bg-gray-100">
+          Join a Club
+        </button>
+        <button id="create-club-button" class="px-6 py-2 bg-highlight text-secondaryText font-semibold rounded-lg shadow-md hover:bg-gray-100">
+          Create a Club
+        </button>
+      </div>
     </div>
   </section>
+
+  <!-- Join Club Popup -->
+  <div id="join-club-popup" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl font-bold text-secondaryBg">Join a Club</h3>
+        <button id="close-popup" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="join-club-form" class="space-y-4">
+        <div>
+          <label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input type="text" id="full-name" name="full-name" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          <p id="name-error" class="mt-1 text-sm text-red-600 hidden">Please enter your full name</p>
+        </div>
+        
+        <div>
+          <label for="student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
+          <input type="text" id="student-id" name="student-id" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          <p id="id-error" class="mt-1 text-sm text-red-600 hidden">Please enter a valid student ID</p>
+        </div>
+        
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">University Email</label>
+          <input type="email" id="email" name="email" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          <p id="email-error" class="mt-1 text-sm text-red-600 hidden">Please enter a valid university email</p>
+        </div>
+        
+        <div>
+          <label for="club-select" class="block text-sm font-medium text-gray-700">Select Club</label>
+          <select id="club-select" name="club-select" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+            <option value="">-- Select a Club --</option>
+            <option value="1">Tech Innovators Club</option>
+            <option value="2">Art and Expression Society</option>
+            <option value="3">Green Future Club</option>
+          </select>
+          <p id="club-error" class="mt-1 text-sm text-red-600 hidden">Please select a club</p>
+        </div>
+        
+        <div>
+          <label for="message" class="block text-sm font-medium text-gray-700">Why do you want to join? (Optional)</label>
+          <textarea id="message" name="message" rows="3"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg"></textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+          <button type="button" id="cancel-join" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryBg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primaryBg hover:bg-secondaryBg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryBg">
+            Submit Application
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Club Popup -->
+  <div id="create-club-popup" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl font-bold text-secondaryBg">Create New Club</h3>
+        <button id="close-create-popup" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="create-club-form" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="club-name" class="block text-sm font-medium text-gray-700">Club Name *</label>
+            <input type="text" id="club-name" name="club-name" required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+            <p id="club-name-error" class="mt-1 text-sm text-red-600 hidden">Please enter a club name</p>
+          </div>
+          
+          <div>
+            <label for="club-category" class="block text-sm font-medium text-gray-700">Category *</label>
+            <select id="club-category" name="club-category" required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+              <option value="">-- Select Category --</option>
+              <option value="Technology">Technology</option>
+              <option value="Arts">Arts</option>
+              <option value="Sports">Sports</option>
+              <option value="Academic">Academic</option>
+              <option value="Cultural">Cultural</option>
+              <option value="Community Service">Community Service</option>
+              <option value="Other">Other</option>
+            </select>
+            <p id="category-error" class="mt-1 text-sm text-red-600 hidden">Please select a category</p>
+          </div>
+        </div>
+        
+        <div>
+          <label for="club-description" class="block text-sm font-medium text-gray-700">Description *</label>
+          <textarea id="club-description" name="club-description" rows="3" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg"></textarea>
+          <p id="description-error" class="mt-1 text-sm text-red-600 hidden">Please enter a description</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="club-email" class="block text-sm font-medium text-gray-700">Contact Email *</label>
+            <input type="email" id="club-email" name="club-email" required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+            <p id="create-email-error" class="mt-1 text-sm text-red-600 hidden">Please enter a valid email</p>
+          </div>
+          
+          <div>
+            <label for="club-website" class="block text-sm font-medium text-gray-700">Website (Optional)</label>
+            <input type="url" id="club-website" name="club-website"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="club-meeting-day" class="block text-sm font-medium text-gray-700">Meeting Day</label>
+            <select id="club-meeting-day" name="club-meeting-day"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+              <option value="">-- Select Day --</option>
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="club-meeting-time" class="block text-sm font-medium text-gray-700">Meeting Time</label>
+            <input type="time" id="club-meeting-time" name="club-meeting-time"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          </div>
+        </div>
+        
+        <div>
+          <label for="club-logo" class="block text-sm font-medium text-gray-700">Club Logo (Optional)</label>
+          <input type="file" id="club-logo" name="club-logo" accept="image/*"
+            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primaryBg file:text-primaryText hover:file:bg-secondaryBg">
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" id="cancel-create-club" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryBg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primaryBg hover:bg-secondaryBg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryBg">
+            Submit Club Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Upcoming Event -->
   <section class="bg-gradient-to-b from-primaryBg to-secondaryBg text-primaryText py-8 text-center rounded-lg mx-8 mb-8 shadow-lg">
