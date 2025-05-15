@@ -3,41 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate on scroll -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="st.css">
     <title>Campus News</title>
 </head>
-<body>
- <header id="main-header">
-    <h1>Campus News</h1>
-  </header>
-
-
-<nav id="main-nav">
-
-    <a href=../events\event.html>Events Calendar</a>
-    <a href=../CourseReviews/Reviews.html>Course Reviews</a>
-    <a href=../Course-note/course-note.html>Course Notes</a>
-    <a href=../CampusNews/CampusNews.html>Campus News</a>
-    <a href=../index.html>Main page</a>
-  </nav>
-
-  <!-- Hero Section -->
-  <section id="hero">
-    <div class="hero-text">Stay Updated With The Latest News</div>
-  </section>
+<body class="bg-gray-50 font-inknut">
+  <header class="header">
+    <nav id="main-nav">
+      <div class="nav-container">
+        <div class="logo">
+          <a href="../index.html">
+            <img src="../Images/logo.png" alt="UOB Logo"class="nav-logo">
+          </a>
+        </div>
+        <div class="nav-links">
+          <a href="../events/event.html">Events Calendar</a>
+          <a href="../CourseReviews/Reviews.html">Course Reviews</a>
+          <a href="../Course-note/course-note.html">Course Notes</a>
+          <a href="../CampusNews/CampusNews.html">Campus News</a>
+          <a href="../club activity/join-a-club.html">Club Activities</a>
+          <a href="../index.html">Main</a>
+        </div>
+      </div>
+    </nav>
+  </header>  <!-- Hero Section -->
+  <section class="hero-container">
+    <div class="hero-content">
+      <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" 
+           alt="University Logo" 
+           class="hero-logo">
+      <h1 class="hero-title">Campus News</h1>
+      <p class="hero-subtitle">Stay Updated With The Latest News</p>
+    </div>
+  </section>  
+  
+  <!-- Search Section -->
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search news..." class="search-input">
+  </div>
 
   <!-- News Cards Section -->
-  <section id="features"><!--will be added here--></section>
-
-  <!--“loading…” message  JavaScript will replace it when the cards load: -->
   <section id="features">
-    <p id="loading-msg" style="text-align:center;">Loading news...</p>
-  </section>
+    <div class="features-container">
+      <p id="loading-msg" style="text-align:center;">Loading news...</p>
+    </div>
+  </section>  <!-- Footer -->
+  <footer style="background-color: #000; color: white; padding: 3rem 1rem;">
 
-  <!-- Footer -->
-  <footer id="main-footer">
-    <p>&copy; 2025 Campus News - All rights reserved.</p>
+    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem;">
+      
+      <!-- UOB Logo and Address -->
+      <div style="flex: 1 1 250px;">
+        <img class="alignleft" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" alt="شعار UOB" width="72" height="85">        <p>University of Bahrain<br>P.O. Box 32038<br>Sakhir – Kingdom of Bahrain<br>1017 Road 5418<br>Zallaq 1054</p>
+        <div style="margin-top: 1rem;">
+
+          <a title="فيسبوك" href="https://www.facebook.com/uobedubh/"><img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/fb_footer.png" alt="فيسبوك"></a>
+          
+          <a title="يوتيوب" href="https://www.youtube.com/user/uobedubh"><img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/icons-youtube.png" alt="يوتيوب"></a>
+          
+          <a title="إنستغرام" href="https://www.instagram.com/uobedubh/"><img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/Group-373@2x-e1623205451501.png" alt="إنستغرام"></a>
+          <a title="لينكدإن" href="https://www.linkedin.com/company/bahrain-university">
+            <img class="alignright" style="height: 32px" src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/Linkedin.png" alt="لينكدإن">
+         
+          
+        </div>
+      </div>
+  
+      <!-- Footer Links -->
+      <div style="flex: 1 1 200px;">
+        <h3>COLLEGES</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li><a href="#">College of Arts</a></li>
+          <li><a href="#">Teachers College</a></li>
+          <li><a href="#">Business Administration</a></li>
+          <li><a href="#">Engineering</a></li>
+          <li><a href="#">IT</a></li>
+        </ul>
+      </div>
+    </div>
   </footer>
+
 
   <!--the link to js-->
   <script src="CampusNews.js"></script>

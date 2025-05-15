@@ -10,7 +10,7 @@
   <header>
     <div class="container">
       <h1>Course Notes</h1>
-      <p class="subheading">I hope that will help you</p>
+      <p class="subheading">I hope this helps you in your journey 🌱</p>
     </div>
   </header>
 
@@ -19,65 +19,466 @@
       <h2>Available Courses</h2>
 
       <div class="search-container">
-        <input type="text" id="search" placeholder="Search Courses.." />
-    </div>
+        <label for="search" class="visually-hidden">Search Courses</label>
+        <input type="text" id="search" placeholder="Search Courses..." />
 
-      <div class="sort-container">
-        <select id="course-sort">
-          <option value="" selected disabled>Choose a category</option> 
+        <div class="category-filter">
+          <label for="filterCategory">Filter by Category:</label>
+          <select id="filterCategory">
+            <option value="">All</option>
             <option value="CS">CS</option>
             <option value="NE">NE</option>
             <option value="IS">IS</option>
             <option value="CY">CY</option>
             <option value="CE">CE</option>
             <option value="ANOTHER">Another</option>
-        </select>
+          </select>
+        </div>
+      </div>
 
+      <div class="controls">
         <label for="itemType">Add new item:</label>
-          <select id="itemType">
+        <select id="itemType">
           <option value="">-- Choose type --</option>
           <option value="pdf">PDF</option>
           <option value="link">Link</option>
         </select>
 
-      <button>Add</button>
-
-
-      <div class="course-grid">
-        <div class="course-card">
-          <h3>ITCS333 – Internet Software Development</h3>
-          <p>HTML, CSS, assignments, quizzes, and project notes.</p>
-          <a href="itcs333.html" class="btn">View Notes</a>
-        </div>
-        <div class="course-card">
-          <h3>ITCS241 – Data Structures</h3>
-          <p>Lectures, exercises, and past exams.</p>
-          <a href="itcs241.html" class="btn">View Notes</a>
-        </div>
-        <div class="course-card">
-          <h3>MATH101 – Calculus I</h3>
-          <p>Limits, derivatives, integrals, and practice problems.</p>
-          <a href="math101.html" class="btn">View Notes</a>
-        </div>
-        <div class="course-card">
-            <h3>ITNE352 – Network Programming</h3>
-            <p>Python, UDP&TCP, Server, and Past exama.</p>
-            <a href="itne352.html" class="btn">View Notes</a>
-          </div>
-          <div class="course-card">
-            <h3>ITNE240 – Network Operating Systems</h3>
-            <p>OS, Printer, AD, and Mid exams.</p>
-            <a href="itne240.html" class="btn">View Notes</a>
-          </div>
-      
+        <button id="addButton" class="btn">Add</button>
       </div>
+
+      <div id="formWrapper" class="form-wrapper">
+        <h3>Add New Course Note</h3>
+        <form id="noteForm" enctype="multipart/form-data">
+          <input type="text" name="title" placeholder="Title" required>
+          <textarea name="description" placeholder="Description" required></textarea>
+          <input type="hidden" name="type" id="noteType" />
+
+          <select name="category" required>
+            <option value="" selected disabled>Choose a category</option>
+            <option value="CS">CS</option>
+            <option value="NE">NE</option>
+            <option value="IS">IS</option>
+            <option value="CY">CY</option>
+            <option value="CE">CE</option>
+            <option value="ANOTHER">Another</option>
+          </select>
+
+          <div id="pdf-upload" style="display: none;">
+            <label>Upload PDF:</label>
+            <input type="file" name="file_path_pdf" accept="application/pdf" />
+          </div>
+
+          <div id="link-input" style="display: none;">
+            <label>Link URL:</label>
+            <input type="url" name="file_path_link" placeholder="https://example.com" />
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn">Submit</button>
+            <button type="button" id="cancelButton" class="btn" style="background-color: #6c757d;">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="loading" style="text-align: center; display: none;">
+        <p>Loading courses...</p>
+      </div>
+      
+      <div id="course-grid" class="course-grid"></div>
+      <div id="pagination" class="pagination"></div>
     </section>
   </main>
 
   <footer>
     <div class="container">
-      <p>Made by Noora Sami</p>
+      <p>Made by Noora Sami &copy; 2025</p>
     </div>
   </footer>
+
+  <script>
+  const API_BASE = "https://5d6a8d96-bb85-474d-8d42-7dc61b926a7f-00-ru1at66zkfc8.pike.replit.dev/course-notes-api.php";
+  const API_ENDPOINTS = {
+    PING: `${API_BASE}?action=ping`,
+    GET_COURSES: `${API_BASE}?action=get-courses`,
+    ADD_COURSE: `${API_BASE}?action=add-course`,
+    VIEW_NOTE: (id) => `${API_BASE}?action=view-note&id=${id}`,
+  };
+
+  const courseGrid = document.getElementById("course-grid");
+  const searchInput = document.getElementById("search");
+  const categoryFilter = document.getElementById("filterCategory");
+  const paginationDiv = document.getElementById("pagination");
+  const noteTypeInput = document.getElementById("noteType");
+  const noteForm = document.getElementById("noteForm");
+  const formWrapper = document.getElementById("formWrapper");
+  const addButton = document.getElementById("addButton");
+  const cancelButton = document.getElementById("cancelButton");
+  const loadingElement = document.getElementById("loading");
+
+  let courses = [];
+  let filteredCourses = [];
+  let currentPage = 1;
+  let itemsPerPage = 10;
+  let totalPages = 1;
+
+  // Initialize the application when DOM is loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    setupEventListeners();
+    checkServerConnection();
+  });
+
+  function setupEventListeners() {
+    searchInput.addEventListener("input", () => {
+      currentPage = 1;
+      fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+    });
+
+    categoryFilter.addEventListener("change", () => {
+      currentPage = 1;
+      fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+    });
+
+    addButton.addEventListener("click", () => {
+      const type = document.getElementById("itemType").value;
+      if (!type) return alert("Please select a type first.");
+      noteTypeInput.value = type;
+      updateFormFields();
+      formWrapper.style.display = "block";
+    });
+
+    cancelButton.addEventListener("click", () => {
+      formWrapper.style.display = "none";
+      noteForm.reset();
+    });
+
+    document.getElementById("itemType").addEventListener("change", updateFormFields);
+
+    noteForm.addEventListener("submit", submitForm);
+  }
+
+  function updateFormFields() {
+    const type = noteTypeInput.value || document.getElementById("itemType").value;
+    const pdfField = document.getElementById("pdf-upload");
+    const linkField = document.getElementById("link-input");
+
+    pdfField.style.display = type === "pdf" ? "block" : "none";
+    linkField.style.display = type === "link" ? "block" : "none";
+
+    // Update required status based on type
+    const pdfInput = document.querySelector('input[name="file_path_pdf"]');
+    const linkInput = document.querySelector('input[name="file_path_link"]');
+    
+    if (pdfInput) pdfInput.required = type === "pdf";
+    if (linkInput) linkInput.required = type === "link";
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    const formData = new FormData(noteForm);
+    const submitButton = noteForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    fetch(API_ENDPOINTS.ADD_COURSE, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Note added successfully!");
+          noteForm.reset();
+          formWrapper.style.display = "none";
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        } else {
+          throw new Error(data.message || "Failed to add note");
+        }
+      })
+      .catch((err) => alert("Error: " + err.message))
+      .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit";
+      });
+  }
+
+  function checkServerConnection() {
+    showLoading(true);
+    fetch(API_ENDPOINTS.PING)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          fetchCourses('', '');
+        } else {
+          throw new Error("Server responded but failed to validate.");
+        }
+      })
+      .catch((err) => {
+        console.error("Server connection failed:", err.message);
+        showLoading(false);
+        useLocalData();
+      });
+  }
+
+  function fetchCourses(search = '', category = '') {
+    showLoading(true);
+    
+    // Construct the API URL with proper query parameters
+    let url = API_ENDPOINTS.GET_COURSES;
+    const params = new URLSearchParams();
+    
+    if (search) params.append('search', search);
+    if (category) params.append('category', category);
+    params.append('page', currentPage);
+    params.append('per_page', itemsPerPage);
+    
+    if (params.toString()) {
+      url += '&' + params.toString();
+    }
+    
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        showLoading(false);
+        if (data.status !== "success") throw new Error(data.message || "Failed to fetch courses");
+        
+        courses = data.data;
+        
+        // Update pagination info from API response
+        if (data.pagination) {
+          totalPages = data.pagination.total_pages;
+          currentPage = data.pagination.current_page;
+          itemsPerPage = data.pagination.per_page;
+        }
+        
+        displayCourses();
+        setupPagination();
+      })
+      .catch((err) => {
+        console.error("Fetch failed:", err.message);
+        showLoading(false);
+        courseGrid.innerHTML = `<p class='error'>Connection failed: ${err.message}</p>`;
+        useLocalData();
+      });
+  }
+
+    function displayCourses() {
+    courseGrid.innerHTML = "";
+    
+    if (!courses || !courses.length) {
+      courseGrid.innerHTML = "<p class='error'>No courses found.</p>";
+      return;
+    }
+
+    for (const course of courses) {
+      const div = document.createElement("div");
+      div.className = "course-card";
+      div.innerHTML = `
+        <h3>${course.title}</h3>
+        <p>${course.description.slice(0, 80)}${course.description.length > 80 ? "..." : ""}</p>
+        <div class="course-meta">
+          <span class="category-badge">${course.category}</span>
+          <span class="type-badge">${course.file_type}</span>
+        </div>
+        <a href="#" class="btn view-note" data-id="${course.id}">View Notes</a>
+      `;
+      div.querySelector(".view-note").addEventListener("click", (e) => {
+        e.preventDefault();
+        viewCourseNote(course.id);
+      });
+      courseGrid.appendChild(div);
+    }
+  }
+
+  function viewCourseNote(id) {
+    fetch(API_ENDPOINTS.VIEW_NOTE(id))
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status !== "success") throw new Error(data.message || "Failed to view note");
+        const note = data.data;
+        if (note.file_path) window.open(note.file_path, "_blank");
+      })
+      .catch((err) => alert("View error: " + err.message));
+  }
+
+  function setupPagination() {
+      paginationDiv.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const addButton = (label, page, isActive = false) => {
+      const btn = document.createElement("button");
+      btn.innerHTML = label;
+      if (isActive) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        if (page !== currentPage) {
+          currentPage = page;
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        }
+      });
+      paginationDiv.appendChild(btn);
+    };
+
+    // First page
+    if (currentPage > 1) {
+      addButton("&laquo;", 1);
+    }
+    
+    // Previous page
+    if (currentPage > 1) {
+      addButton("Prev", currentPage - 1);
+    }
+    
+    // Current page and neighbors
+    const startPage = Math.max(1, currentPage - 1);
+    const endPage = Math.min(totalPages, currentPage + 1);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      addButton(i, i, i === currentPage);
+    }
+    
+    // Next page
+    if (currentPage < totalPages) {
+      addButton("Next", currentPage + 1);
+    }
+    
+    // Last page
+    if (currentPage < totalPages) {
+      addButton("&raquo;", totalPages);
+    }
+  }
+
+  // The submit form function with improved error handling
+function submitForm(e) {
+  e.preventDefault();
+  const formData = new FormData(noteForm);
+  const submitButton = noteForm.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+  
+  // Display upload status
+  const statusDiv = document.createElement('div');
+  statusDiv.id = 'upload-status';
+  statusDiv.innerHTML = '<p>Uploading your file... Please wait.</p>';
+  statusDiv.style.padding = '10px';
+  statusDiv.style.marginTop = '10px';
+  statusDiv.style.backgroundColor = '#f8f9fa';
+  statusDiv.style.border = '1px solid #ddd';
+  statusDiv.style.borderRadius = '4px';
+  
+  noteForm.querySelector('.form-buttons').after(statusDiv);
+
+  // Log what we're sending to help 
+  console.log("Submitting form", {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    category: formData.get('category'),
+    type: formData.get('type')
+  });
+  
+  if (formData.get('type') === 'pdf') {
+    const file = formData.get('file_path_pdf');
+    if (file.size > 0) {
+      console.log("Uploading file:", file.name, "Size:", (file.size / 1024 / 1024).toFixed(2) + "MB");
+      statusDiv.innerHTML += `<p>File: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)</p>`;
+    } else {
+      statusDiv.innerHTML += `<p style="color: red">No file selected or file is empty!</p>`;
+    }
+  }
+
+  fetch(API_ENDPOINTS.ADD_COURSE, {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => {
+      if (!res.ok) {
+        statusDiv.innerHTML += `<p style="color: red">Server returned ${res.status}: ${res.statusText}</p>`;
+      }
+      return res.json();
+    })
+    .then((data) => {
+      if (data.status === "success") {
+        statusDiv.innerHTML = `<p style="color: green">✓ Note added successfully!</p>`;
+        setTimeout(() => {
+          noteForm.reset();
+          formWrapper.style.display = "none";
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        }, 1500);
+      } else {
+        throw new Error(data.message || "Failed to add note");
+      }
+    })
+    .catch((err) => {
+      statusDiv.innerHTML += `<p style="color: red">Error: ${err.message}</p>`;
+      console.error("Form submission error:", err);
+      alert("Error: " + err.message);
+    })
+    .finally(() => {
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit";
+    });
+}
+
+// Modified update form fields 
+function updateFormFields() {
+  const type = noteTypeInput.value || document.getElementById("itemType").value;
+  const pdfField = document.getElementById("pdf-upload");
+  const linkField = document.getElementById("link-input");
+
+  pdfField.style.display = type === "pdf" ? "block" : "none";
+  linkField.style.display = type === "link" ? "block" : "none";
+
+  // Update required status based on type
+  const pdfInput = document.querySelector('input[name="file_path_pdf"]');
+  const linkInput = document.querySelector('input[name="file_path_link"]');
+  
+  if (pdfInput) {
+    pdfInput.required = type === "pdf";
+    
+    // Add some instructions for the user
+    if (type === "pdf") {
+      let helpText = document.getElementById('pdf-help-text');
+      if (!helpText) {
+        helpText = document.createElement('small');
+        helpText.id = 'pdf-help-text';
+        helpText.style.display = 'block';
+        helpText.style.marginTop = '5px';
+        helpText.style.color = '#666';
+        pdfField.appendChild(helpText);
+      }
+      helpText.textContent = 'Maximum file size: 8MB.';
+    }
+  }
+  
+  if (linkInput) {
+    linkInput.required = type === "link";
+    
+    // Add validation to URL field
+    if (type === "link") {
+      linkInput.addEventListener('blur', function() {
+        if (this.value && !this.value.match(/^https?:\/\/.+/)) {
+          if (!this.value.startsWith('http')) {
+            this.value = 'https://' + this.value;
+          }
+        }
+      });
+    }}}
+
+  function showLoading(show) {
+    loadingElement.style.display = show ? "block" : "none";
+    if (show) {
+      courseGrid.innerHTML = "";
+      paginationDiv.innerHTML = "";
+    }
+  }
+
+  function useLocalData() {
+    const sample = [
+      { id: 1, title: "Offline - Intro to HTML", description: "Learn the basics of HTML.", category: "CS", file_type: "link" },
+      { id: 2, title: "Offline - Network Intro", description: "Understand basics of networks.", category: "NE", file_type: "link" },
+    ];
+    courses = sample;
+    displayCourses();
+  }
+</script>
 </body>
 </html>

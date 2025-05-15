@@ -5,50 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Campus Club Activities</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --primary-bg: #4b1e1e;
-      --secondary-bg: #800000;
-      --accent-bg: #d9d9d9;
-      --light-bg: #f7f7f7;
-      --primary-text: #fff;
-      --secondary-text: #1f1212;
-      --highlight: #caa472;
-    }
-
-    /* Spinner animation */
-    .loader {
-      border-top-color: #3498db;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {          colors: {
+            primaryBg: '#FFFFFF', // Changed to white for header
+            secondaryBg: '#253108', // Updated title and search section to green (#253108)
+            accentBg: '#d9d9d9',
+            lightBg: '#f7f7f7',
+            primaryText: '#000000', // Changed to black for header text
+            secondaryText: '#1f1212',
+            highlight: '#caa472'
+          },
+          fontFamily: {
+            sans: ['Arial', 'sans-serif']
+          }
+        }
       }
     }
-  </style>
+  </script>
 </head>
-<body class="bg-[var(--light-bg)] text-gray-800">
+<body class="bg-lightBg font-serif text-secondaryText">
 
-  <!-- Add a loading spinner container -->
-  <div id="loading-spinner" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="loader animate-spin border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full h-12 w-12"></div>
   </div>
-
-  <!-- Header -->
-  <header class="bg-[var(--primary-bg)] text-[var(--primary-text)] shadow-md">
-    <div class="flex items-center justify-between p-4 border-t-4">
-      <div class="logo">
-        <a href="../index.html">
-          <img src="images.png" alt="Campus Logo" class="h-12 mx-auto" />
-        </a>
-      </div>
+  <!-- Header -->  <header class="bg-primaryBg text-primaryText border-b-4 border-highlight shadow-md">
+    <div class="max-w-[1440px] mx-auto flex items-center justify-between p-4">
+      <a href="../index.html">
+        <img src="images/images.png" alt="Campus Logo" class="h-12" />
+      </a>
       <nav>
-        <ul class="flex space-x-6 font-semibold">
+        <ul class="flex gap-6 font-semibold">
           <li><a href="../events/event.html" class="hover:underline">Events Calendar</a></li>
           <li><a href="../CourseReviews/Reviews.html" class="hover:underline">Course Reviews</a></li>
           <li><a href="../Course-note/course-note.html" class="hover:underline">Course Notes</a></li>
@@ -58,24 +47,23 @@
       </nav>
     </div>
   </header>
-
   <!-- Title + Search -->
-  <div class="title-wrapper bg-[var(--secondary-bg)] text-[var(--primary-text)] py-8">
-    <section class="title text-center">
-      <h1 class="text-4xl font-bold">Explore Campus Club Activities</h1>
-    </section>
-    <div class="search-sort-section mt-4 flex flex-col md:flex-row justify-center items-center gap-4">
+  <div class="bg-[#3D5985] text-white py-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold text-white">Explore Campus Club Activities</h1>
+    </div>
+    <div class="mt-4 flex flex-col md:flex-row justify-center items-center gap-4">
       <div class="relative">
         <input
           type="text"
           placeholder="Type here..."
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 text-black"
+          class="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 text-black"
           id="search-input"
           list="club-suggestions"
         />
         <span class="absolute inset-y-0 right-3 flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
           </svg>
         </span>
         <datalist id="club-suggestions">
@@ -85,7 +73,7 @@
         </datalist>
       </div>
       <div>
-        <label for="sort" class="text-lg font-semibold">Sort by:</label>
+        <label for="sort" class="text-lg font-semibold text-white">Sort by:</label>
         <select id="sort" class="ml-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
           <option value="name">Name</option>
           <option value="newest">Newest</option>
@@ -95,72 +83,290 @@
     </div>
   </div>
 
-  <!-- Club Cards Section -->
-  <section class="club-cards grid grid-cols-1 md:grid-cols-3 gap-6 p-8">
-    <div class="club-card bg-[url('./tech%20innovators%20club.jpg')] bg-cover bg-center text-[var(--secondary-text)] shadow-md p-6 rounded-lg text-center h-full hover:shadow-lg">
-      <h3 class="text-xl font-bold bg-[var(--light-bg)] bg-opacity-70 inline-block px-2 py-1 rounded text-black">Tech Innovators Club</h3>
-      <p class="mt-4 bg-[var(--light-bg)] bg-opacity-80 p-2 rounded">A club for tech enthusiasts to innovate and collaborate on projects.</p>
-      <a href="tech-innovators.html" class="mt-6 inline-block px-6 py-3 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Learn More</a>
+  <!-- Club Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 max-w-[1440px] mx-auto mt-12">
+    <!-- Club card template -->
+     <div id="club-info-container" class="p-8"></div>
+
+    <div class="bg-[url('./images/tech%20innovators%20club.jpg')] bg-cover bg-center shadow-md p-6 rounded-[2rem] text-center hover:shadow-lg">
+      <h3 class="text-xl font-bold bg-lightBg bg-opacity-70 inline-block px-2 py-1 rounded text-black">Tech Innovators Club</h3>
+      <p class="mt-4 bg-lightBg bg-opacity-80 p-2 rounded">A club for tech enthusiasts to innovate and collaborate on projects.</p>
+      <a href= C:\Users\User\Documents\G2project\club activity\clubs\clubs-info.html class="mt-6 inline-block px-6 py-3 bg-primaryBg text-primaryText rounded-lg hover:bg-gray-100">Learn More</a>
     </div>
-    <div class="club-card bg-[url('./art%20and%20expression%20society.jpg')] bg-cover bg-center text-[var(--secondary-text)] shadow-md p-6 rounded-lg text-center h-full hover:shadow-lg">
-      <h3 class="text-xl font-bold bg-[var(--light-bg)] bg-opacity-70 inline-block px-2 py-1 rounded text-black">Art and Expression Society</h3>
-      <p class="mt-4 bg-[var(--light-bg)] bg-opacity-80 p-2 rounded">A space for artists to express and showcase their creativity.</p>
-      <a href="art-expression.html" class="mt-6 inline-block px-6 py-3 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Learn More</a>
+    <div class="bg-[url('./images/art%20and%20expression%20society.jpg')] bg-cover bg-center shadow-md p-6 rounded-[2rem] text-center hover:shadow-lg">
+      <h3 class="text-xl font-bold bg-lightBg bg-opacity-70 inline-block px-2 py-1 rounded text-black">Art and Expression Society</h3>
+      <p class="mt-4 bg-lightBg bg-opacity-80 p-2 rounded">A space for artists to express and showcase their creativity.</p>
+      <a href="clubs/art-expression.html" class="mt-6 inline-block px-6 py-3 bg-primaryBg text-primaryText rounded-lg hover:bg-gray-100">Learn More</a>
     </div>
-    <div class="club-card bg-[url('./green%20future%20club.jpg')] bg-cover bg-center text-[var(--secondary-text)] shadow-md p-6 rounded-lg text-center h-full hover:shadow-lg">
-      <h3 class="text-xl font-bold bg-[var(--light-bg)] bg-opacity-70 inline-block px-2 py-1 rounded text-black">Green Future Club</h3>
-      <p class="mt-4 bg-[var(--light-bg)] bg-opacity-80 p-2 rounded">Join us in promoting sustainability and environmental awareness.</p>
-      <a href="green-future.html" class="mt-6 inline-block px-6 py-3 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-lg hover:bg-gray-100">Learn More</a>
+    <div class="bg-[url('./images/green%20future%20club.jpg')] bg-cover bg-center shadow-md p-6 rounded-[2rem] text-center hover:shadow-lg">
+      <h3 class="text-xl font-bold bg-lightBg bg-opacity-70 inline-block px-2 py-1 rounded text-black">Green Future Club</h3>
+      <p class="mt-4 bg-lightBg bg-opacity-80 p-2 rounded">Join us in promoting sustainability and environmental awareness.</p>
+      <a href="clubs/green-future.html" class="mt-6 inline-block px-6 py-3 bg-primaryBg text-primaryText rounded-lg hover:bg-gray-100">Learn More</a>
     </div>
   </section>
 
-  <!-- Pagination Controls -->
-  <div class="pagination-controls text-center mt-8 flex justify-center items-center gap-4 mb-8">
-    <button class="px-4 py-2 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-full hover:bg-gray-100 flex items-center gap-2">
+  <!-- Pagination -->
+  <div class="text-center mt-8 flex justify-center items-center gap-4 mb-8">
+    <button class="px-4 py-2 bg-primaryBg text-primaryText rounded-full hover:bg-gray-100 flex items-center gap-2">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M12.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L9.414 10l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        <path fill-rule="evenodd" d="M12.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 010-1.414l4-4a1 1 011.414 1.414L9.414 10l3.293 3.293a1 1 010 1.414z" clip-rule="evenodd" />
       </svg>
       Previous
     </button>
     <span class="mx-4">Page 1 of 5</span>
-    <button class="px-4 py-2 bg-[var(--primary-bg)] text-[var(--primary-text)] rounded-full hover:bg-gray-100 flex items-center gap-2">
+    <button class="px-4 py-2 bg-primaryBg text-primaryText rounded-full hover:bg-gray-100 flex items-center gap-2">
       Next
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M7.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L10.586 10 7.293 6.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        <path fill-rule="evenodd" d="M7.293 5.293a1 1 0 011.414 0l4 4a1 1 010 1.414l-4 4a1 0 01-1.414-1.414L10.586 10 7.293 6.707a1 0 010-1.414z" clip-rule="evenodd" />
       </svg>
     </button>
   </div>
-
-  <!-- Join Us Section (curved) -->
-  <section class="join-us-wrapper bg-[var(--accent-bg)] text-[var(--secondary-text)] py-12 text-center rounded-lg mx-8 mb-8 shadow-lg">
-    <div class="join-us">
-      <h2 id="join" class="text-3xl font-bold">Join us now</h2>
+   
+  <!-- Join Us -->
+  <section class="bg-accentBg text-secondaryText py-12 text-center rounded-lg mx-8 mb-8 shadow-lg">
+    <div class="bg-lightBg inline-block px-16 py-6 rounded-full shadow-md">
+      <h2 class="text-3xl font-bold text-secondaryBg">Get Involved</h2>
       <p class="mt-4">Be part of our vibrant campus community and make a difference!</p>
-      <input
-        type="button"
-        class="mt-4 px-6 py-2 bg-[var(--primary-bg)] text-[var(--primary-text)] font-semibold rounded-lg shadow-md hover:bg-gray-100"
-        value="Join"
-        onclick="location.href='join-a-club.html'"
-      />
+      <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+        <button id="join-button" class="px-6 py-2 bg-primaryBg text-primaryText font-semibold rounded-lg shadow-md hover:bg-gray-100">
+          Join a Club
+        </button>
+        <button id="create-club-button" class="px-6 py-2 bg-highlight text-secondaryText font-semibold rounded-lg shadow-md hover:bg-gray-100">
+          Create a Club
+        </button>
+      </div>
     </div>
   </section>
 
-  <!-- Upcoming Event Section -->
-  <section class="upcoming-event bg-gradient-to-b from-[var(--primary-bg)] to-[var(--secondary-bg)] text-[var(--primary-text)] py-8 text-center rounded-lg mx-8 mb-8 shadow-lg">
+  <!-- Join Club Popup -->
+  <div id="join-club-popup" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl font-bold text-secondaryBg">Join a Club</h3>
+        <button id="close-popup" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="join-club-form" class="space-y-4">
+        <div>
+          <label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input type="text" id="full-name" name="full-name" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          <p id="name-error" class="mt-1 text-sm text-red-600 hidden">Please enter your full name</p>
+        </div>
+        
+        <div>
+          <label for="student-id" class="block text-sm font-medium text-gray-700">Student ID</label>
+          <input type="text" id="student-id" name="student-id" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          <p id="id-error" class="mt-1 text-sm text-red-600 hidden">Please enter a valid student ID</p>
+        </div>
+        
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">University Email</label>
+          <input type="email" id="email" name="email" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          <p id="email-error" class="mt-1 text-sm text-red-600 hidden">Please enter a valid university email</p>
+        </div>
+        
+        <div>
+          <label for="club-select" class="block text-sm font-medium text-gray-700">Select Club</label>
+          <select id="club-select" name="club-select" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+            <option value="">-- Select a Club --</option>
+            <option value="1">Tech Innovators Club</option>
+            <option value="2">Art and Expression Society</option>
+            <option value="3">Green Future Club</option>
+          </select>
+          <p id="club-error" class="mt-1 text-sm text-red-600 hidden">Please select a club</p>
+        </div>
+        
+        <div>
+          <label for="message" class="block text-sm font-medium text-gray-700">Why do you want to join? (Optional)</label>
+          <textarea id="message" name="message" rows="3"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg"></textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+          <button type="button" id="cancel-join" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryBg">
+            Cancel
+          </button>          <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#aa0023] hover:bg-[#880000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#aa0023]">
+            Submit Application
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Club Popup -->
+  <div id="create-club-popup" class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl font-bold text-secondaryBg">Create New Club</h3>
+        <button id="close-create-popup" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form id="create-club-form" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="club-name" class="block text-sm font-medium text-gray-700">Club Name *</label>
+            <input type="text" id="club-name" name="club-name" required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+            <p id="club-name-error" class="mt-1 text-sm text-red-600 hidden">Please enter a club name</p>
+          </div>
+          
+          <div>
+            <label for="club-category" class="block text-sm font-medium text-gray-700">Category *</label>
+            <select id="club-category" name="club-category" required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+              <option value="">-- Select Category --</option>
+              <option value="Technology">Technology</option>
+              <option value="Arts">Arts</option>
+              <option value="Sports">Sports</option>
+              <option value="Academic">Academic</option>
+              <option value="Cultural">Cultural</option>
+              <option value="Community Service">Community Service</option>
+              <option value="Other">Other</option>
+            </select>
+            <p id="category-error" class="mt-1 text-sm text-red-600 hidden">Please select a category</p>
+          </div>
+        </div>
+        
+        <div>
+          <label for="club-description" class="block text-sm font-medium text-gray-700">Description *</label>
+          <textarea id="club-description" name="club-description" rows="3" required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg"></textarea>
+          <p id="description-error" class="mt-1 text-sm text-red-600 hidden">Please enter a description</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="club-email" class="block text-sm font-medium text-gray-700">Contact Email *</label>
+            <input type="email" id="club-email" name="club-email" required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+            <p id="create-email-error" class="mt-1 text-sm text-red-600 hidden">Please enter a valid email</p>
+          </div>
+          
+          <div>
+            <label for="club-website" class="block text-sm font-medium text-gray-700">Website (Optional)</label>
+            <input type="url" id="club-website" name="club-website"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="club-meeting-day" class="block text-sm font-medium text-gray-700">Meeting Day</label>
+            <select id="club-meeting-day" name="club-meeting-day"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+              <option value="">-- Select Day --</option>
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="club-meeting-time" class="block text-sm font-medium text-gray-700">Meeting Time</label>
+            <input type="time" id="club-meeting-time" name="club-meeting-time"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryBg focus:border-primaryBg">
+          </div>
+        </div>
+        
+        <div>
+          <label for="club-logo" class="block text-sm font-medium text-gray-700">Club Logo (Optional)</label>
+          <input type="file" id="club-logo" name="club-logo" accept="image/*"
+            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primaryBg file:text-primaryText hover:file:bg-secondaryBg">
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" id="cancel-create-club" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryBg">
+            Cancel
+          </button>          <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#aa0023] hover:bg-[#880000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#aa0023]">
+            Submit Club Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>  <!-- Upcoming Event -->
+  <section class="bg-[#aa0023] text-white py-8 text-center rounded-lg mx-8 mb-8 shadow-lg">
     <h2 class="text-2xl font-bold">Upcoming Event</h2>
-    <div class="event-details mt-4 bg-[var(--light-bg)] bg-opacity-90 p-6 rounded-lg shadow-md text-black">
+    <div class="mt-4 bg-lightBg bg-opacity-90 p-6 rounded-lg shadow-md text-black max-w-3xl mx-auto">
       <h3 class="text-2xl font-semibold">Tech Innovation Workshop</h3>
       <p class="mt-2">Date & Time: April 25, 2025, 3:00 PM</p>
       <p class="mt-2">Hosting Club: Tech Innovators Club</p>
       <p class="mt-2">Location: University Auditorium</p>
       <p class="mt-2">Description: Join us for an exciting workshop where innovation meets technology. Learn, collaborate, and create with like-minded individuals!</p>
-      <a href="#" class="mt-4 inline-block px-6 py-3 bg-[var(--highlight)] text-[var(--secondary-text)] font-bold rounded-lg hover:bg-gray-100">RSVP</a>
+      <a href="#" class="mt-4 inline-block px-6 py-3 bg-highlight text-secondaryText font-bold rounded-lg hover:bg-gray-100">RSVP</a>
     </div>
   </section>
+  <!-- Footer -->
+  <footer class="uob-footer" style="background-color:#0a0a0a; color:white; font-family:'Montserrat',sans-serif;">
+    <div class="footer-container" style="display:flex; flex-wrap:wrap; justify-content:space-between; max-width:1248px; margin:auto; padding:40px 20px;">
+      <!-- Logo + Address -->
+      <div class="footer-col logo-col" style="flex:1 1 250px; min-width:240px;">
+        <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" alt="UOB Logo" width="72" height="85">
+        <p style="line-height:22px; font-size:14px; margin-top:10px;">
+          University of Bahrain<br>
+          P.O. Box 32038, Sakhir – Kingdom of Bahrain<br>
+          1017 Road 5418, Zallaq 1054
+        </p>
+        <div class="social-icons" style="margin-top:10px;">
+          <a href="https://www.facebook.com/uobedubh/" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/fb_footer.png" alt="Facebook" style="height:28px; margin-right:8px;"></a>
+          <a href="https://www.youtube.com/user/uobedubh" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2021/03/icons-youtube.png" alt="YouTube" style="height:28px; margin-right:8px;"></a>
+          <a href="https://www.instagram.com/uobedubh/" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/Group-373@2x-e1623205451501.png" alt="Instagram" style="height:28px; margin-right:8px;"></a>
+          <a href="https://www.linkedin.com/company/bahrain-university" target="_blank" rel="noopener noreferrer"><img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/Linkedin.png" alt="LinkedIn" style="height:28px;"></a>
+        </div>
+      </div>
 
-  <!-- FOOTER -->
-  <footer id="main-footer" class="bg-[var(--primary-bg)] text-[var(--primary-text)] text-center py-6 border-t-4 border-[var(--highlight)] mt-8 text-lg">
-    <p>&copy; 2025 University of Bahrain. Student Hub Platform.</p>
+      <!-- Colleges -->
+      <div class="footer-col" style="flex:1 1 180px; min-width:180px;">
+        <h3 style="margin-bottom:10px;">COLLEGES</h3>
+        <ul style="list-style:none; padding:0;">
+          <li><a href="https://www.uob.edu.bh/college-of-arts/" target="_blank">College of Arts</a></li>
+          <li><a href="https://www.uob.edu.bh/teachers-college/" target="_blank">Teachers College</a></li>
+          <li><a href="https://www.uob.edu.bh/college-of-business-administration/" target="_blank">Business Administration</a></li>
+          <li><a href="https://www.uob.edu.bh/college-of-engineering/" target="_blank">Engineering</a></li>
+          <li><a href="https://www.uob.edu.bh/college-of-information-technology/" target="_blank">Information Technology</a></li>
+        </ul>
+      </div>
+
+      <!-- Info + Quick Links -->
+      <div class="footer-col" style="flex:1 1 180px; min-width:180px;">
+        <h3 style="margin-bottom:10px;">INFORMATION</h3>
+        <ul style="list-style:none; padding:0;">
+          <li><a href="https://www.uob.edu.bh/deanship-of-graduate-studies/" target="_blank">Graduate Studies</a></li>
+          <li><a href="https://www.uob.edu.bh/scientific-research/" target="_blank">Scientific Research</a></li>
+        </ul>
+        <h3 style="margin:16px 0 10px;">QUICK LINKS</h3>
+        <ul style="list-style:none; padding:0;">
+          <li><a href="https://www.uob.edu.bh/join-uob/" target="_blank">Join UOB</a></li>
+          <li><a href="https://www.uob.edu.bh/students/" target="_blank">Students</a></li>
+          <li><a href="https://www.uob.edu.bh/class-schedule/" target="_blank">Schedule</a></li>
+        </ul>
+      </div>
+
+      <!-- About -->
+      <div class="footer-col" style="flex:1 1 180px; min-width:180px;">
+        <h3 style="margin-bottom:10px;">ABOUT</h3>
+        <ul style="list-style:none; padding:0;">
+          <li><a href="https://www.uob.edu.bh/policies/" target="_blank">Policies</a></li>
+          <li><a href="https://www.uob.edu.bh/leadership/" target="_blank">Leadership</a></li>
+          <li><a href="https://www.uob.edu.bh/contact/map/" target="_blank">Map</a></li>
+          <li><a href="https://www.uob.edu.bh/careers/" target="_blank">Careers</a></li>
+          <li><a href="https://www.uob.edu.bh/contact/" target="_blank">Contact</a></li>
+        </ul>
+      </div>
+    </div>
   </footer>
 
   <script src="script.js" defer></script>
