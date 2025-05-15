@@ -259,7 +259,7 @@ footer {
   color: #4d0e0e;
 }
 
-/* Form elements on Safari fix */
+
 input, textarea, select, button {
   font: inherit;
   max-width: 100%;
