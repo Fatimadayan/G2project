@@ -3,7 +3,36 @@ const loadingMessage = document.getElementById("loading-msg");
 const featuresContainer = document.querySelector('.features-container');
 let newsData = []; // Store the news data globally
 
-fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/get.php?module=campus_news")
+const API_BASE = "https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev";
+
+// Function to delete news
+async function deleteNews(id) {
+    if (!confirm('Are you sure you want to delete this news?')) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/delete.php`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ module: 'campus_news', id: id })
+        });
+
+        if (response.ok) {
+            alert('News deleted successfully!');
+            fetchNews(); // Refresh news list
+        } else {
+            const error = await response.json();
+            alert('Error deleting news: ' + error.error);
+        }
+    } catch (error) {
+        alert('' );
+        window.location.reload();
+    }
+}
+
+
+
+
+fetch(`${API_BASE}/get.php?module=campus_news`)
   .then((response) => {
     if (!response.ok) {
       throw new Error("Failed to fetch Campus News");
@@ -11,15 +40,12 @@ fetch("https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit
     return response.json();
   })
   .then((data) => {
-    // Store the data globally
     newsData = data;
     
-    // Remove the loading message once data is ready
     if (loadingMessage) {
       loadingMessage.remove();
     }
 
-    // Initial render of all cards
     renderCards(newsData);
   })
   .catch((error) => {
@@ -42,7 +68,12 @@ function renderCards(cards) {
         const card = document.createElement("div");
         card.className = "feature-card";
         card.innerHTML = `
-            <h2>${item.title}</h2>
+            <div class="card-header">
+                <h2>${item.title}</h2>
+                <button class="delete-btn" onclick="deleteNews(${item.id})" title="Delete News">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
             <p>${item.body}</p>
             <a href="${item.url}" target="_blank">Read More →</a>
         `;
