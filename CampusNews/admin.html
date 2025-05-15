@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate on scroll -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="st.css">
+    <title>Create News - Admin</title>
+</head>
+<body class="bg-gray-50 font-inknut">
+    <header class="header">
+        <nav id="main-nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <a href="../index.html">
+                        <img src="../Images/logo.png" alt="UOB Logo" class="nav-logo">
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="CampusNews.html">Back to News</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-container">
+        <div class="hero-content">
+            <img src="https://uobhomesiteprod.s3.me-south-1.amazonaws.com/site-prod/uploads/2020/12/nF9OjbCe-white_logo_footer.png" 
+                 alt="University Logo" 
+                 class="hero-logo">
+            <h1 class="hero-title">Create News</h1>
+            <p class="hero-subtitle">Add New Campus News</p>
+        </div>
+    </section>
+
+    <!-- Create News Form Section -->
+    <section class="admin-form-section">
+        <div class="form-container">
+            <form id="createNewsForm" class="news-form">
+                <div class="form-group">
+                    <label for="title">News Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="body">Description</label>
+                    <textarea id="body" name="body" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="url">URL (Optional)</label>
+                    <input type="url" id="url" name="url">
+                </div>
+                
+                <button type="submit" class="submit-btn">Create News <i class="fas fa-plus"></i></button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        // Form submission handling
+        document.getElementById('createNewsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                module: 'campus_news',
+                title: document.getElementById('title').value,
+                body: document.getElementById('body').value,
+                url: document.getElementById('url').value || ''
+            };
+
+            try {
+                const response = await fetch('https://3aa7faeb-f0f7-4ea7-98b7-1eb9cc448768-00-29unw5ntf5qlw.pike.replit.dev/create.php?module=campus_news', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('News created successfully!');
+                    window.location.href = 'CampusNews.html';
+                } else {
+                    throw new Error('Failed to create news');
+                }
+            } catch (error) {
+                alert('Error creating news: ' + error.message);
+            }
+        });
+
+        // Navigation scroll effect
+        const header = document.querySelector('.header');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 100) {
+                header.classList.add('active');
+            } else {
+                header.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
