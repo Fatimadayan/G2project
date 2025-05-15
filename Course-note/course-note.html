@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Course Notes</title>
   <link rel="stylesheet" href="course-note.css" />
-  </head>
+</head>
 <body>
   <header>
     <div class="container">
@@ -87,7 +87,7 @@
       
       <div id="course-grid" class="course-grid"></div>
       <div id="pagination" class="pagination"></div>
-      </section>
+    </section>
   </main>
 
   <footer>
@@ -346,6 +346,122 @@
       addButton("&raquo;", totalPages);
     }
   }
+
+  // The submit form function with improved error handling
+function submitForm(e) {
+  e.preventDefault();
+  const formData = new FormData(noteForm);
+  const submitButton = noteForm.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+  
+  // Display upload status
+  const statusDiv = document.createElement('div');
+  statusDiv.id = 'upload-status';
+  statusDiv.innerHTML = '<p>Uploading your file... Please wait.</p>';
+  statusDiv.style.padding = '10px';
+  statusDiv.style.marginTop = '10px';
+  statusDiv.style.backgroundColor = '#f8f9fa';
+  statusDiv.style.border = '1px solid #ddd';
+  statusDiv.style.borderRadius = '4px';
+  
+  noteForm.querySelector('.form-buttons').after(statusDiv);
+
+  // Log what we're sending to help 
+  console.log("Submitting form", {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    category: formData.get('category'),
+    type: formData.get('type')
+  });
+  
+  if (formData.get('type') === 'pdf') {
+    const file = formData.get('file_path_pdf');
+    if (file.size > 0) {
+      console.log("Uploading file:", file.name, "Size:", (file.size / 1024 / 1024).toFixed(2) + "MB");
+      statusDiv.innerHTML += `<p>File: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)</p>`;
+    } else {
+      statusDiv.innerHTML += `<p style="color: red">No file selected or file is empty!</p>`;
+    }
+  }
+
+  fetch(API_ENDPOINTS.ADD_COURSE, {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => {
+      if (!res.ok) {
+        statusDiv.innerHTML += `<p style="color: red">Server returned ${res.status}: ${res.statusText}</p>`;
+      }
+      return res.json();
+    })
+    .then((data) => {
+      if (data.status === "success") {
+        statusDiv.innerHTML = `<p style="color: green">✓ Note added successfully!</p>`;
+        setTimeout(() => {
+          noteForm.reset();
+          formWrapper.style.display = "none";
+          fetchCourses(searchInput.value.toLowerCase(), categoryFilter.value);
+        }, 1500);
+      } else {
+        throw new Error(data.message || "Failed to add note");
+      }
+    })
+    .catch((err) => {
+      statusDiv.innerHTML += `<p style="color: red">Error: ${err.message}</p>`;
+      console.error("Form submission error:", err);
+      alert("Error: " + err.message);
+    })
+    .finally(() => {
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit";
+    });
+}
+
+// Modified update form fields 
+function updateFormFields() {
+  const type = noteTypeInput.value || document.getElementById("itemType").value;
+  const pdfField = document.getElementById("pdf-upload");
+  const linkField = document.getElementById("link-input");
+
+  pdfField.style.display = type === "pdf" ? "block" : "none";
+  linkField.style.display = type === "link" ? "block" : "none";
+
+  // Update required status based on type
+  const pdfInput = document.querySelector('input[name="file_path_pdf"]');
+  const linkInput = document.querySelector('input[name="file_path_link"]');
+  
+  if (pdfInput) {
+    pdfInput.required = type === "pdf";
+    
+    // Add some instructions for the user
+    if (type === "pdf") {
+      let helpText = document.getElementById('pdf-help-text');
+      if (!helpText) {
+        helpText = document.createElement('small');
+        helpText.id = 'pdf-help-text';
+        helpText.style.display = 'block';
+        helpText.style.marginTop = '5px';
+        helpText.style.color = '#666';
+        pdfField.appendChild(helpText);
+      }
+      helpText.textContent = 'Maximum file size: 8MB.';
+    }
+  }
+  
+  if (linkInput) {
+    linkInput.required = type === "link";
+    
+    // Add validation to URL field
+    if (type === "link") {
+      linkInput.addEventListener('blur', function() {
+        if (this.value && !this.value.match(/^https?:\/\/.+/)) {
+          if (!this.value.startsWith('http')) {
+            this.value = 'https://' + this.value;
+          }
+        }
+      });
+    }}}
 
   function showLoading(show) {
     loadingElement.style.display = show ? "block" : "none";
