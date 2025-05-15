@@ -400,47 +400,21 @@ function resetCreateFormErrors() {
 
 // Filter clubs based on search input
 function filterClubs() {
-    const searchTerm = searchInput.value.toLowerCase();
-
-    if (searchTerm === '') {
-        filteredClubs = [...allClubs];
-    } else {
-        filteredClubs = allClubs.filter(club => 
-            club.name.toLowerCase().includes(searchTerm) || 
-            club.description.toLowerCase().includes(searchTerm) ||
-            club.category.toLowerCase().includes(searchTerm)
-        );
-    }
+    currentPage = 1; // Reset to first page when searching
+    fetchClubData(); // Let server handle the filtering
 }
 
 // Sort clubs based on selected option
 function sortClubs() {
-    const sortOption = sortSelect.value;
-
-    switch (sortOption) {
-        case 'name':
-            filteredClubs.sort((a, b) => a.name.localeCompare(b.name));
-            break;
-        case 'newest':
-            filteredClubs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            break;
-        case 'category':
-            filteredClubs.sort((a, b) => a.category.localeCompare(b.category));
-            break;
-        default:
-            break;
-    }
+    currentPage = 1; // Reset to first page when changing sort
+    fetchClubData(); // Let server handle the sorting
 }
 
 // Render club cards based on current page
 function renderClubCards() {
-    const startIndex = (currentPage - 1) * clubsPerPage;
-    const endIndex = startIndex + clubsPerPage;
-    const clubsToDisplay = filteredClubs.slice(startIndex, endIndex);
-
     clubCardsContainer.innerHTML = '';
 
-    if (clubsToDisplay.length === 0) {
+    if (allClubs.length === 0) {
         clubCardsContainer.innerHTML = `
             <div class="col-span-3 text-center py-8">
                 <p class="text-xl">No clubs found matching your search.</p>
@@ -449,22 +423,20 @@ function renderClubCards() {
         return;
     }
 
-    clubsToDisplay.forEach(club => {
+    allClubs.forEach(club => {
         const clubCard = document.createElement('div');
         clubCard.className = 'bg-cover bg-center shadow-md p-6 rounded-[2rem] text-center hover:shadow-lg';
         
-       const bgImage = club.logo
-       ? `url('https://f023b77e-ddd3-4b2a-83b2-04e0be6c5df2-00-3sfdt77xdn4hi.sisko.replit.dev/${club.logo}')` : `url('./images/default-club-bg.jpg')`;
+        const bgImage = club.logo
+            ? `url('https://f023b77e-ddd3-4b2a-83b2-04e0be6c5df2-00-3sfdt77xdn4hi.sisko.replit.dev/${club.logo}')` 
+            : `url('./images/default-club-bg.jpg')`;
 
-clubCard.style.backgroundImage = bgImage;
-;
-;
-
-        
+        clubCard.style.backgroundImage = bgImage;
 
         clubCard.innerHTML = `
             <h3 class="text-xl font-bold bg-lightBg bg-opacity-70 inline-block px-2 py-1 rounded text-black">${club.name}</h3>
-            <p class="mt-4 bg-lightBg bg-opacity-80 p-2 rounded">${club.description}</p>            <div class="mt-2 bg-lightBg bg-opacity-80 p-2 rounded">
+            <p class="mt-4 bg-lightBg bg-opacity-80 p-2 rounded">${club.description}</p>            
+            <div class="mt-2 bg-lightBg bg-opacity-80 p-2 rounded">
                 <span class="font-semibold">Category:</span> ${club.category} | 
                 <span class="font-semibold">Members:</span> ${club.members}
             </div>
